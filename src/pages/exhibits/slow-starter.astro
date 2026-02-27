@@ -2,7 +2,7 @@
 import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
 import ExhibitDescription from '../../components/ExhibitDescription.astro';
 import PerformanceController from '../../components/PerformanceController.astro';
-import ProductCard from '../../components/ProductCard.astro';
+import ProductPageMock from '../../components/ProductPageMock.astro';
 
 const title = 'The Slow Starter';
 const description =
@@ -17,14 +17,14 @@ const description =
       <div class="comparison-panel">
         <span class="panel-label">Optimized (500ms)</span>
         <div class="viewport" id="optimized-viewport">
-          <ProductCard id="optimized-card" />
+          <ProductPageMock id="optimized-page" />
         </div>
       </div>
 
       <div class="comparison-panel">
         <span class="panel-label">Throttled (500ms + Delay)</span>
         <div class="viewport" id="throttled-viewport">
-          <ProductCard id="throttled-card" />
+          <ProductPageMock id="throttled-page" />
         </div>
       </div>
     </div>
@@ -54,10 +54,10 @@ const description =
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
       width: 100%;
-      min-height: 500px;
+      min-height: 600px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       .comparison-container {
         grid-template-columns: 1fr;
       }
@@ -80,16 +80,16 @@ const description =
 
     .viewport {
       width: 100%;
-      aspect-ratio: 4/5;
       background: var(--sidebar-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      padding: 2rem;
+      padding: 1rem;
       position: relative;
       transition: background-color 0.3s;
+      min-height: 500px;
     }
 
     :global(.scrubbing) .viewport {
@@ -109,8 +109,8 @@ const description =
     let timers: number[] = [];
 
     const stage = document.getElementById('comparison-stage');
-    const optCard = document.getElementById('optimized-card');
-    const thrCard = document.getElementById('throttled-card');
+    const optPage = document.getElementById('optimized-page');
+    const thrPage = document.getElementById('throttled-page');
 
     function clearTimers() {
       timers.forEach((t) => clearTimeout(t));
@@ -121,10 +121,10 @@ const description =
       clearTimers();
       stage?.classList.add('scrubbing');
 
-      [optCard, thrCard].forEach((card) => {
-        if (!card) return;
-        card.classList.remove('visible');
-        card.querySelectorAll('.painted').forEach((el) => {
+      [optPage, thrPage].forEach((page) => {
+        if (!page) return;
+        page.classList.remove('visible');
+        page.querySelectorAll('.painted').forEach((el) => {
           el.classList.remove('painted');
         });
       });
@@ -134,37 +134,42 @@ const description =
       stage?.classList.remove('scrubbing');
 
       // Start Optimized sequence
-      runSequence(optCard, OPTIMIZED_BASE);
+      runSequence(optPage, OPTIMIZED_BASE);
 
       // Start Throttled sequence
-      runSequence(thrCard, OPTIMIZED_BASE + additionalDelay);
+      runSequence(thrPage, OPTIMIZED_BASE + additionalDelay);
     }
 
-    function runSequence(card: HTMLElement | null, startDelay: number) {
-      if (!card) return;
+    function runSequence(page: HTMLElement | null, startDelay: number) {
+      if (!page) return;
 
-      const elements = [
-        { selector: '.product-card', class: 'visible' },
-        { selector: '.product-image', class: 'painted' },
-        { selector: '.product-title', class: 'painted' },
-        { selector: '.product-price', class: 'painted' },
-        { selector: '.buy-button', class: 'painted' },
+      const steps = [
+        { selector: '.product-page-mock', class: 'visible', delay: 0 },
+        { selector: '.mock-nav', class: 'painted', delay: 100 },
+        { selector: '.mock-hero', class: 'painted', delay: 200 },
+        { selector: '.product-image', class: 'painted', delay: 400 },
+        { selector: '.product-title', class: 'painted', delay: 100 },
+        { selector: '.product-price', class: 'painted', delay: 50 },
+        { selector: '.buy-button', class: 'painted', delay: 100 },
+        { selector: '.mock-description', class: 'painted', delay: 300 },
+        { selector: '.desc-text', class: 'painted', delay: 100 },
+        { selector: '.spec-list', class: 'painted', delay: 100 },
+        { selector: '.mock-footer', class: 'painted', delay: 200 },
       ];
 
-      let currentDelay = startDelay;
+      let accumulatedDelay = startDelay;
 
-      elements.forEach((step, index) => {
+      steps.forEach((step) => {
+        accumulatedDelay += step.delay;
         const timer = window.setTimeout(() => {
-          if (step.selector === '.product-card') {
-            card.classList.add('visible');
+          if (step.selector === '.product-page-mock') {
+            page.classList.add(step.class);
           } else {
-            card.querySelector(step.selector)?.classList.add(step.class);
+            page.querySelector(step.selector)?.classList.add(step.class);
           }
-        }, currentDelay);
+        }, accumulatedDelay);
 
         timers.push(timer);
-        // Stagger elements by 200ms
-        currentDelay += 200;
       });
     }
 

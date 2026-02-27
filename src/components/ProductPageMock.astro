@@ -1,0 +1,217 @@
+---
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<div class="product-page-mock" id={id}>
+  <nav class="mock-nav">
+    <div class="mock-logo">CHRONOS</div>
+    <div class="mock-links">
+      <span>Collections</span>
+      <span>Men</span>
+      <span>Women</span>
+    </div>
+    <div class="mock-cart">🛒 (0)</div>
+  </nav>
+
+  <div class="mock-hero">
+    <div class="mock-image-container">
+      <img
+        src="https://placehold.co/600x400/e2e8f0/1e293b?text=Luxury+Timepiece"
+        alt="Product"
+        class="product-image"
+      />
+    </div>
+    <div class="mock-main-info">
+      <h3 class="product-title">Chronos Elite Series 5</h3>
+      <p class="product-price">$1,299.00</p>
+      <button class="buy-button">Buy Now</button>
+    </div>
+  </div>
+
+  <div class="mock-description">
+    <h4>About the Series 5</h4>
+    <p class="desc-text">
+      Crafted with precision engineering and timeless design, the Elite Series 5
+      features an automatic movement, sapphire crystal, and 100m water
+      resistance.
+    </p>
+    <ul class="spec-list">
+      <li>42mm Stainless Steel Case</li>
+      <li>Automatic self-winding movement</li>
+      <li>Italian Leather Strap</li>
+    </ul>
+  </div>
+
+  <footer class="mock-footer">
+    <span>Terms</span>
+    <span>Privacy</span>
+    <span>Support</span>
+  </footer>
+</div>
+
+<style>
+  .product-page-mock {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+  }
+
+  .product-page-mock.visible {
+    opacity: 1;
+  }
+
+  .mock-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--sidebar-bg);
+  }
+
+  .mock-logo {
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+  .mock-links {
+    display: flex;
+    gap: 1rem;
+    color: var(--muted-text);
+    font-size: 0.7rem;
+  }
+
+  .mock-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .mock-hero {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mock-image-container {
+    aspect-ratio: 1;
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .product-image.painted {
+    opacity: 1;
+  }
+
+  .mock-main-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .product-title {
+    font-size: 1.25rem;
+  }
+  .product-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+  }
+
+  .buy-button {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+
+  .mock-description {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .desc-text {
+    color: var(--muted-text);
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+  }
+  .spec-list {
+    padding-left: 1rem;
+    color: var(--muted-text);
+    font-size: 0.75rem;
+  }
+
+  .mock-footer {
+    margin-top: auto;
+    padding: 1rem;
+    background: var(--sidebar-bg);
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 0.6rem;
+    color: var(--muted-text);
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* Painting logic */
+  .mock-nav,
+  .mock-hero,
+  .mock-description,
+  .mock-footer,
+  .product-title,
+  .product-price,
+  .buy-button,
+  .desc-text,
+  .spec-list {
+    opacity: 0;
+    transition:
+      opacity 0.4s ease-out,
+      transform 0.4s ease-out;
+  }
+
+  .painted {
+    opacity: 1 !important;
+  }
+
+  :global(.scrubbing) .product-page-mock {
+    opacity: 0.3 !important;
+    filter: grayscale(1);
+  }
+
+  :global(.scrubbing) .painted {
+    opacity: 0 !important;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.buy-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      alert('Success! Added to your collection.');
+    });
+  });
+</script>

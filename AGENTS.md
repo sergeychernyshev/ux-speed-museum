@@ -30,13 +30,17 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 ## Phase 2: Core Exhibits (MVP)
 
 - [x] **Exhibit 1: The Slow Starter.**
-  - **Concept:** Progressive rendering of an e-commerce product page.
+  - **Concept:** Progressive rendering of a realistic e-commerce product page.
   - **Optimized Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline).
   - **Throttled Side:** Controllable "Rendering Delay" (0-5000ms) added via scrubber.
   - **Scrubbing Logic:**
     - When the user starts scrubbing, both views reset to empty grey placeholders.
     - When the user stops scrubbing, the rendering sequence restarts for both sides using the updated delay.
-  - **Content:** A mock e-commerce product page (Image, Title, Price, Buy Button).
+  - **Content:** A realistic product page layout including:
+    - Navigation Bar (Logo, Menu links, Cart icon).
+    - Hero Section (Product Image, Title, Price, Buy Button).
+    - Product Details (Description text, Specifications).
+    - Footer links.
   - **Animation:** Elements animate in to simulate the browser's paint sequence. Interactive as soon as rendered. Skeleton animations are disabled to focus purely on the paint timing.
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
