@@ -36,13 +36,15 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
   - **Scrubbing Logic:**
     - When the user starts scrubbing, both views reset to empty grey placeholders.
     - When the user stops scrubbing, the rendering sequence restarts for both sides using the updated delay.
-  - **Content:** A realistic product page layout including:
-    - Navigation Bar (Logo, Menu links, Cart icon).
-    - Hero Section (Product Image, Title, Price, Buy Button).
-    - Product Details (Description text, Specifications).
-    - Footer links.
-  - **Animation:** Elements animate in to simulate the browser's paint sequence. Interactive as soon as rendered. Skeleton animations are disabled to focus purely on the paint timing.
-- [ ] **Exhibit 2: The Input Abyss (Input Latency).**
+    - **Content:** A realistic product page layout including:
+      - Navigation Bar (Logo, Menu links, Cart icon).
+      - Hero Section (Product Image, Title, Price, Buy Button).
+      - Product Details (Description text, Specifications).
+      - Footer links.
+    - **Animation:** Elements animate in to simulate the browser's paint sequence.
+    - **Interactivity:** The mock product page remains **non-interactive** after loading to focus purely on the visual assembly and the perception of rendering speed.
+    - **Constraints:** Skeleton animations are disabled to focus purely on the paint timing.
+  - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
   - [ ] Implementation: Instead of side-by-side, display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
   - [ ] Scrubbing logic: Use the `PerformanceController` scrubber to highlight/enable the input corresponding to the chosen latency level.
