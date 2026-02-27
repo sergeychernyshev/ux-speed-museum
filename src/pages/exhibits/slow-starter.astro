@@ -15,7 +15,10 @@ const description =
   <div class="exhibit-stage">
     <div class="comparison-container" id="comparison-stage">
       <div class="comparison-panel">
-        <span class="panel-label">Optimized (500ms)</span>
+        <span class="panel-label">Fast (500ms)</span>
+        <p class="panel-note">
+          Only 5% of websites start rendering faster than this.
+        </p>
         <div class="viewport" id="optimized-viewport">
           <ProductPageMock id="optimized-page" />
         </div>
@@ -76,6 +79,16 @@ const description =
       font-size: 0.8rem;
       letter-spacing: 0.05em;
       color: var(--muted-text);
+    }
+
+    .panel-note {
+      font-size: 0.7rem;
+      color: var(--muted-text);
+      font-style: italic;
+      margin-top: -0.5rem;
+      margin-bottom: 0.5rem;
+      max-width: 250px;
+      text-align: center;
     }
 
     .viewport {
