@@ -1,21 +1,25 @@
 ---
 import ExhibitLayout from '../layouts/ExhibitLayout.astro';
-import ExhibitDescription from '../components/ExhibitDescription.astro';
 
 const title = 'Welcome to the Museum';
-const description =
-  "The UX Speed Museum is a place to experience the visceral impact of performance bottlenecks. Here, we don't just measure metrics; we feel them. Explore our exhibits to understand why speed matters.";
 ---
 
 <ExhibitLayout title={title}>
-  <ExhibitDescription description={description} />
-
   <div class="welcome-stage">
-    <h2>Step into the Gallery</h2>
-    <p>
-      Select an exhibit from the sidebar to begin your journey through the
-      layers of user experience friction.
+    <h1>{title}</h1>
+    <p class="intro-text">
+      The UX Speed Museum is a place to experience the visceral impact of
+      performance bottlenecks. Here, we don't just measure metrics; we feel
+      them. Explore our exhibits to understand why speed matters.
     </p>
+
+    <div class="cta-section">
+      <h2>Step into the Gallery</h2>
+      <p>
+        Select an exhibit from the sidebar to begin your journey through the
+        layers of user experience friction.
+      </p>
+    </div>
   </div>
 
   <style>
@@ -27,8 +31,27 @@ const description =
       text-align: center;
       padding: 4rem 2rem;
       background: var(--card-bg);
-      border: 1px dashed var(--border-color);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
+      gap: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--accent-color);
+    }
+
+    .intro-text {
+      font-size: 1.25rem;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+
+    .cta-section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      width: 100%;
     }
   </style>
 </ExhibitLayout>
