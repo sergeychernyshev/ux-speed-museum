@@ -32,7 +32,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
   - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
-  - **Throttled Side:** Controllable "**Time to start rendering**" (500-5500ms) added via scrubber. The scrubber displays the total time (Base 500ms + Delay).
+  - **Slow to Start Side:** Controllable "**Time to start rendering**" (500-5500ms) added via scrubber. The scrubber displays the total time (Base 500ms + Delay).
   - **Scrubbing Logic:**
     - When the user starts scrubbing, both views hide their content immediately (transparency/opacity reset).
     - Backgrounds remain unchanged during scrubbing (no grey placeholders).
