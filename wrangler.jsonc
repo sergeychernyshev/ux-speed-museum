@@ -8,11 +8,5 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
-  },
-  "routes": [
-    {
-      "pattern": "museum.ux-speed.dev/*",
-      "zone_name": "ux-speed.dev"
-    }
-  ]
+  }
 }
