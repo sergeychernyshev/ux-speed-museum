@@ -1,0 +1,365 @@
+---
+import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
+import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import PerformanceController from '../../components/PerformanceController.astro';
+import ProductPageMock from '../../components/ProductPageMock.astro';
+
+const title = 'The Slow Starter';
+const description =
+  'Starting to render the page quickly, measured by a <a href="https://web.dev/articles/fcp" target="_blank" rel="noopener">First Contentful Paint (FCP)</a> metric, is critical for how users perceive your site\'s speed. Delays in FCP, often caused by slow servers (measured using <a href="https://web.dev/articles/ttfb" target="_blank" rel="noopener">Time To First Byte</a>) or render-blocking resources, significantly increase the chance of users abandoning the page (bounce rate). Learn more in the <a href="https://www.speedpatterns.com/patterns/fast_start/" target="_blank" rel="noopener">"Fast Start" Speed Pattern</a>. Compare the 500ms "Fast" baseline against the delayed version below.';
+---
+
+<ExhibitLayout title={title}>
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
+
+  <div class="exhibit-stage">
+    <div class="comparison-container" id="comparison-stage">
+      <div class="comparison-panel">
+        <span class="panel-label">Fast</span>
+        <p class="panel-note">
+          Only 5% of websites start rendering faster than <span class="fcp-good"
+            >500ms</span
+          >.
+        </p>
+        <div class="experience-block">
+          <div class="timer-display" id="optimized-timer">0ms</div>
+          <div class="viewport" id="optimized-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="optimized-progress"></div>
+            </div>
+            <ProductPageMock id="optimized-page" />
+          </div>
+        </div>
+      </div>
+
+      <div class="comparison-panel">
+        <span class="panel-label">Slow to Start</span>
+        <p class="panel-note" id="throttled-note">
+          Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
+        </p>
+        <div class="experience-block">
+          <div class="timer-display" id="throttled-timer">0ms</div>
+          <div class="viewport" id="throttled-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="throttled-progress"></div>
+            </div>
+            <ProductPageMock id="throttled-page" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-overlay">
+      <PerformanceController
+        min={500}
+        max={5500}
+        step={100}
+        defaultValue={2500}
+        label="Time to start rendering"
+        unit="ms"
+      />
+    </div>
+  </div>
+
+  <style>
+    .exhibit-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      width: 100%;
+      min-height: 600px;
+    }
+
+    @media (max-width: 1024px) {
+      .comparison-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comparison-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start; /* Align timer and viewport to left */
+      width: 100%;
+    }
+
+    .panel-label,
+    .panel-note {
+      align-self: center; /* Keep labels centered if preferred, or left-align */
+    }
+
+    .panel-label {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      color: var(--muted-text);
+    }
+
+    .panel-note {
+      font-size: 0.7rem;
+      color: var(--muted-text);
+      font-style: italic;
+      margin-top: -0.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      height: 1rem; /* Reserve space */
+    }
+
+    .experience-block {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .viewport {
+      width: 100%;
+      background: var(--sidebar-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      border-top-left-radius: 0; /* Flush with timer tab */
+      display: flex;
+      flex-direction: column; /* Stack progress and page */
+      align-items: stretch;
+      justify-content: center;
+      padding: 1rem;
+      position: relative;
+      min-height: 500px;
+      overflow: hidden;
+    }
+
+    .render-progress-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--border-color);
+      z-index: 10;
+    }
+
+    .render-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-color);
+      transition: width 0.2s ease-out;
+    }
+
+    .timer-display {
+      font-family: monospace;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      background: var(--card-bg);
+      padding: 0.25rem 0.75rem;
+      width: max-content;
+      text-align: left;
+      opacity: 1;
+      transition: opacity 0.2s;
+      border: 1px solid var(--border-color);
+      border-bottom: none;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 5;
+    }
+
+    .timer-display.hidden {
+      opacity: 0;
+    }
+
+    .controls-overlay {
+      position: sticky;
+      bottom: 2rem;
+      z-index: 100;
+    }
+  </style>
+
+  <script>
+    const OPTIMIZED_BASE = 500;
+    let throttledDelay = 2500;
+    let timers: number[] = [];
+
+    const stage = document.getElementById('comparison-stage');
+    const optPage = document.getElementById('optimized-page');
+    const thrPage = document.getElementById('throttled-page');
+    const thrNote = document.getElementById('throttled-note');
+    const optProgress = document.getElementById('optimized-progress');
+    const thrProgress = document.getElementById('throttled-progress');
+    const optTimer = document.getElementById('optimized-timer');
+    const thrTimer = document.getElementById('throttled-timer');
+
+    let startTime = 0;
+    let rafId = 0;
+    let optFinished = false;
+    let thrFinished = false;
+
+    function clearTimers() {
+      timers.forEach((t) => clearTimeout(t));
+      timers = [];
+      cancelAnimationFrame(rafId);
+    }
+
+    function getFCPClass(time: number) {
+      if (time <= 1800) return 'fcp-good';
+      if (time <= 3000) return 'fcp-needs-improvement';
+      return 'fcp-poor';
+    }
+
+    function resetViews() {
+      clearTimers();
+      stage?.classList.add('scrubbing');
+      optFinished = false;
+      thrFinished = false;
+
+      [optPage, thrPage].forEach((page) => {
+        if (!page) return;
+        page.classList.remove('visible');
+        page.querySelectorAll('.painted').forEach((el) => {
+          el.classList.remove('painted');
+        });
+      });
+
+      if (optProgress) optProgress.style.width = '0%';
+      if (thrProgress) thrProgress.style.width = '0%';
+
+      // Hide timers instead of resetting text
+      optTimer?.classList.add('hidden');
+      thrTimer?.classList.add('hidden');
+    }
+
+    function updateTimers(timestamp: number) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = Math.floor(timestamp - startTime);
+
+      const arrow =
+        '<span style="color: var(--text-color); margin: 0 0.75rem;">→</span>';
+
+      if (!optFinished && optTimer) {
+        if (elapsed >= OPTIMIZED_BASE) {
+          optTimer.innerHTML = `<span class="${getFCPClass(OPTIMIZED_BASE)}">${OPTIMIZED_BASE}</span>${arrow}${elapsed}ms`;
+        } else {
+          optTimer.textContent = `${elapsed}ms`;
+        }
+      }
+      if (!thrFinished && thrTimer) {
+        if (elapsed >= throttledDelay) {
+          thrTimer.innerHTML = `<span class="${getFCPClass(throttledDelay)}">${throttledDelay}</span>${arrow}${elapsed}ms`;
+        } else {
+          thrTimer.textContent = `${elapsed}ms`;
+        }
+      }
+
+      if (!optFinished || !thrFinished) {
+        rafId = requestAnimationFrame(updateTimers);
+      }
+    }
+
+    function startRendering() {
+      stage?.classList.remove('scrubbing');
+      startTime = 0;
+      optFinished = false;
+      thrFinished = false;
+
+      // Reveal and initialize timers
+      if (optTimer) {
+        optTimer.textContent = '0ms';
+        optTimer.classList.remove('hidden');
+      }
+      if (thrTimer) {
+        thrTimer.textContent = '0ms';
+        thrTimer.classList.remove('hidden');
+      }
+
+      rafId = requestAnimationFrame(updateTimers);
+
+      // Start Optimized sequence
+      runSequence(optPage, optProgress, OPTIMIZED_BASE, () => {
+        optFinished = true;
+      });
+
+      // Start Throttled sequence
+      runSequence(thrPage, thrProgress, throttledDelay, () => {
+        thrFinished = true;
+      });
+    }
+
+    function runSequence(
+      page: HTMLElement | null,
+      progress: HTMLElement | null,
+      startDelay: number,
+      onComplete?: () => void
+    ) {
+      if (!page) return;
+
+      const steps = [
+        { selector: '.product-page-mock', class: 'visible', delay: 0 },
+        { selector: '.mock-nav', class: 'painted', delay: 100 },
+        { selector: '.mock-hero', class: 'painted', delay: 200 },
+        { selector: '.product-image', class: 'painted', delay: 400 },
+        { selector: '.product-title', class: 'painted', delay: 100 },
+        { selector: '.product-price', class: 'painted', delay: 50 },
+        { selector: '.buy-button', class: 'painted', delay: 100 },
+        { selector: '.mock-description', class: 'painted', delay: 300 },
+        { selector: '.desc-text', class: 'painted', delay: 100 },
+        { selector: '.spec-list', class: 'painted', delay: 100 },
+        { selector: '.mock-footer', class: 'painted', delay: 200 },
+      ];
+
+      let accumulatedDelay = startDelay;
+
+      steps.forEach((step, index) => {
+        accumulatedDelay += step.delay;
+        const timer = window.setTimeout(() => {
+          if (step.selector === '.product-page-mock') {
+            page.classList.add(step.class);
+          } else {
+            page.querySelector(step.selector)?.classList.add(step.class);
+          }
+
+          // Update progress bar
+          if (progress) {
+            const percent = ((index + 1) / steps.length) * 100;
+            progress.style.width = `${percent}%`;
+          }
+
+          // Trigger completion callback on last step
+          if (index === steps.length - 1 && onComplete) {
+            onComplete();
+          }
+        }, accumulatedDelay);
+
+        timers.push(timer);
+      });
+    }
+
+    // Listen for scrubber updates
+    window.addEventListener('performance-update', (e: any) => {
+      resetViews();
+      throttledDelay = e.detail.value;
+      if (thrNote)
+        thrNote.innerHTML = `Starts rendering at <span class="${getFCPClass(throttledDelay)}">${throttledDelay}ms</span>.`;
+    });
+
+    window.addEventListener('performance-update-end', () => {
+      startRendering();
+    });
+
+    // Initial run
+    startRendering();
+  </script>
+</ExhibitLayout>

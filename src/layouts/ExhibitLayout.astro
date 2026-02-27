@@ -13,61 +13,170 @@ const audioEnabled =
   Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
 const animationsEnabled =
   Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
-const descriptionCollapsed =
-  Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} | UX Speed Museum</title>
 
     <style>
       .layout {
-        display: grid;
-        grid-template-columns: 250px 1fr;
-        grid-template-rows: auto 1fr;
+        display: flex;
+        flex-direction: column;
         min-height: 100vh;
       }
 
-      @media (max-width: 768px) {
-        .layout {
-          grid-template-columns: 1fr;
-          grid-template-rows: auto auto 1fr;
-        }
-      }
-
       header {
-        grid-column: 1 / -1;
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1.5rem;
         border-bottom: 1px solid var(--border-color);
         background: var(--header-bg);
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        z-index: 10;
-        flex-wrap: wrap;
-        gap: 1rem;
+        gap: 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
       header h1 {
-        font-size: 1.5rem;
         margin-bottom: 0;
+        display: flex;
+        align-items: center;
       }
 
-      nav {
-        background: var(--sidebar-bg);
-        border-right: 1px solid var(--border-color);
-        padding: 1.5rem;
+      header h1 a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .logo-img {
+        height: 32px;
+        width: auto;
+      }
+
+      .logo-text {
+        font-size: 1.25rem;
+        white-space: nowrap;
+      }
+
+      .top-nav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex: 1;
+      }
+
+      .top-nav ul {
+        display: flex;
+        list-style: none;
+        gap: 1.5rem;
+        margin: 0;
+        padding: 0;
+      }
+
+      .top-nav a {
+        text-decoration: none;
+        color: var(--muted-text);
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .top-nav a:hover {
+        color: var(--accent-color);
+      }
+
+      .top-nav a.active {
+        color: var(--accent-color);
+        border-bottom: 2px solid var(--accent-color);
+      }
+
+      .global-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 0.5rem;
+        cursor: pointer;
+        color: var(--text-color);
+        font-size: 1.25rem;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
       }
 
       @media (max-width: 768px) {
-        nav {
-          border-right: none;
+        header {
+          justify-content: space-between;
+          gap: 1rem;
+        }
+
+        .menu-toggle {
+          display: flex;
+          order: -1;
+        }
+
+        .top-nav {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 280px;
+          height: 100vh;
+          background: var(--sidebar-bg);
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 5rem 1.5rem 1.5rem;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease-in-out;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          border-right: 1px solid var(--border-color);
+          z-index: 90;
+        }
+
+        .top-nav.active {
+          transform: translateX(0);
+        }
+
+        .top-nav ul {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .top-nav a {
+          display: block;
+          padding: 0.75rem 0;
+          font-size: 1.1rem;
           border-bottom: 1px solid var(--border-color);
+        }
+
+        .top-nav a.active {
+          color: var(--accent-color);
+          border-bottom: 1px solid var(--accent-color);
+        }
+
+        .layout.menu-open::after {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 80;
         }
       }
 
@@ -89,22 +198,28 @@ const descriptionCollapsed =
       }
 
       .preparation-shield {
-        position: fixed;
-        inset: 0;
-        background: var(--bg-color);
-        z-index: 1000;
+        width: 100%;
+        padding: 2rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        transition:
-          opacity 0.5s ease-out,
-          visibility 0.5s;
+        margin-bottom: 2rem;
       }
 
       .preparation-shield.ready {
-        opacity: 0;
-        visibility: hidden;
+        display: none;
+      }
+
+      .exhibit-content {
+        display: none;
+      }
+
+      .exhibit-content.ready {
+        display: block;
       }
 
       .shield-content {
@@ -140,92 +255,176 @@ const descriptionCollapsed =
     </style>
   </head>
   <body>
-    {
-      showShield && (
-        <div id="shield" class="preparation-shield">
-          <div class="shield-content">
-            <div class="loading-progress">
-              <div id="loading-bar" class="loading-bar" />
-            </div>
-            <p>We are preparing your experience...</p>
-          </div>
-        </div>
-      )
-    }
-
-    <div class="layout">
+    <div class="layout" id="app-layout">
       <header>
-        <h1>UX Speed Museum</h1>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+          ☰
+        </button>
+        <h1>
+          <a href="/">
+            <img src="/logo.svg" alt="No Spinners" class="logo-img" />
+            <span class="logo-text">UX Speed Museum</span>
+          </a>
+        </h1>
+
+        <nav class="top-nav" id="sidebar-nav">
+          <ul>
+            <li>
+              <a
+                href="/"
+                class:list={{ active: Astro.url.pathname === '/' }}
+                data-astro-prefetch
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="/exhibits/slow-starter"
+                class:list={{
+                  active: Astro.url.pathname === '/exhibits/slow-starter',
+                }}
+                data-astro-prefetch
+              >
+                The Slow Starter
+              </a>
+            </li>
+            <!-- Exhibit links will be added here -->
+          </ul>
+        </nav>
+
         <div class="global-controls">
           <!-- Global controls will go here -->
         </div>
       </header>
 
-      <nav>
-        <h3>Exhibits</h3>
-        <ul>
-          <li>
-            <a href="/" data-astro-prefetch> Home </a>
-          </li>
-          <!-- Exhibit links will be added here -->
-        </ul>
-      </nav>
-
       <main>
-        <slot />
+        <slot name="description" />
+
+        {
+          showShield && (
+            <div id="shield" class="preparation-shield">
+              <script is:inline>
+                {`
+                  (function () {
+                    if (document.readyState === 'complete') {
+                      const s = document.getElementById('shield');
+                      if (s) s.style.display = 'none';
+                    }
+                  })();
+                  `}
+              </script>
+              <div class="shield-content">
+                <div class="loading-progress">
+                  <div id="loading-bar" class="loading-bar" />
+                </div>
+                <p>We are preparing your experience...</p>
+              </div>
+            </div>
+          )
+        }
+
+        <div
+          id="exhibit-content"
+          class:list={['exhibit-content', { ready: !showShield }]}
+        >
+          <slot />
+        </div>
       </main>
     </div>
 
     <script>
+      // Menu Toggle Logic
+      const menuToggle = document.getElementById('menu-toggle');
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const appLayout = document.getElementById('app-layout');
+
+      if (menuToggle && sidebarNav && appLayout) {
+        menuToggle.addEventListener('click', () => {
+          sidebarNav.classList.toggle('active');
+          appLayout.classList.toggle('menu-open');
+          menuToggle.textContent = sidebarNav.classList.contains('active')
+            ? '✕'
+            : '☰';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if (
+            sidebarNav.classList.contains('active') &&
+            !sidebarNav.contains(e.target as Node) &&
+            !menuToggle.contains(e.target as Node)
+          ) {
+            sidebarNav.classList.remove('active');
+            appLayout.classList.remove('menu-open');
+            menuToggle.textContent = '☰';
+          }
+        });
+      }
+
       // The Preparation Shield logic
       const shield = document.getElementById('shield');
       const bar = document.getElementById('loading-bar');
+      const content = document.getElementById('exhibit-content');
 
-      if (shield && bar) {
-        // Track resource loading
-        const resources = performance.getEntriesByType('resource');
-        const totalResources = resources.length || 10; // Fallback estimate
-        let loadedResources = 0;
-
-        const updateProgress = () => {
-          loadedResources++;
-          const progress = Math.min(
-            (loadedResources / totalResources) * 100,
-            100
-          );
-          bar.style.width = `${progress}%`;
-
-          if (progress >= 100 || document.readyState === 'complete') {
-            setTimeout(() => {
-              shield.classList.add('ready');
-            }, 300);
-          }
+      if (shield && bar && content) {
+        const setReady = () => {
+          shield.classList.add('ready');
+          content.classList.add('ready');
         };
 
-        // Listen for resource loads
-        const observer = new PerformanceObserver((list) => {
-          list.getEntries().forEach(() => {
-            updateProgress();
+        // If window is already loaded (e.g. from cache or very fast), hide immediately
+        if (document.readyState === 'complete') {
+          setReady();
+        } else {
+          // Track resource loading
+          const resources = performance.getEntriesByType('resource');
+          const totalResources = resources.length || 10; // Fallback estimate
+          let loadedResources = 0;
+
+          const updateProgress = () => {
+            loadedResources++;
+            const progress = Math.min(
+              (loadedResources / totalResources) * 100,
+              100
+            );
+            bar.style.width = `${progress}%`;
+
+            if (progress >= 100) {
+              setTimeout(() => {
+                setReady();
+              }, 300);
+            }
+          };
+
+          // Listen for resource loads
+          const observer = new PerformanceObserver((list) => {
+            list.getEntries().forEach(() => {
+              updateProgress();
+            });
           });
-        });
 
-        observer.observe({ entryTypes: ['resource'] });
+          observer.observe({ entryTypes: ['resource'] });
 
-        // Backup for window load
-        window.addEventListener('load', () => {
-          bar.style.width = '100%';
+          // Final safety net
+          window.addEventListener('load', () => {
+            bar.style.width = '100%';
+            setTimeout(() => {
+              setReady();
+              observer.disconnect();
+            }, 200);
+          });
+
+          // If no new resources after 500ms, assume ready
           setTimeout(() => {
-            shield.classList.add('ready');
-            observer.disconnect();
-          }, 300);
-        });
-
-        // Initial bump
-        setTimeout(() => {
-          if (parseFloat(bar.style.width) === 0) {
-            bar.style.width = '20%';
-          }
-        }, 100);
+            if (
+              loadedResources === 0 &&
+              document.readyState === 'interactive'
+            ) {
+              setReady();
+            }
+          }, 500);
+        }
       }
     </script>
   </body>

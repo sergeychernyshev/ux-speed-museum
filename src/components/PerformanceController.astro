@@ -41,6 +41,7 @@ const { min, max, step, defaultValue, label, unit } = Astro.props;
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.5rem;
+    gap: 1rem;
   }
 
   .value-display {
@@ -61,13 +62,40 @@ const { min, max, step, defaultValue, label, unit } = Astro.props;
   const display = document.getElementById('value-display');
   const unit = scrubber?.getAttribute('data-unit') || 'ms';
 
+  function updateColor(value: number) {
+    if (!display) return;
+    display.classList.remove('fcp-good', 'fcp-needs-improvement', 'fcp-poor');
+    if (value <= 1800) {
+      display.classList.add('fcp-good');
+    } else if (value <= 3000) {
+      display.classList.add('fcp-needs-improvement');
+    } else {
+      display.classList.add('fcp-poor');
+    }
+  }
+
+  // Initial color
+  if (scrubber) updateColor(parseInt(scrubber.value));
+
   scrubber?.addEventListener('input', (e) => {
     const value = (e.target as HTMLInputElement).value;
-    if (display) display.textContent = `${value}ms`;
+    if (display) display.textContent = `${value}${unit}`;
+    updateColor(parseInt(value));
 
-    // Dispatch custom event for exhibit to listen to
+    // Dispatch custom event for exhibit to listen to (scrubbing)
     window.dispatchEvent(
       new CustomEvent('performance-update', {
+        detail: { value: parseInt(value) },
+      })
+    );
+  });
+
+  scrubber?.addEventListener('change', (e) => {
+    const value = (e.target as HTMLInputElement).value;
+
+    // Dispatch completion event (released)
+    window.dispatchEvent(
+      new CustomEvent('performance-update-end', {
         detail: { value: parseInt(value) },
       })
     );
