@@ -9,5 +9,12 @@
     "directory": "./dist",
     "binding": "ASSETS"
   },
-  "preview_urls": true
+  "preview_urls": true,
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "museum.ux-speed.dev",
+      "custom_domain": true
+    }
+  ]
 }
