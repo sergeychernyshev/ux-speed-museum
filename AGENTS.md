@@ -63,6 +63,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
     - Commit changes incrementally as they are implemented.
     - Create a Pull Request (PR) on GitHub for each feature branch.
     - **Document PRs:** Every time a new commit is pushed to a PR, the PR description must be updated with comprehensive documentation of all changes and features implemented in that PR.
+    - **Preview URLs:** Every PR must include a branch preview URL in the format `https://[branch-name]-ux-speed-museum.sergeychernyshev.workers.dev`.
     - **Automated Deployment:** Deployment to Cloudflare is handled automatically upon pushing changes to the branch/PR. Manual deployment is not required.
     - Merge into the `main` branch **ONLY** via GitHub PR after your review and final confirmation.
 6. **Validation:** Verify behavioral and stylistic correctness after each step.
