@@ -10,6 +10,12 @@
       "options": {
         "parser": "astro"
       }
+    },
+    {
+      "files": ["*.jsonc", "tsconfig.json"],
+      "options": {
+        "parser": "json"
+      }
     }
   ]
 }

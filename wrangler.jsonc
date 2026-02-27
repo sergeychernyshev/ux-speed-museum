@@ -5,14 +5,14 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS",
+    "binding": "ASSETS"
   },
   "preview_urls": true,
   "workers_dev": true,
   "routes": [
     {
       "pattern": "museum.uxspeed.dev",
-      "custom_domain": true,
-    },
-  ],
+      "custom_domain": true
+    }
+  ]
 }

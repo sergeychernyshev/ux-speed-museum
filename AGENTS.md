@@ -54,6 +54,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 - **Responsive Design:** The UI must be fully responsive, supporting both desktop resolutions and mobile browsers through adaptive layouts (e.g., stacking sidebars on mobile).
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered. Use CSS (e.g., `display: none` or `visibility: hidden`) for initial state management rather than client-side conditional rendering.
 - **No Tailwind:** Use Vanilla CSS to ensure we can manipulate the box model and transitions without framework interference.
+- **Code Styling:** Prettier is used for consistent code formatting across the project, including support for `.astro` and `.jsonc` files.
 - **Accessibility:** Ensure the "museum" is accessible even when the exhibits are "broken" by design.
 - **Performance:** Ironically, the app itself must be highly performant to ensure the _simulated_ slowness is accurate and predictable.
 
