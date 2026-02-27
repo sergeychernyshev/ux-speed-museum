@@ -19,11 +19,45 @@ const { id } = Astro.props;
 
   <div class="mock-hero">
     <div class="mock-image-container">
-      <img
-        src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600&h=600"
-        alt="Chronos Elite Series 5 Watch"
+      <svg
+        viewBox="0 0 400 400"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
         class="product-image"
-      />
+      >
+        <circle
+          cx="200"
+          cy="200"
+          r="150"
+          stroke="var(--accent-color)"
+          stroke-width="8"></circle>
+        <circle
+          cx="200"
+          cy="200"
+          r="130"
+          stroke="var(--border-color)"
+          stroke-width="2"></circle>
+        <path
+          d="M200 80V200L280 260"
+          stroke="var(--text-color)"
+          stroke-width="6"
+          stroke-linecap="round"></path>
+        <circle cx="200" cy="200" r="10" fill="var(--accent-color)"></circle>
+        <rect
+          x="180"
+          y="30"
+          width="40"
+          height="20"
+          rx="4"
+          fill="var(--border-color)"></rect>
+        <rect
+          x="180"
+          y="350"
+          width="40"
+          height="20"
+          rx="4"
+          fill="var(--border-color)"></rect>
+      </svg>
     </div>
     <div class="mock-main-info">
       <h3 class="product-title">Chronos Elite Series 5</h3>
