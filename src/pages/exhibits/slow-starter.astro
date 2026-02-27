@@ -23,11 +23,11 @@ const description =
         <p class="panel-note">
           Only 5% of websites start rendering faster than this.
         </p>
+        <div class="timer-display align-left" id="optimized-timer">0ms</div>
         <div class="viewport" id="optimized-viewport">
           <div class="render-progress-container">
             <div class="render-progress-bar" id="optimized-progress"></div>
           </div>
-          <div class="timer-display" id="optimized-timer">0ms</div>
           <ProductPageMock id="optimized-page" />
         </div>
       </div>
@@ -37,11 +37,11 @@ const description =
         <p class="panel-note" id="throttled-note">
           Starts rendering at 2500ms.
         </p>
+        <div class="timer-display align-right" id="throttled-timer">0ms</div>
         <div class="viewport" id="throttled-viewport">
           <div class="render-progress-container">
             <div class="render-progress-bar" id="throttled-progress"></div>
           </div>
-          <div class="timer-display" id="throttled-timer">0ms</div>
           <ProductPageMock id="throttled-page" />
         </div>
       </div>
@@ -140,18 +140,20 @@ const description =
     }
 
     .timer-display {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
       font-family: monospace;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       font-weight: bold;
       color: var(--accent-color);
-      background: var(--card-bg);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      border: 1px solid var(--border-color);
-      z-index: 10;
+      margin-bottom: 0.5rem;
+      width: 100%;
+    }
+
+    .align-left {
+      text-align: left;
+    }
+
+    .align-right {
+      text-align: right;
     }
 
     .controls-overlay {
