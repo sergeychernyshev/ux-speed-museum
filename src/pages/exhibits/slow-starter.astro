@@ -37,7 +37,7 @@ const description =
       <div class="comparison-panel">
         <span class="panel-label">Slow to Start</span>
         <p class="panel-note" id="throttled-note">
-          Starts rendering at 2500ms.
+          Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
         </p>
         <div class="experience-block">
           <div class="timer-display" id="throttled-timer">0ms</div>
@@ -181,20 +181,6 @@ const description =
       opacity: 0;
     }
 
-    .fcp-good {
-      color: #2fb344;
-    }
-    .fcp-needs-improvement {
-      color: #f59f00;
-    }
-    .fcp-poor {
-      color: #d63939;
-    }
-
-    .align-left {
-      text-align: left;
-    }
-
     .controls-overlay {
       position: sticky;
       bottom: 2rem;
@@ -227,6 +213,12 @@ const description =
       cancelAnimationFrame(rafId);
     }
 
+    function getFCPClass(time: number) {
+      if (time <= 1800) return 'fcp-good';
+      if (time <= 3000) return 'fcp-needs-improvement';
+      return 'fcp-poor';
+    }
+
     function resetViews() {
       clearTimers();
       stage?.classList.add('scrubbing');
@@ -247,12 +239,6 @@ const description =
       // Hide timers instead of resetting text
       optTimer?.classList.add('hidden');
       thrTimer?.classList.add('hidden');
-    }
-
-    function getFCPClass(time: number) {
-      if (time <= 1800) return 'fcp-good';
-      if (time <= 3000) return 'fcp-needs-improvement';
-      return 'fcp-poor';
     }
 
     function updateTimers(timestamp: number) {
@@ -362,7 +348,7 @@ const description =
       resetViews();
       throttledDelay = e.detail.value;
       if (thrNote)
-        thrNote.textContent = `Starts rendering at ${throttledDelay}ms.`;
+        thrNote.innerHTML = `Starts rendering at <span class="${getFCPClass(throttledDelay)}">${throttledDelay}ms</span>.`;
     });
 
     window.addEventListener('performance-update-end', () => {

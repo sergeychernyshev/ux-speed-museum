@@ -58,3 +58,14 @@ button {
   cursor: pointer;
   font-family: inherit;
 }
+
+/* FCP Threshold Colors */
+.fcp-good {
+  color: #2fb344 !important;
+}
+.fcp-needs-improvement {
+  color: #f59f00 !important;
+}
+.fcp-poor {
+  color: #d63939 !important;
+}
