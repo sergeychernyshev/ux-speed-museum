@@ -65,9 +65,20 @@ const { min, max, step, defaultValue, label, unit } = Astro.props;
     const value = (e.target as HTMLInputElement).value;
     if (display) display.textContent = `${value}ms`;
 
-    // Dispatch custom event for exhibit to listen to
+    // Dispatch custom event for exhibit to listen to (scrubbing)
     window.dispatchEvent(
       new CustomEvent('performance-update', {
+        detail: { value: parseInt(value) },
+      })
+    );
+  });
+
+  scrubber?.addEventListener('change', (e) => {
+    const value = (e.target as HTMLInputElement).value;
+
+    // Dispatch completion event (released)
+    window.dispatchEvent(
+      new CustomEvent('performance-update-end', {
         detail: { value: parseInt(value) },
       })
     );

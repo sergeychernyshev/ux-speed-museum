@@ -29,11 +29,20 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 
 ## Phase 2: Core Exhibits (MVP)
 
-- [ ] **Exhibit 1: The Slow Starter.** A simulation of a slow initial page load/hydration. Users can dial in the delay before the app becomes interactive.
+- [ ] **Exhibit 1: The Slow Starter.**
+  - **Concept:** Progressive rendering of an e-commerce product page.
+  - **Optimized Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline).
+  - **Throttled Side:** Controllable "Rendering Delay" (0-5000ms) added via scrubber.
+  - **Scrubbing Logic:**
+    - When the user starts scrubbing, both views reset to empty grey placeholders.
+    - When the user stops scrubbing, the rendering sequence restarts for both sides using the updated delay.
+  - **Content:** A mock e-commerce product page (Image, Title, Price, Buy Button).
+  - **Animation:** Elements animate in to simulate the browser's paint sequence. Interactive as soon as rendered.
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
   - [ ] Implementation: Instead of side-by-side, display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
   - [ ] Scrubbing logic: Use the `PerformanceController` scrubber to highlight/enable the input corresponding to the chosen latency level.
+
 - [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface where users can simulate 2G, 3G, and "Slow 4G" speeds with artificial request queuing.
 - [ ] **Exhibit 4: Layout Shift.** A news-style layout where images and ads load at different, controllable intervals to demonstrate CLS (Cumulative Layout Shift).
 
