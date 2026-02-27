@@ -3,9 +3,10 @@ import '../styles/global.css';
 
 interface Props {
   title: string;
+  showShield?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, showShield = true } = Astro.props;
 
 // SSR Preference reading
 const audioEnabled =
@@ -139,14 +140,18 @@ const descriptionCollapsed =
     </style>
   </head>
   <body>
-    <div id="shield" class="preparation-shield">
-      <div class="shield-content">
-        <div class="loading-progress">
-          <div id="loading-bar" class="loading-bar"></div>
+    {
+      showShield && (
+        <div id="shield" class="preparation-shield">
+          <div class="shield-content">
+            <div class="loading-progress">
+              <div id="loading-bar" class="loading-bar" />
+            </div>
+            <p>We are preparing your experience...</p>
+          </div>
         </div>
-        <p>We are preparing your experience...</p>
-      </div>
-    </div>
+      )
+    }
 
     <div class="layout">
       <header>
@@ -159,7 +164,9 @@ const descriptionCollapsed =
       <nav>
         <h3>Exhibits</h3>
         <ul>
-          <li><a href="/" data-astro-prefetch>Home</a></li>
+          <li>
+            <a href="/" data-astro-prefetch> Home </a>
+          </li>
           <!-- Exhibit links will be added here -->
         </ul>
       </nav>
