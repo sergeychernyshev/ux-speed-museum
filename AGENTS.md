@@ -72,6 +72,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 - **Accessibility & Motion:** All animations must respect `prefers-reduced-motion`. Narrative audio must be togglable and its preloading must be conditional to save bandwidth when disabled.
 - **No Spinners:** Never use spinners anywhere in the UI. Use alternative indicators like progress bars or text-based loading states.
 - **Loading Progress:** Animate loading bars according to actual asset download progress. Do not apply CSS progress animations if the loading shield is not shown.
+- **Inline Preparation Shield:** The shield is displayed inline within the exhibit page (under the description) instead of a fixed overlay. It hides the exhibit content until all resources are ready.
 - **Preparation Shield Optimization:** Do not show the shield at all if there are no additional resources to load (e.g., everything is already in cache or loaded).
 - **Responsive Design:** The UI must be fully responsive, supporting both desktop resolutions and mobile browsers through adaptive layouts (e.g., stacking sidebars on mobile).
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered. Use CSS (e.g., `display: none` or `visibility: hidden`) for initial state management rather than client-side conditional rendering.

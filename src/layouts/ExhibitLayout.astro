@@ -89,10 +89,11 @@ const descriptionCollapsed =
       }
 
       .preparation-shield {
-        position: fixed;
-        inset: 0;
-        background: var(--bg-color);
-        z-index: 1000;
+        width: 100%;
+        padding: 2rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -100,11 +101,22 @@ const descriptionCollapsed =
         transition:
           opacity 0.5s ease-out,
           visibility 0.5s;
+        margin-bottom: 2rem;
       }
 
       .preparation-shield.ready {
+        display: none;
+      }
+
+      .exhibit-content {
         opacity: 0;
         visibility: hidden;
+        transition: opacity 0.5s ease-in;
+      }
+
+      .exhibit-content.ready {
+        opacity: 1;
+        visibility: visible;
       }
 
       .shield-content {
@@ -140,30 +152,6 @@ const descriptionCollapsed =
     </style>
   </head>
   <body>
-    {
-      showShield && (
-        <div id="shield" class="preparation-shield">
-          <script is:inline>
-            {`
-                  (function () {
-                    if (document.readyState === 'complete') {
-                      const s = document.getElementById('shield');
-                      if (s) s.style.display = 'none';
-                    }
-                  })();
-                  `}
-          </script>
-          <div class="shield-content">
-            {' '}
-            <div class="loading-progress">
-              <div id="loading-bar" class="loading-bar" />
-            </div>
-            <p>We are preparing your experience...</p>
-          </div>
-        </div>
-      )
-    }
-
     <div class="layout">
       <header>
         <h1>UX Speed Museum</h1>
@@ -172,7 +160,7 @@ const descriptionCollapsed =
         </div>
       </header>
 
-      <nav>
+      <nav {title}>
         <h3>Exhibits</h3>
         <ul>
           <li>
@@ -188,7 +176,37 @@ const descriptionCollapsed =
       </nav>
 
       <main>
-        <slot />
+        <slot name="description" />
+
+        {
+          showShield && (
+            <div id="shield" class="preparation-shield">
+              <script is:inline>
+                {`
+                  (function () {
+                    if (document.readyState === 'complete') {
+                      const s = document.getElementById('shield');
+                      if (s) s.style.display = 'none';
+                    }
+                  })();
+                  `}
+              </script>
+              <div class="shield-content">
+                <div class="loading-progress">
+                  <div id="loading-bar" class="loading-bar" />
+                </div>
+                <p>We are preparing your experience...</p>
+              </div>
+            </div>
+          )
+        }
+
+        <div
+          id="exhibit-content"
+          class:list={['exhibit-content', { ready: !showShield }]}
+        >
+          <slot />
+        </div>
       </main>
     </div>
 
@@ -196,11 +214,17 @@ const descriptionCollapsed =
       // The Preparation Shield logic
       const shield = document.getElementById('shield');
       const bar = document.getElementById('loading-bar');
+      const content = document.getElementById('exhibit-content');
 
-      if (shield && bar) {
+      if (shield && bar && content) {
+        const setReady = () => {
+          shield.classList.add('ready');
+          content.classList.add('ready');
+        };
+
         // If window is already loaded (e.g. from cache or very fast), hide immediately
         if (document.readyState === 'complete') {
-          shield.classList.add('ready');
+          setReady();
         } else {
           // Track resource loading
           const resources = performance.getEntriesByType('resource');
@@ -217,7 +241,7 @@ const descriptionCollapsed =
 
             if (progress >= 100) {
               setTimeout(() => {
-                shield.classList.add('ready');
+                setReady();
               }, 300);
             }
           };
@@ -235,7 +259,7 @@ const descriptionCollapsed =
           window.addEventListener('load', () => {
             bar.style.width = '100%';
             setTimeout(() => {
-              shield.classList.add('ready');
+              setReady();
               observer.disconnect();
             }, 200);
           });
@@ -246,7 +270,7 @@ const descriptionCollapsed =
               loadedResources === 0 &&
               document.readyState === 'interactive'
             ) {
-              shield.classList.add('ready');
+              setReady();
             }
           }, 500);
         }
