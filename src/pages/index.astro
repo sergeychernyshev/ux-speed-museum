@@ -1,7 +1,6 @@
 ---
 import ExhibitLayout from '../layouts/ExhibitLayout.astro';
 import ExhibitDescription from '../components/ExhibitDescription.astro';
-import PerformanceController from '../components/PerformanceController.astro';
 
 const title = "Welcome to the Museum";
 const description = "The UX Speed Museum is a place to experience the visceral impact of performance bottlenecks. Here, we don't just measure metrics; we feel them. Explore our exhibits to understand why speed matters.";
@@ -13,18 +12,6 @@ const description = "The UX Speed Museum is a place to experience the visceral i
 	<div class="welcome-stage">
 		<h2>Step into the Gallery</h2>
 		<p>Select an exhibit from the sidebar to begin your journey through the layers of user experience friction.</p>
-		
-		<div class="demo-controller">
-			<p>Try the global performance scrubber below:</p>
-			<PerformanceController 
-				min={0} 
-				max={2000} 
-				step={100} 
-				defaultValue={0} 
-				label="Simulated Latency" 
-				unit="ms" 
-			/>
-		</div>
 	</div>
 
 	<style>
@@ -38,14 +25,6 @@ const description = "The UX Speed Museum is a place to experience the visceral i
 			background: var(--card-bg);
 			border: 1px dashed var(--border-color);
 			border-radius: 12px;
-		}
-
-		.demo-controller {
-			margin-top: 2rem;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
 		}
 	</style>
 </ExhibitLayout>
