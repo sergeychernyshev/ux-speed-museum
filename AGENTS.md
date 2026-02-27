@@ -52,6 +52,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 
 - **Zero-Layout-Shift SSR:** All user preferences (collapsed state, etc.) must be rendered on the server based on cookies to prevent layout shifts.
 - **Accessibility & Motion:** All animations must respect `prefers-reduced-motion`. Narrative audio must be togglable and its preloading must be conditional to save bandwidth when disabled.
+- **No Spinners:** Never use spinners anywhere in the UI. Use alternative indicators like progress bars or text-based loading states.
 - **Responsive Design:** The UI must be fully responsive, supporting both desktop resolutions and mobile browsers through adaptive layouts (e.g., stacking sidebars on mobile).
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered. Use CSS (e.g., `display: none` or `visibility: hidden`) for initial state management rather than client-side conditional rendering.
 - **No Tailwind:** Use Vanilla CSS to ensure we can manipulate the box model and transitions without framework interference.
