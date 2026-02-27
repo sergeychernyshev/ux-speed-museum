@@ -46,7 +46,7 @@ const animationsEnabled =
         display: flex;
         justify-content: space-between;
         align-items: center;
-        z-index: 10;
+        z-index: 100;
         flex-wrap: wrap;
         gap: 1rem;
       }
@@ -56,16 +56,60 @@ const animationsEnabled =
         margin-bottom: 0;
       }
 
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 0.5rem;
+        cursor: pointer;
+        color: var(--text-color);
+        font-size: 1.25rem;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        z-index: 110;
+      }
+
       nav {
         background: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
         padding: 1.5rem;
+        transition: transform 0.3s ease-in-out;
       }
 
       @media (max-width: 768px) {
+        .menu-toggle {
+          display: flex;
+        }
+
         nav {
-          border-right: none;
-          border-bottom: 1px solid var(--border-color);
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 250px;
+          height: 100vh;
+          z-index: 90;
+          transform: translateX(-100%);
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          border-right: 1px solid var(--border-color);
+          padding-top: 5rem; /* Space for header */
+        }
+
+        nav.active {
+          transform: translateX(0);
+        }
+
+        .layout.menu-open::after {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 80;
         }
       }
 
@@ -150,15 +194,18 @@ const animationsEnabled =
     </style>
   </head>
   <body>
-    <div class="layout">
+    <div class="layout" id="app-layout">
       <header>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+          ☰
+        </button>
         <h1>UX Speed Museum</h1>
         <div class="global-controls">
           <!-- Global controls will go here -->
         </div>
       </header>
 
-      <nav {title}>
+      <nav id="sidebar-nav">
         <h3>Exhibits</h3>
         <ul>
           <li>
@@ -209,6 +256,34 @@ const animationsEnabled =
     </div>
 
     <script>
+      // Menu Toggle Logic
+      const menuToggle = document.getElementById('menu-toggle');
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const appLayout = document.getElementById('app-layout');
+
+      if (menuToggle && sidebarNav && appLayout) {
+        menuToggle.addEventListener('click', () => {
+          sidebarNav.classList.toggle('active');
+          appLayout.classList.toggle('menu-open');
+          menuToggle.textContent = sidebarNav.classList.contains('active')
+            ? '✕'
+            : '☰';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if (
+            sidebarNav.classList.contains('active') &&
+            !sidebarNav.contains(e.target as Node) &&
+            !menuToggle.contains(e.target as Node)
+          ) {
+            sidebarNav.classList.remove('active');
+            appLayout.classList.remove('menu-open');
+            menuToggle.textContent = '☰';
+          }
+        });
+      }
+
       // The Preparation Shield logic
       const shield = document.getElementById('shield');
       const bar = document.getElementById('loading-bar');
