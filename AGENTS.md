@@ -43,10 +43,11 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
       - Product Details (Description text, Specifications).
       - Footer links.
       - **Animation:** Elements animate in to simulate the browser's paint sequence.
-      - **Visuals:**
-        - Side-by-side comparison of the visual assembly of the page.
-        - **Rendering Progress Bars:** A progress bar at the top of each viewport that fills as the paint sequence progresses.
-      - **Interactivity:** The mock product page remains **non-interactive** after loading. - **Constraints:** Skeleton animations are disabled to focus purely on the paint timing.
+        - **Visuals:**
+          - Side-by-side comparison of the visual assembly of the page.
+          - **Rendering Progress Bars:** A progress bar at the top of each viewport that fills as the paint sequence progresses.
+          - **Simulation Timers:** A millisecond timer on each panel showing elapsed time since the start of the simulation.
+        - **Interactivity:** The mock product page remains **non-interactive** after loading. - **Constraints:** Skeleton animations are disabled to focus purely on the paint timing.
   - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
   - [ ] Implementation: Instead of side-by-side, display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.

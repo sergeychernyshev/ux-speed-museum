@@ -27,6 +27,7 @@ const description =
           <div class="render-progress-container">
             <div class="render-progress-bar" id="optimized-progress"></div>
           </div>
+          <div class="timer-display" id="optimized-timer">0ms</div>
           <ProductPageMock id="optimized-page" />
         </div>
       </div>
@@ -40,6 +41,7 @@ const description =
           <div class="render-progress-container">
             <div class="render-progress-bar" id="throttled-progress"></div>
           </div>
+          <div class="timer-display" id="throttled-timer">0ms</div>
           <ProductPageMock id="throttled-page" />
         </div>
       </div>
@@ -137,6 +139,21 @@ const description =
       transition: width 0.2s ease-out;
     }
 
+    .timer-display {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-family: monospace;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      background: var(--card-bg);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      z-index: 10;
+    }
+
     .controls-overlay {
       position: sticky;
       bottom: 2rem;
@@ -155,10 +172,16 @@ const description =
     const thrNote = document.getElementById('throttled-note');
     const optProgress = document.getElementById('optimized-progress');
     const thrProgress = document.getElementById('throttled-progress');
+    const optTimer = document.getElementById('optimized-timer');
+    const thrTimer = document.getElementById('throttled-timer');
+
+    let startTime = 0;
+    let rafId = 0;
 
     function clearTimers() {
       timers.forEach((t) => clearTimeout(t));
       timers = [];
+      cancelAnimationFrame(rafId);
     }
 
     function resetViews() {
@@ -175,10 +198,26 @@ const description =
 
       if (optProgress) optProgress.style.width = '0%';
       if (thrProgress) thrProgress.style.width = '0%';
+      if (optTimer) optTimer.textContent = '0ms';
+      if (thrTimer) thrTimer.textContent = '0ms';
+    }
+
+    function updateTimers(timestamp: number) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = Math.floor(timestamp - startTime);
+
+      // Only update if rendering hasn't finished (we'll simplify and just update for 10s)
+      if (elapsed < 10000) {
+        if (optTimer) optTimer.textContent = `${elapsed}ms`;
+        if (thrTimer) thrTimer.textContent = `${elapsed}ms`;
+        rafId = requestAnimationFrame(updateTimers);
+      }
     }
 
     function startRendering() {
       stage?.classList.remove('scrubbing');
+      startTime = 0;
+      rafId = requestAnimationFrame(updateTimers);
 
       // Start Optimized sequence
       runSequence(optPage, optProgress, OPTIMIZED_BASE);
@@ -224,6 +263,9 @@ const description =
             const percent = ((index + 1) / steps.length) * 100;
             progress.style.width = `${percent}%`;
           }
+
+          // If last step, we could stop the timer, but we have two timers running on one RAF.
+          // We'll let the RAF continue or implement separate stop flags if needed.
         }, accumulatedDelay);
 
         timers.push(timer);
