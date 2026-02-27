@@ -179,6 +179,8 @@ const description =
 
     let startTime = 0;
     let rafId = 0;
+    let optFinished = false;
+    let thrFinished = false;
 
     function clearTimers() {
       timers.forEach((t) => clearTimeout(t));
@@ -189,6 +191,8 @@ const description =
     function resetViews() {
       clearTimers();
       stage?.classList.add('scrubbing');
+      optFinished = false;
+      thrFinished = false;
 
       [optPage, thrPage].forEach((page) => {
         if (!page) return;
@@ -208,10 +212,10 @@ const description =
       if (!startTime) startTime = timestamp;
       const elapsed = Math.floor(timestamp - startTime);
 
-      // Only update if rendering hasn't finished (we'll simplify and just update for 10s)
-      if (elapsed < 10000) {
-        if (optTimer) optTimer.textContent = `${elapsed}ms`;
-        if (thrTimer) thrTimer.textContent = `${elapsed}ms`;
+      if (!optFinished && optTimer) optTimer.textContent = `${elapsed}ms`;
+      if (!thrFinished && thrTimer) thrTimer.textContent = `${elapsed}ms`;
+
+      if (!optFinished || !thrFinished) {
         rafId = requestAnimationFrame(updateTimers);
       }
     }
@@ -219,19 +223,26 @@ const description =
     function startRendering() {
       stage?.classList.remove('scrubbing');
       startTime = 0;
+      optFinished = false;
+      thrFinished = false;
       rafId = requestAnimationFrame(updateTimers);
 
       // Start Optimized sequence
-      runSequence(optPage, optProgress, OPTIMIZED_BASE);
+      runSequence(optPage, optProgress, OPTIMIZED_BASE, () => {
+        optFinished = true;
+      });
 
       // Start Throttled sequence
-      runSequence(thrPage, thrProgress, throttledDelay);
+      runSequence(thrPage, thrProgress, throttledDelay, () => {
+        thrFinished = true;
+      });
     }
 
     function runSequence(
       page: HTMLElement | null,
       progress: HTMLElement | null,
-      startDelay: number
+      startDelay: number,
+      onComplete?: () => void
     ) {
       if (!page) return;
 
@@ -266,8 +277,10 @@ const description =
             progress.style.width = `${percent}%`;
           }
 
-          // If last step, we could stop the timer, but we have two timers running on one RAF.
-          // We'll let the RAF continue or implement separate stop flags if needed.
+          // Trigger completion callback on last step
+          if (index === steps.length - 1 && onComplete) {
+            onComplete();
+          }
         }, accumulatedDelay);
 
         timers.push(timer);
