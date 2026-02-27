@@ -69,6 +69,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
    - Use Markdown checkboxes in `AGENTS.md` to track and persist progress between sessions.
 5. **Execution:** **ONLY** proceed with implementation on the feature branch once the user has explicitly stated they are "ready" or given the green light.
 6. **Commits & GitHub Pull Requests:**
+   - **Format Code:** Run `npm run format` before every commit to ensure consistent code styling according to Prettier.
    - Commit changes incrementally as they are implemented.
    - Create a Pull Request (PR) on GitHub for each feature branch.
    - **Document PRs:** Every time a new commit is pushed to a PR, the PR description must be updated with comprehensive documentation of all changes and features implemented in that PR.
