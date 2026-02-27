@@ -4,7 +4,7 @@ This document outlines the architectural strategy and implementation phases for 
 
 ## Architectural Vision
 
-The application is built as a multi-page site using Astro in **SSR (Server-Side Rendering) mode**. This allows the server to read user preference cookies (audio, animation, collapse state) and render the initial HTML accordingly, ensuring a zero-layout-shift (CLS) experience. Each exhibit is a self-contained page where all potential states (hidden or visible) are pre-rendered.
+The application is built as a multi-page site using Astro in **SSR (Server-Side Rendering) mode**. This allows the server to read user preference cookies and render the initial HTML accordingly, ensuring a zero-layout-shift (CLS) experience. Each exhibit is a self-contained page where all potential states (hidden or visible) are pre-rendered.
 
 ### Navigation & Loading Strategy
 
@@ -17,30 +17,22 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
 
 - [x] Initialize Astro + TypeScript project (**Cloudflare Workers SSR mode**).
 - [x] Establish a "Vanilla CSS" design system with **Light and Dark mode** support.
-- [x] Implement cookie-based preference management (audio, animation, collapse).
+- [x] Implement cookie-based preference management.
 - [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
-- [x] Implement the `ExhibitDescription` component:
-  - [x] Progressive sentence reveal animation.
-  - [x] Audio narration system with enable/disable toggle.
-  - [x] Visible audio narration playback controls.
-  - [x] Conditional preloading of audio.
-  - [x] Controls to stop animation and collapse the section.
+- [x] Implement the `ExhibitDescription` component (Static text only).
 - [x] Implement the `PerformanceController` component for real-time manipulation.
 
 ## Phase 2: Core Exhibits (MVP)
 
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
-  - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline).
+  - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
   - **Slow to Start Side:** Controllable "**Time to start rendering**" (500-5500ms) via scrubber.
-  - **Scrubbing Logic:**
-    - When the user starts scrubbing, both views hide their content and timers immediately.
-    - Backgrounds remain unchanged during scrubbing.
-    - When the user stops scrubbing, the rendering sequence restarts and timers are revealed.
+  - **Scrubbing Logic:** Content and timers hide immediately; sequence restarts on release.
   - **Content:** Realistic Navigation, Hero, Image, Details, and Footer.
   - **Animation:** Staggered 11-step paint sequence.
   - **Interactivity:** Intentionally non-interactive to focus on visual assembly.
-  - **Visuals:** Rendering progress bars and dual-value millisecond timers ({start} - {current}ms). Timers are visually attached to the top-left of each experience frame. The start value is color-coded by FCP thresholds (Green <= 1800ms, Orange <= 3000ms, Red > 3000ms).
+  - **Visuals:** Rendering progress bars and left-aligned dual-value millisecond timers ({start} - {current}ms).
 
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
@@ -63,14 +55,14 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
 
 ## Implementation Guidelines
 
-- **Zero-Layout-Shift SSR:** All user preferences rendered on the server based on cookies.
+- **Zero-Layout-Shift SSR:** Initial HTML rendered based on cookies to prevent shifts.
 - **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
 - **Loading Progress:** Animate loading bars according to actual asset download progress.
 - **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.
 - **Responsive Design:** Fully responsive supporting mobile and desktop. 📱💻
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered.
 - **No Tailwind:** Use Vanilla CSS for precise control.
-- **Code Styling:** Prettier is used for consistent formatting (`.astro`, `.jsonc`, etc.).
+- **Code Styling:** Prettier is used for consistent formatting.
 
 ## Workflow Protocol
 
@@ -79,7 +71,7 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
 3. **Review:** Allow user feedback before proceeding.
 4. **Branching & Progress Tracking:**
    - Pull `main` from GitHub before starting (`git pull origin main`).
-   - Create feature branch named after the step (e.g., `feature/exhibit-2-input-abyss`).
+   - Create feature branch named after the step.
    - Use Markdown checkboxes to track progress.
 5. **Execution:** **ONLY** proceed once the user has explicitly stated "ready."
 6. **Commits & GitHub Pull Requests:**

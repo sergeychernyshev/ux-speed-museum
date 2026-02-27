@@ -1,7 +1,6 @@
 export const PREF_KEYS = {
   AUDIO: 'exhibit-audio-enabled',
   ANIMATIONS: 'exhibit-animations-enabled',
-  COLLAPSED: 'exhibit-description-collapsed',
 } as const;
 
 export function getCookie(name: string): string | undefined {
