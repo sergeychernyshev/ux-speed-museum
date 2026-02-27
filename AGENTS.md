@@ -32,7 +32,9 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
   - **Content:** Realistic Navigation, Hero, Image, Details, and Footer.
   - **Animation:** Staggered 11-step paint sequence.
   - **Interactivity:** Intentionally non-interactive to focus on visual assembly.
-  - **Visuals:** Rendering progress bars and dual-value millisecond timers ({start} - {current}ms). Timers are styled as bordered tabs sitting flush against the top of each experience frame (no gap) and are left-aligned.
+  - **Visuals:** Rendering progress bars and dual-value millisecond timers. Timers are styled as bordered tabs sitting flush against the top of each experience frame (no gap) and are left-aligned.
+    - **Timer Format:** Before rendering: `{current}ms`. After rendering starts: `{start} → {current}ms`. The arrow uses standard text color.
+    - **FCP Colorization:** The `{start}` value is color-coded by FCP thresholds: **Green** (≤1800ms), **Orange** (≤3000ms), and **Red** (>3000ms).
 
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.

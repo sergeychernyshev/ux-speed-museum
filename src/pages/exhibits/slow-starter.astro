@@ -245,16 +245,19 @@ const description =
       if (!startTime) startTime = timestamp;
       const elapsed = Math.floor(timestamp - startTime);
 
+      const arrow =
+        '<span style="color: var(--text-color); margin: 0 0.25rem;">→</span>';
+
       if (!optFinished && optTimer) {
         if (elapsed >= OPTIMIZED_BASE) {
-          optTimer.innerHTML = `<span class="${getFCPClass(OPTIMIZED_BASE)}">${OPTIMIZED_BASE}</span> - ${elapsed}ms`;
+          optTimer.innerHTML = `<span class="${getFCPClass(OPTIMIZED_BASE)}">${OPTIMIZED_BASE}</span>${arrow}${elapsed}ms`;
         } else {
           optTimer.textContent = `${elapsed}ms`;
         }
       }
       if (!thrFinished && thrTimer) {
         if (elapsed >= throttledDelay) {
-          thrTimer.innerHTML = `<span class="${getFCPClass(throttledDelay)}">${throttledDelay}</span> - ${elapsed}ms`;
+          thrTimer.innerHTML = `<span class="${getFCPClass(throttledDelay)}">${throttledDelay}</span>${arrow}${elapsed}ms`;
         } else {
           thrTimer.textContent = `${elapsed}ms`;
         }
