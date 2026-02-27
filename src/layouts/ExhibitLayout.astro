@@ -93,6 +93,11 @@ const animationsEnabled =
         color: var(--accent-color);
       }
 
+      .top-nav a.active {
+        color: var(--accent-color);
+        border-bottom: 2px solid var(--accent-color);
+      }
+
       .global-controls {
         display: flex;
         align-items: center;
@@ -156,6 +161,11 @@ const animationsEnabled =
           padding: 0.75rem 0;
           font-size: 1.1rem;
           border-bottom: 1px solid var(--border-color);
+        }
+
+        .top-nav a.active {
+          color: var(--accent-color);
+          border-bottom: 1px solid var(--accent-color);
         }
 
         .layout.menu-open::after {
@@ -266,10 +276,22 @@ const animationsEnabled =
         <nav class="top-nav" id="sidebar-nav">
           <ul>
             <li>
-              <a href="/" data-astro-prefetch> Home </a>
+              <a
+                href="/"
+                class:list={{ active: Astro.url.pathname === '/' }}
+                data-astro-prefetch
+              >
+                Home
+              </a>
             </li>
             <li>
-              <a href="/exhibits/slow-starter" data-astro-prefetch>
+              <a
+                href="/exhibits/slow-starter"
+                class:list={{
+                  active: Astro.url.pathname === '/exhibits/slow-starter',
+                }}
+                data-astro-prefetch
+              >
                 The Slow Starter
               </a>
             </li>
