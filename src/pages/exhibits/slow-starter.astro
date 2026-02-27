@@ -19,6 +19,22 @@ const description =
   <div class="exhibit-stage">
     <div class="comparison-container" id="comparison-stage">
       <div class="comparison-panel">
+        <span class="panel-label">Slow to Start</span>
+        <p class="panel-note" id="throttled-note">
+          Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
+        </p>
+        <div class="experience-block">
+          <div class="timer-display" id="throttled-timer">0ms</div>
+          <div class="viewport" id="throttled-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="throttled-progress"></div>
+            </div>
+            <ProductPageMock id="throttled-page" />
+          </div>
+        </div>
+      </div>
+
+      <div class="comparison-panel">
         <span class="panel-label">Fast</span>
         <p class="panel-note">
           Only 5% of websites start rendering faster than <span class="fcp-good"
@@ -32,22 +48,6 @@ const description =
               <div class="render-progress-bar" id="optimized-progress"></div>
             </div>
             <ProductPageMock id="optimized-page" />
-          </div>
-        </div>
-      </div>
-
-      <div class="comparison-panel">
-        <span class="panel-label">Slow to Start</span>
-        <p class="panel-note" id="throttled-note">
-          Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
-        </p>
-        <div class="experience-block">
-          <div class="timer-display" id="throttled-timer">0ms</div>
-          <div class="viewport" id="throttled-viewport">
-            <div class="render-progress-container">
-              <div class="render-progress-bar" id="throttled-progress"></div>
-            </div>
-            <ProductPageMock id="throttled-page" />
           </div>
         </div>
       </div>
@@ -81,7 +81,11 @@ const description =
       min-height: 600px;
     }
 
-    @media (max-width: 1024px) {
+    .comparison-panel:first-child {
+      order: -1;
+    }
+
+    @media (max-width: 768px) {
       .comparison-container {
         grid-template-columns: 1fr;
       }
