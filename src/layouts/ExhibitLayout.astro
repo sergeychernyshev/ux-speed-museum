@@ -143,7 +143,18 @@ const descriptionCollapsed =
     {
       showShield && (
         <div id="shield" class="preparation-shield">
+          <script is:inline>
+            {`
+                  (function () {
+                    if (document.readyState === 'complete') {
+                      const s = document.getElementById('shield');
+                      if (s) s.style.display = 'none';
+                    }
+                  })();
+                  `}
+          </script>
           <div class="shield-content">
+            {' '}
             <div class="loading-progress">
               <div id="loading-bar" class="loading-bar" />
             </div>
@@ -187,50 +198,58 @@ const descriptionCollapsed =
       const bar = document.getElementById('loading-bar');
 
       if (shield && bar) {
-        // Track resource loading
-        const resources = performance.getEntriesByType('resource');
-        const totalResources = resources.length || 10; // Fallback estimate
-        let loadedResources = 0;
+        // If window is already loaded (e.g. from cache or very fast), hide immediately
+        if (document.readyState === 'complete') {
+          shield.classList.add('ready');
+        } else {
+          // Track resource loading
+          const resources = performance.getEntriesByType('resource');
+          const totalResources = resources.length || 10; // Fallback estimate
+          let loadedResources = 0;
 
-        const updateProgress = () => {
-          loadedResources++;
-          const progress = Math.min(
-            (loadedResources / totalResources) * 100,
-            100
-          );
-          bar.style.width = `${progress}%`;
+          const updateProgress = () => {
+            loadedResources++;
+            const progress = Math.min(
+              (loadedResources / totalResources) * 100,
+              100
+            );
+            bar.style.width = `${progress}%`;
 
-          if (progress >= 100 || document.readyState === 'complete') {
+            if (progress >= 100) {
+              setTimeout(() => {
+                shield.classList.add('ready');
+              }, 300);
+            }
+          };
+
+          // Listen for resource loads
+          const observer = new PerformanceObserver((list) => {
+            list.getEntries().forEach(() => {
+              updateProgress();
+            });
+          });
+
+          observer.observe({ entryTypes: ['resource'] });
+
+          // Final safety net
+          window.addEventListener('load', () => {
+            bar.style.width = '100%';
             setTimeout(() => {
               shield.classList.add('ready');
-            }, 300);
-          }
-        };
-
-        // Listen for resource loads
-        const observer = new PerformanceObserver((list) => {
-          list.getEntries().forEach(() => {
-            updateProgress();
+              observer.disconnect();
+            }, 200);
           });
-        });
 
-        observer.observe({ entryTypes: ['resource'] });
-
-        // Backup for window load
-        window.addEventListener('load', () => {
-          bar.style.width = '100%';
+          // If no new resources after 500ms, assume ready
           setTimeout(() => {
-            shield.classList.add('ready');
-            observer.disconnect();
-          }, 300);
-        });
-
-        // Initial bump
-        setTimeout(() => {
-          if (parseFloat(bar.style.width) === 0) {
-            bar.style.width = '20%';
-          }
-        }, 100);
+            if (
+              loadedResources === 0 &&
+              document.readyState === 'interactive'
+            ) {
+              shield.classList.add('ready');
+            }
+          }, 500);
+        }
       }
     </script>
   </body>
