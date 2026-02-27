@@ -85,7 +85,13 @@ const description =
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      align-items: center;
+      align-items: flex-start; /* Align timer and viewport to left */
+      width: 100%;
+    }
+
+    .panel-label,
+    .panel-note {
+      align-self: center; /* Keep labels centered if preferred, or left-align */
     }
 
     .panel-label {
@@ -112,6 +118,7 @@ const description =
       background: var(--sidebar-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
+      border-top-left-radius: 0; /* Flush with timer tab */
       display: flex;
       flex-direction: column; /* Stack progress and page */
       align-items: stretch;
@@ -144,11 +151,19 @@ const description =
       font-size: 1.25rem;
       font-weight: bold;
       color: var(--accent-color);
-      margin-bottom: 0.5rem;
-      width: 100%;
+      background: var(--card-bg);
+      padding: 0.25rem 0.75rem;
+      width: max-content;
       text-align: left;
       opacity: 1;
       transition: opacity 0.2s;
+      border: 1px solid var(--border-color);
+      border-bottom: none;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 5;
     }
 
     .timer-display.hidden {
