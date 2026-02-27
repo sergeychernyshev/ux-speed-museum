@@ -33,7 +33,10 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
   - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline).
   - **Slow to Start Side:** Controllable "**Time to start rendering**" (500-5500ms) via scrubber.
-  - **Scrubbing Logic:** Content hides immediately; rendering sequence restarts on release.
+  - **Scrubbing Logic:**
+    - When the user starts scrubbing, both views hide their content and timers immediately.
+    - Backgrounds remain unchanged during scrubbing.
+    - When the user stops scrubbing, the rendering sequence restarts and timers are revealed.
   - **Content:** Realistic Navigation, Hero, Image, Details, and Footer.
   - **Animation:** Staggered 11-step paint sequence.
   - **Interactivity:** Intentionally non-interactive to focus on visual assembly.

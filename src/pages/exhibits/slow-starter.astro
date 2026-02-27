@@ -146,6 +146,12 @@ const description =
       color: var(--accent-color);
       margin-bottom: 0.5rem;
       width: 100%;
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+
+    .timer-display.hidden {
+      opacity: 0;
     }
 
     .align-left {
@@ -200,8 +206,10 @@ const description =
 
       if (optProgress) optProgress.style.width = '0%';
       if (thrProgress) thrProgress.style.width = '0%';
-      if (optTimer) optTimer.textContent = '0ms';
-      if (thrTimer) thrTimer.textContent = '0ms';
+
+      // Hide timers instead of resetting text
+      optTimer?.classList.add('hidden');
+      thrTimer?.classList.add('hidden');
     }
 
     function updateTimers(timestamp: number) {
@@ -231,6 +239,17 @@ const description =
       startTime = 0;
       optFinished = false;
       thrFinished = false;
+
+      // Reveal and initialize timers
+      if (optTimer) {
+        optTimer.textContent = '0ms';
+        optTimer.classList.remove('hidden');
+      }
+      if (thrTimer) {
+        thrTimer.textContent = '0ms';
+        thrTimer.classList.remove('hidden');
+      }
+
       rafId = requestAnimationFrame(updateTimers);
 
       // Start Optimized sequence
