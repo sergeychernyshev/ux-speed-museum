@@ -6,6 +6,7 @@ This document outlines the architectural strategy and implementation phases for 
 The application will be built as a multi-page site using Astro in **SSR (Server-Side Rendering) mode**. This allows the server to read user preference cookies (audio, animation, collapse state) and render the initial HTML accordingly, ensuring a zero-layout-shift (CLS) experience. Each "exhibit" remains a self-contained page where all potential states (hidden or visible) are pre-rendered. 
 
 ### Navigation & Loading Strategy
+- **Custom Domain:** The project is hosted on `museum.uxspeed.dev`.
 - **Pre-fetch on Intent:** Use Astro's pre-fetching mechanisms (hover/tap) to warm up the browser cache.
 - **The Preparation Shield:** A script in the `<head>` of the `ExhibitLayout.astro` will show a "We are preparing your experience" message, hiding the exhibit until `window.onload` or a custom "assets-ready" event fires. This ensures the museum's performance is flawless before the *simulated* slowness begins.
 - **State Persistence:** User preferences are stored in cookies and applied during server-side rendering.
