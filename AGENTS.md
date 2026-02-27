@@ -37,7 +37,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
     - When the user starts scrubbing, both views reset to empty grey placeholders.
     - When the user stops scrubbing, the rendering sequence restarts for both sides using the updated delay.
   - **Content:** A mock e-commerce product page (Image, Title, Price, Buy Button).
-  - **Animation:** Elements animate in to simulate the browser's paint sequence. Interactive as soon as rendered.
+  - **Animation:** Elements animate in to simulate the browser's paint sequence. Interactive as soon as rendered. Skeleton animations are disabled to focus purely on the paint timing.
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
   - [ ] Implementation: Instead of side-by-side, display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.

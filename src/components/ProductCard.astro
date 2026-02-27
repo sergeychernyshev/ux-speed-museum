@@ -8,7 +8,6 @@ const { id } = Astro.props;
 
 <div class="product-card" id={id}>
   <div class="product-image-container">
-    <div class="skeleton image-placeholder"></div>
     <img
       src="https://placehold.co/600x400/e2e8f0/1e293b?text=Luxury+Timepiece"
       alt="Product"
@@ -94,28 +93,6 @@ const { id } = Astro.props;
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
-  }
-
-  .skeleton {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      var(--border-color) 25%,
-      var(--sidebar-bg) 50%,
-      var(--border-color) 75%
-    );
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-  }
-
-  @keyframes loading {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
   }
 
   :global(.scrubbing) .product-card {
