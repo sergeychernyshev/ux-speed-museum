@@ -20,6 +20,9 @@ const description =
           Only 5% of websites start rendering faster than this.
         </p>
         <div class="viewport" id="optimized-viewport">
+          <div class="render-progress-container">
+            <div class="render-progress-bar" id="optimized-progress"></div>
+          </div>
           <ProductPageMock id="optimized-page" />
         </div>
       </div>
@@ -30,6 +33,9 @@ const description =
           Starts rendering at 2500ms.
         </p>
         <div class="viewport" id="throttled-viewport">
+          <div class="render-progress-container">
+            <div class="render-progress-bar" id="throttled-progress"></div>
+          </div>
           <ProductPageMock id="throttled-page" />
         </div>
       </div>
@@ -101,11 +107,30 @@ const description =
       border: 1px solid var(--border-color);
       border-radius: 12px;
       display: flex;
+      flex-direction: column; /* Stack progress and page */
       align-items: stretch;
       justify-content: center;
       padding: 1rem;
       position: relative;
       min-height: 500px;
+      overflow: hidden;
+    }
+
+    .render-progress-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--border-color);
+      z-index: 10;
+    }
+
+    .render-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-color);
+      transition: width 0.2s ease-out;
     }
 
     .controls-overlay {
@@ -124,6 +149,8 @@ const description =
     const optPage = document.getElementById('optimized-page');
     const thrPage = document.getElementById('throttled-page');
     const thrNote = document.getElementById('throttled-note');
+    const optProgress = document.getElementById('optimized-progress');
+    const thrProgress = document.getElementById('throttled-progress');
 
     function clearTimers() {
       timers.forEach((t) => clearTimeout(t));
@@ -141,19 +168,26 @@ const description =
           el.classList.remove('painted');
         });
       });
+
+      if (optProgress) optProgress.style.width = '0%';
+      if (thrProgress) thrProgress.style.width = '0%';
     }
 
     function startRendering() {
       stage?.classList.remove('scrubbing');
 
       // Start Optimized sequence
-      runSequence(optPage, OPTIMIZED_BASE);
+      runSequence(optPage, optProgress, OPTIMIZED_BASE);
 
       // Start Throttled sequence
-      runSequence(thrPage, throttledDelay);
+      runSequence(thrPage, thrProgress, throttledDelay);
     }
 
-    function runSequence(page: HTMLElement | null, startDelay: number) {
+    function runSequence(
+      page: HTMLElement | null,
+      progress: HTMLElement | null,
+      startDelay: number
+    ) {
       if (!page) return;
 
       const steps = [
@@ -172,13 +206,19 @@ const description =
 
       let accumulatedDelay = startDelay;
 
-      steps.forEach((step) => {
+      steps.forEach((step, index) => {
         accumulatedDelay += step.delay;
         const timer = window.setTimeout(() => {
           if (step.selector === '.product-page-mock') {
             page.classList.add(step.class);
           } else {
             page.querySelector(step.selector)?.classList.add(step.class);
+          }
+
+          // Update progress bar
+          if (progress) {
+            const percent = ((index + 1) / steps.length) * 100;
+            progress.style.width = `${percent}%`;
           }
         }, accumulatedDelay);
 

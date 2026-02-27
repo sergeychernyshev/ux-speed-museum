@@ -42,9 +42,11 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
       - Hero Section (Product Image, Title, Price, Buy Button).
       - Product Details (Description text, Specifications).
       - Footer links.
-    - **Animation:** Elements animate in to simulate the browser's paint sequence.
-    - **Interactivity:** The mock product page remains **non-interactive** after loading to focus purely on the visual assembly and the perception of rendering speed.
-    - **Constraints:** Skeleton animations are disabled to focus purely on the paint timing.
+      - **Animation:** Elements animate in to simulate the browser's paint sequence.
+      - **Visuals:**
+        - Side-by-side comparison of the visual assembly of the page.
+        - **Rendering Progress Bars:** A progress bar at the top of each viewport that fills as the paint sequence progresses.
+      - **Interactivity:** The mock product page remains **non-interactive** after loading. - **Constraints:** Skeleton animations are disabled to focus purely on the paint timing.
   - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
   - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
   - [ ] Implementation: Instead of side-by-side, display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
