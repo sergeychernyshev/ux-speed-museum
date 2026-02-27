@@ -21,10 +21,11 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 - [x] Create an `ExhibitLayout.astro` component to provide a consistent frame, including the **Preparation Shield** logic and server-side application of user preferences from cookies.
 - [x] Implement the `ExhibitDescription` component:
   - [x] Progressive sentence reveal animation (honoring `prefers-reduced-motion`).
-  - [x] Audio narration system with enable/disable toggle.
-  - [x] Conditional preloading: Do not fetch audio if narration is disabled.
-  - [x] Controls to stop animation and collapse the section.
-- [x] Implement the `PerformanceController` component (client-side script targeting pre-rendered HTML) for real-time manipulation.
+    - [x] Audio narration system with enable/disable toggle.
+    - [ ] Visible audio narration playback controls (play/pause/progress).
+    - [x] Conditional preloading: Do not fetch audio if narration is disabled.
+    - [ ] Ensure narration is audible and triggered appropriately during the exhibit reveal.
+    - [x] Controls to stop animation and collapse the section.- [x] Implement the `PerformanceController` component (client-side script targeting pre-rendered HTML) for real-time manipulation.
 
 ## Phase 2: Core Exhibits (MVP)
 

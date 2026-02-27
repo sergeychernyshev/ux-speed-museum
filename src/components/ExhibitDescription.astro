@@ -60,7 +60,15 @@ const sentences = description
 
   {
     audioUrl && audioEnabled && (
-      <audio id="narration-audio" src={audioUrl} preload="auto" />
+      <div class="audio-controls-container">
+        <audio
+          id="narration-audio"
+          src={audioUrl}
+          preload="auto"
+          controls
+          class="narration-audio-player"
+        />
+      </div>
     )
   }
 </section>
@@ -130,6 +138,20 @@ const sentences = description
 
   .sentence.visible {
     opacity: 1;
+  }
+
+  .audio-controls-container {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+  }
+
+  .narration-audio-player {
+    width: 100%;
+    max-width: 500px;
+    height: 32px;
   }
 </style>
 
@@ -201,6 +223,24 @@ const sentences = description
 
   function stopAnimation() {
     sentences.forEach((s) => s.classList.add('visible'));
+  }
+
+  // Handle auto-playing narration when ready
+  if (audio) {
+    audio.addEventListener('canplaythrough', () => {
+      const isInitiallyCollapsed = section?.classList.contains('collapsed');
+      if (
+        !isInitiallyCollapsed &&
+        getPreference(PREF_KEYS.AUDIO) &&
+        audio.paused
+      ) {
+        // Many browsers block autoplay unless user has interacted with the domain.
+        // We attempt it here.
+        audio.play().catch(() => {
+          console.warn('Narration playback blocked by browser.');
+        });
+      }
+    });
   }
 
   // Initial reveal
