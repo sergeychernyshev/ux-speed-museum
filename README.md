@@ -1,43 +1,29 @@
-# Astro Starter Kit: Minimal
+# UX Speed Museum
 
-```sh
-npm create astro@latest -- --template minimal
-```
+The **UX Speed Museum** is an interactive, educational platform designed to help developers, designers, and product managers experience the visceral impact of performance bottlenecks. By providing a controlled environment where users can "dial in" various forms of slowness, the museum transforms abstract metrics like LCP or input latency into tangible, felt experiences.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## The Mission
+To build empathy for users on slow devices or poor networks by making the "invisible" friction of bad performance impossible to ignore.
 
-## 🚀 Project Structure
+## Exhibits
+- **The Slow Starter:** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
+- **The Latency Labyrinth:** Experience varying degrees of network request delays and their impact on UI responsiveness.
+- **The Jitter Junction:** Feel the frustration of inconsistent frame rates and scroll stutter.
+- **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts.
+- **The Input Abyss:** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
+- **The Throttled Theater:** Watch media playback with simulated bandwidth constraints and buffer bloat.
 
-Inside of your Astro project, you'll see the following folders and files:
+## Architectural Approach
+- **Multi-Page Exhibits:** Each exhibit resides on its own statically generated page.
+- **Aggressive Pre-loading:** The museum uses `data-astro-prefetch` and custom "click-to-load" strategies to start resource fetching as soon as the user interacts with navigation links.
+- **Preparation Shield:** A "We are preparing your experience" overlay ensures that all required assets (scripts, images, styles, and optional audio) are fully loaded and ready before any simulation is presented.
+- **Persistent Multi-Modal Descriptions:** Each exhibit features an animated description that reveals sentences progressively (respecting `prefers-reduced-motion`) and provides synchronized audio narration. User preferences for audio, animation, and section collapse are persisted via cookies and rendered on the server (SSR) to eliminate layout shifts. Audio assets are only preloaded if narration is enabled.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Tech Stack
+- **Frontend:** Astro (TypeScript)
+- **Styling:** Vanilla CSS with full support for `prefers-color-scheme` (Light/Dark modes).
+- **State Management:** Native Web APIs / Nanostores (for client-side reactivity)
+- **Simulation Engine:** Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Getting Started
+(Detailed setup instructions will be added as implementation progresses.)
