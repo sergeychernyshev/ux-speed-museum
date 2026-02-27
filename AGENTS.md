@@ -66,4 +66,4 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
     - **Automated Deployment:** Deployment to Cloudflare is handled automatically upon pushing changes to the branch/PR. Manual deployment is not required.
     - Merge into the `main` branch **ONLY** via GitHub PR after your review and final confirmation.
 6. **Validation:** Verify behavioral and stylistic correctness after each step.
-7. **Communication:** Use colorful emojis when communicating progress and updates to keep the project fun! 🎨✨🚀
+7. **Communication:** Use very few emojis when communicating progress and updates. 📝
