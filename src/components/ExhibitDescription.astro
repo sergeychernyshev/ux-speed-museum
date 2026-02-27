@@ -1,10 +1,11 @@
 ---
 interface Props {
+  title: string;
   description: string;
   audioUrl?: string;
 }
 
-const { description, audioUrl } = Astro.props;
+const { title, description, audioUrl } = Astro.props;
 
 // Read collapse preference from cookies (SSR)
 const collapsed =
@@ -26,7 +27,7 @@ const sentences = description
   id="description-section"
 >
   <div class="description-header">
-    <h2>About this Exhibit</h2>
+    <h2>{title}</h2>
     <div class="description-controls">
       <button
         id="toggle-narration"

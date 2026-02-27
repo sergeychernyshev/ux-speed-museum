@@ -10,7 +10,11 @@ const description =
 ---
 
 <ExhibitLayout title={title}>
-  <ExhibitDescription slot="description" description={description} />
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
 
   <div class="exhibit-stage">
     <div class="comparison-container" id="comparison-stage">
