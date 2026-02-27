@@ -51,7 +51,8 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 
 ## Workflow Protocol
 1. **Research & Plan:** For each exhibit or major feature, first present a detailed walkthrough of the requirements and implementation strategy.
-2. **Review:** Allow the user to modify requirements or provide feedback.
+2. **Document Requirements:** **ALWAYS** update this `AGENTS.md` file with any new requirements, constraints, or architectural decisions provided by the user before starting implementation.
+3. **Review:** Allow the user to modify requirements or provide feedback.
 3. **Branching & Progress Tracking:**
     - Always pull `main` from GitHub before starting a new step (`git pull origin main`).
     - **DO NOT** start any new steps or create new feature branches until all existing Pull Requests are merged and closed.
