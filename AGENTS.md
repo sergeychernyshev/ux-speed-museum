@@ -62,6 +62,7 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
 - **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
 - **Loading Progress:** Animate loading bars according to actual asset download progress.
 - **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.
+- **Side-by-Side Layout:** Always place the slower or throttled experience on the left to prioritize user attention on the performance bottleneck.
 - **Responsive Design:** Fully responsive supporting mobile and desktop. 📱💻
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered.
 - **No Tailwind:** Use Vanilla CSS for precise control.
