@@ -52,10 +52,13 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 1. **Research & Plan:** For each exhibit or major feature, first present a detailed walkthrough of the requirements and implementation strategy.
 2. **Review:** Allow the user to modify requirements or provide feedback.
 3. **Branching & Progress Tracking:**
+    - Always pull `main` from GitHub before starting a new step (`git pull origin main`).
+    - **DO NOT** start any new steps or create new feature branches until all existing Pull Requests are merged and closed.
     - Create a new git branch for each step named after the step (e.g., `feature/phase-1-scaffolding`).
     - Use Markdown checkboxes in `AGENTS.md` to track and persist progress between sessions.
 4. **Execution:** **ONLY** proceed with implementation on the feature branch once the user has explicitly stated they are "ready" or given the green light.
-5. **Commits & Merging:**
+5. **Commits & GitHub Pull Requests:**
     - Commit changes incrementally as they are implemented.
-    - Merge into the `main` branch **ONLY** after confirming with the user that the step is ready to be finalized.
+    - Create a Pull Request (PR) on GitHub for each feature branch.
+    - Merge into the `main` branch **ONLY** via GitHub PR after your review and final confirmation.
 6. **Validation:** Verify behavioral and stylistic correctness after each step.
