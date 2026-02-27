@@ -62,3 +62,4 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
     - Create a Pull Request (PR) on GitHub for each feature branch.
     - Merge into the `main` branch **ONLY** via GitHub PR after your review and final confirmation.
 6. **Validation:** Verify behavioral and stylistic correctness after each step.
+7. **Communication:** Use colorful emojis when communicating progress and updates to keep the project fun! 🎨✨🚀
