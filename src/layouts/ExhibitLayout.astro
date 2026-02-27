@@ -3,10 +3,14 @@ import '../styles/global.css';
 
 interface Props {
   title: string;
+  image?: string;
   showShield?: boolean;
 }
 
-const { title, showShield = true } = Astro.props;
+const { title, image, showShield = true } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://museum.uxspeed.dev');
+const socialImageURL = image ? new URL(image, Astro.url.origin) : null;
 
 // SSR Preference reading
 const audioEnabled =
@@ -22,6 +26,12 @@ const animationsEnabled =
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} | UX Speed Museum</title>
+
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content={`${title} | UX Speed Museum`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    {socialImageURL && <meta property="og:image" content={socialImageURL} />}
 
     <style>
       .layout {
