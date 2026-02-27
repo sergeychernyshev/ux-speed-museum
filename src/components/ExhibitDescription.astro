@@ -53,6 +53,15 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
     overflow: hidden;
   }
 
+  @media (max-width: 480px) {
+    .exhibit-description {
+      padding: 1rem;
+    }
+    .description-header h2 {
+      font-size: 1.25rem;
+    }
+  }
+
   .exhibit-description.collapsed {
     max-height: 80px;
   }

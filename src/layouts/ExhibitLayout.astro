@@ -28,30 +28,60 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
         grid-template-rows: auto 1fr;
         min-height: 100vh;
       }
+
+      @media (max-width: 768px) {
+        .layout {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto 1fr;
+        }
+      }
       
       header {
         grid-column: 1 / -1;
-        padding: 1rem 2rem;
+        padding: 1rem 1.5rem;
         border-bottom: 1px solid var(--border-color);
         background: var(--header-bg);
         display: flex;
         justify-content: space-between;
         align-items: center;
         z-index: 10;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0;
       }
       
       nav {
         background: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
-        padding: 2rem;
+        padding: 1.5rem;
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          border-right: none;
+          border-bottom: 1px solid var(--border-color);
+        }
       }
       
       main {
-        padding: 2rem;
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
         gap: 2rem;
         position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 480px) {
+        main {
+          padding: 1rem;
+        }
       }
 
       .preparation-shield {
