@@ -29,7 +29,9 @@ const description =
 
       <div class="comparison-panel">
         <span class="panel-label">Slow to Start</span>
-        <p class="panel-note" id="throttled-note">Starts rendering at 800ms.</p>
+        <p class="panel-note" id="throttled-note">
+          Starts rendering at 2500ms.
+        </p>
         <div class="viewport" id="throttled-viewport">
           <div class="render-progress-container">
             <div class="render-progress-bar" id="throttled-progress"></div>
@@ -44,7 +46,7 @@ const description =
         min={500}
         max={5500}
         step={100}
-        defaultValue={800}
+        defaultValue={2500}
         label="Time to start rendering"
         unit="ms"
       />
@@ -140,7 +142,7 @@ const description =
 
   <script>
     const OPTIMIZED_BASE = 500;
-    let throttledDelay = 800;
+    let throttledDelay = 2500;
     let timers: number[] = [];
 
     const stage = document.getElementById('comparison-stage');
