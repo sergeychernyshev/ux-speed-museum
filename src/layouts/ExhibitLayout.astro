@@ -1,0 +1,232 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  showShield?: boolean;
+}
+
+const { title, showShield = true } = Astro.props;
+
+// SSR Preference reading
+const audioEnabled =
+  Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
+const animationsEnabled =
+  Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
+const descriptionCollapsed =
+  Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} | UX Speed Museum</title>
+
+    <style>
+      .layout {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        grid-template-rows: auto 1fr;
+        min-height: 100vh;
+      }
+
+      @media (max-width: 768px) {
+        .layout {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto 1fr;
+        }
+      }
+
+      header {
+        grid-column: 1 / -1;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--header-bg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+      }
+
+      nav {
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border-color);
+        padding: 1.5rem;
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          border-right: none;
+          border-bottom: 1px solid var(--border-color);
+        }
+      }
+
+      main {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 480px) {
+        main {
+          padding: 1rem;
+        }
+      }
+
+      .preparation-shield {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-color);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition:
+          opacity 0.5s ease-out,
+          visibility 0.5s;
+      }
+
+      .preparation-shield.ready {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .shield-content {
+        text-align: center;
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .loading-progress {
+        height: 4px;
+        width: 100%;
+        background: var(--border-color);
+        border-radius: 2px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .loading-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: var(--accent-color);
+        transition: width 0.3s ease-out;
+      }
+
+      /* No animation unless shield is shown */
+      .preparation-shield.ready .loading-bar {
+        animation: none;
+      }
+    </style>
+  </head>
+  <body>
+    {
+      showShield && (
+        <div id="shield" class="preparation-shield">
+          <div class="shield-content">
+            <div class="loading-progress">
+              <div id="loading-bar" class="loading-bar" />
+            </div>
+            <p>We are preparing your experience...</p>
+          </div>
+        </div>
+      )
+    }
+
+    <div class="layout">
+      <header>
+        <h1>UX Speed Museum</h1>
+        <div class="global-controls">
+          <!-- Global controls will go here -->
+        </div>
+      </header>
+
+      <nav>
+        <h3>Exhibits</h3>
+        <ul>
+          <li>
+            <a href="/" data-astro-prefetch> Home </a>
+          </li>
+          <!-- Exhibit links will be added here -->
+        </ul>
+      </nav>
+
+      <main>
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      // The Preparation Shield logic
+      const shield = document.getElementById('shield');
+      const bar = document.getElementById('loading-bar');
+
+      if (shield && bar) {
+        // Track resource loading
+        const resources = performance.getEntriesByType('resource');
+        const totalResources = resources.length || 10; // Fallback estimate
+        let loadedResources = 0;
+
+        const updateProgress = () => {
+          loadedResources++;
+          const progress = Math.min(
+            (loadedResources / totalResources) * 100,
+            100
+          );
+          bar.style.width = `${progress}%`;
+
+          if (progress >= 100 || document.readyState === 'complete') {
+            setTimeout(() => {
+              shield.classList.add('ready');
+            }, 300);
+          }
+        };
+
+        // Listen for resource loads
+        const observer = new PerformanceObserver((list) => {
+          list.getEntries().forEach(() => {
+            updateProgress();
+          });
+        });
+
+        observer.observe({ entryTypes: ['resource'] });
+
+        // Backup for window load
+        window.addEventListener('load', () => {
+          bar.style.width = '100%';
+          setTimeout(() => {
+            shield.classList.add('ready');
+            observer.disconnect();
+          }, 300);
+        });
+
+        // Initial bump
+        setTimeout(() => {
+          if (parseFloat(bar.style.width) === 0) {
+            bar.style.width = '20%';
+          }
+        }, 100);
+      }
+    </script>
+  </body>
+</html>

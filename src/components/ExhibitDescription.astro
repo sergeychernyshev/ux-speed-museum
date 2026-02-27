@@ -1,0 +1,257 @@
+---
+interface Props {
+  description: string;
+  audioUrl?: string;
+}
+
+const { description, audioUrl } = Astro.props;
+
+// Read collapse preference from cookies (SSR)
+const collapsed =
+  Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
+const audioEnabled =
+  Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
+const animationsEnabled =
+  Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
+
+// Split description into sentences
+const sentences = description
+  .split('. ')
+  .filter((s) => s.trim().length > 0)
+  .map((s) => (s.endsWith('.') ? s : s + '.'));
+---
+
+<section
+  class:list={['exhibit-description', { collapsed }]}
+  id="description-section"
+>
+  <div class="description-header">
+    <h2>About this Exhibit</h2>
+    <div class="description-controls">
+      <button
+        id="toggle-narration"
+        title="Toggle Narration"
+        class={audioEnabled ? 'active' : ''}
+      >
+        <span class="icon">🔊</span>
+      </button>
+      <button
+        id="toggle-animation"
+        title="Toggle Animation"
+        class={animationsEnabled ? 'active' : ''}
+      >
+        <span class="icon">✨</span>
+      </button>
+      <button id="toggle-collapse" title="Collapse Description">
+        <span class="icon">↕️</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="description-content" id="description-content">
+    {
+      sentences.map((sentence, index) => (
+        <span class="sentence" data-index={index}>
+          {sentence}{' '}
+        </span>
+      ))
+    }
+  </div>
+
+  {
+    audioUrl && audioEnabled && (
+      <div class="audio-controls-container">
+        <audio
+          id="narration-audio"
+          src={audioUrl}
+          preload="auto"
+          controls
+          class="narration-audio-player"
+        />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .exhibit-description {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+  }
+
+  @media (max-width: 480px) {
+    .exhibit-description {
+      padding: 1rem;
+    }
+    .description-header h2 {
+      font-size: 1.25rem;
+    }
+  }
+
+  .exhibit-description.collapsed {
+    max-height: 80px;
+  }
+
+  .description-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .description-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .description-controls button {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    transition: background 0.2s;
+  }
+
+  .description-controls button.active {
+    background: var(--accent-color);
+    color: white;
+  }
+
+  .sentence {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    display: inline;
+  }
+
+  .no-animation .sentence {
+    opacity: 1;
+  }
+
+  .sentence.visible {
+    opacity: 1;
+  }
+
+  .audio-controls-container {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+  }
+
+  .narration-audio-player {
+    width: 100%;
+    max-width: 500px;
+    height: 32px;
+  }
+</style>
+
+<script>
+  import { PREF_KEYS, setPreference, getPreference } from '../utils/cookies';
+
+  const section = document.getElementById('description-section');
+  const toggleCollapse = document.getElementById('toggle-collapse');
+  const toggleNarration = document.getElementById('toggle-narration');
+  const toggleAnimation = document.getElementById('toggle-animation');
+  const sentences = document.querySelectorAll('.sentence');
+  const audio = document.getElementById('narration-audio') as HTMLAudioElement;
+
+  // Handle Collapse
+  toggleCollapse?.addEventListener('click', () => {
+    const isCollapsed = section?.classList.toggle('collapsed');
+    setPreference(PREF_KEYS.COLLAPSED, !!isCollapsed);
+
+    if (isCollapsed) {
+      if (audio) audio.pause();
+    } else {
+      if (getPreference(PREF_KEYS.AUDIO) && audio) {
+        audio.play().catch(() => {});
+      }
+      if (getPreference(PREF_KEYS.ANIMATIONS)) {
+        startAnimation();
+      }
+    }
+  });
+
+  // Handle Narration Toggle
+  toggleNarration?.addEventListener('click', () => {
+    const isActive = toggleNarration.classList.toggle('active');
+    setPreference(PREF_KEYS.AUDIO, isActive);
+    if (!isActive && audio) {
+      audio.pause();
+    } else if (isActive && audio && !section?.classList.contains('collapsed')) {
+      audio.play().catch(() => {});
+    }
+  });
+
+  // Handle Animation Toggle
+  toggleAnimation?.addEventListener('click', () => {
+    const isActive = toggleAnimation.classList.toggle('active');
+    setPreference(PREF_KEYS.ANIMATIONS, isActive);
+    if (isActive) {
+      startAnimation();
+    } else {
+      stopAnimation();
+    }
+  });
+
+  function startAnimation() {
+    if (section?.classList.contains('collapsed')) return;
+
+    let delay = 0;
+    sentences.forEach((s, i) => {
+      setTimeout(() => {
+        if (
+          getPreference(PREF_KEYS.ANIMATIONS) &&
+          !section?.classList.contains('collapsed')
+        ) {
+          s.classList.add('visible');
+        }
+      }, delay);
+      delay += 1000; // 1 second per sentence
+    });
+  }
+
+  function stopAnimation() {
+    sentences.forEach((s) => s.classList.add('visible'));
+  }
+
+  // Handle auto-playing narration when ready
+  if (audio) {
+    audio.addEventListener('canplaythrough', () => {
+      const isInitiallyCollapsed = section?.classList.contains('collapsed');
+      if (
+        !isInitiallyCollapsed &&
+        getPreference(PREF_KEYS.AUDIO) &&
+        audio.paused
+      ) {
+        // Many browsers block autoplay unless user has interacted with the domain.
+        // We attempt it here.
+        audio.play().catch(() => {
+          console.warn('Narration playback blocked by browser.');
+        });
+      }
+    });
+  }
+
+  // Initial reveal
+  const isInitiallyCollapsed = section?.classList.contains('collapsed');
+  if (
+    !isInitiallyCollapsed &&
+    getPreference(PREF_KEYS.ANIMATIONS) &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    startAnimation();
+  } else {
+    stopAnimation();
+  }
+</script>
