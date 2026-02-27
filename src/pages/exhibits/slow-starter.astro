@@ -6,7 +6,7 @@ import ProductPageMock from '../../components/ProductPageMock.astro';
 
 const title = 'The Slow Starter';
 const description =
-  'Experience how First Contentful Paint (FCP) impacts the initial perception of speed. The "Optimized" version renders at the 5th percentile (P5) baseline of 500ms, while the "Throttled" version adds your chosen delay. Observe how the assembly of the page feels as the rendering delay increases.';
+  'Starting to render the page quickly, measured by a <a href="https://web.dev/articles/fcp" target="_blank" rel="noopener">First Contentful Paint (FCP)</a> metric, is critical for how users perceive your site\'s speed. Delays in FCP, often caused by slow servers (measured using <a href="https://web.dev/articles/ttfb" target="_blank" rel="noopener">Time To First Byte</a>) or render-blocking resources, significantly increase the chance of users leaving (bounce rate). Learn more in the <a href="https://www.speedpatterns.com/patterns/fast_start/" target="_blank" rel="noopener">"Fast Start" Speed Pattern</a>. Compare the 500ms "Fast" baseline against the throttled version below.';
 ---
 
 <ExhibitLayout title={title}>
@@ -19,9 +19,11 @@ const description =
   <div class="exhibit-stage">
     <div class="comparison-container" id="comparison-stage">
       <div class="comparison-panel">
-        <span class="panel-label">Fast (500ms)</span>
+        <span class="panel-label">Fast</span>
         <p class="panel-note">
-          Only 5% of websites start rendering faster than this.
+          Only 5% of websites start rendering faster than <span class="fcp-good"
+            >500ms</span
+          >.
         </p>
         <div class="experience-block">
           <div class="timer-display" id="optimized-timer">0ms</div>

@@ -13,7 +13,7 @@ const { title, description } = Astro.props;
   </div>
 
   <div class="description-content">
-    <p>{description}</p>
+    <p set:html={description} />
   </div>
 </section>
 
@@ -42,5 +42,17 @@ const { title, description } = Astro.props;
   .description-content {
     color: var(--text-color);
     line-height: 1.6;
+  }
+
+  .description-content :global(a) {
+    color: var(--accent-color);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    transition: color 0.2s;
+  }
+
+  .description-content :global(a:hover) {
+    color: var(--text-color);
   }
 </style>

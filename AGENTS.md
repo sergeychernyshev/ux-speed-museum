@@ -29,8 +29,8 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
   - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
   - **Slow to Start Side:** Controllable "**Time to start rendering**" (500-5500ms) via scrubber.
   - **Scrubbing Logic:** Content and timers hide immediately; sequence restarts on release.
-  - **Content:** Realistic Navigation, Hero, Stylized Image (local SVG), Details, and Footer.
-  - **Local Assets:** The product image is a stylized SVG stored locally to ensure consistent performance simulation without external dependencies.
+  - **Content:** Realistic Navigation, Hero, Realistic Image (locally generated), Details, and Footer.
+  - **Local Assets:** The product image is a realistic photograph stored locally to ensure consistent performance simulation.
   - **Animation:** Staggered 11-step paint sequence.
   - **Interactivity:** Intentionally non-interactive to focus on visual assembly.
   - **Visuals:** Rendering progress bars and dual-value millisecond timers. Timers are styled as bordered tabs sitting flush against the top of each experience frame (no gap) and are left-aligned.
