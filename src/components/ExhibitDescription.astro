@@ -115,6 +115,17 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
   toggleCollapse?.addEventListener('click', () => {
     const isCollapsed = section?.classList.toggle('collapsed');
     setPreference(PREF_KEYS.COLLAPSED, !!isCollapsed);
+    
+    if (isCollapsed) {
+      if (audio) audio.pause();
+    } else {
+      if (getPreference(PREF_KEYS.AUDIO) && audio) {
+        audio.play().catch(() => {});
+      }
+      if (getPreference(PREF_KEYS.ANIMATIONS)) {
+        startAnimation();
+      }
+    }
   });
 
   // Handle Narration Toggle
@@ -123,6 +134,8 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
     setPreference(PREF_KEYS.AUDIO, isActive);
     if (!isActive && audio) {
       audio.pause();
+    } else if (isActive && audio && !section?.classList.contains('collapsed')) {
+      audio.play().catch(() => {});
     }
   });
 
@@ -138,10 +151,12 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
   });
 
   function startAnimation() {
+    if (section?.classList.contains('collapsed')) return;
+    
     let delay = 0;
     sentences.forEach((s, i) => {
       setTimeout(() => {
-        if (getPreference(PREF_KEYS.ANIMATIONS)) {
+        if (getPreference(PREF_KEYS.ANIMATIONS) && !section?.classList.contains('collapsed')) {
           s.classList.add('visible');
         }
       }, delay);
@@ -154,7 +169,8 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
   }
 
   // Initial reveal
-  if (getPreference(PREF_KEYS.ANIMATIONS) && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const isInitiallyCollapsed = section?.classList.contains('collapsed');
+  if (!isInitiallyCollapsed && getPreference(PREF_KEYS.ANIMATIONS) && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     startAnimation();
   } else {
     stopAnimation();
