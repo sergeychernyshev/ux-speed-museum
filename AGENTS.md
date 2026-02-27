@@ -13,14 +13,14 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 ## Phase 1: Foundation (Scaffolding)
 - [x] Initialize Astro + TypeScript project (**SSR mode**).
 - [x] Establish a "Vanilla CSS" design system focused on a museum-like aesthetic (clean, minimalist, focused), supporting both **Light and Dark modes** via `prefers-color-scheme`.
-- [ ] Implement cookie-based preference management (audio, animation, collapse).
-- [ ] Create an `ExhibitLayout.astro` component to provide a consistent frame, including the **Preparation Shield** logic and server-side application of user preferences from cookies.
-- [ ] Implement the `ExhibitDescription` component:
-    - [ ] Progressive sentence reveal animation (honoring `prefers-reduced-motion`).
-    - [ ] Audio narration system with enable/disable toggle.
-    - [ ] Conditional preloading: Do not fetch audio if narration is disabled.
-    - [ ] Controls to stop animation and collapse the section.
-- [ ] Implement the `PerformanceController` component (client-side script targeting pre-rendered HTML) for real-time manipulation.
+- [x] Implement cookie-based preference management (audio, animation, collapse).
+- [x] Create an `ExhibitLayout.astro` component to provide a consistent frame, including the **Preparation Shield** logic and server-side application of user preferences from cookies.
+- [x] Implement the `ExhibitDescription` component:
+    - [x] Progressive sentence reveal animation (honoring `prefers-reduced-motion`).
+    - [x] Audio narration system with enable/disable toggle.
+    - [x] Conditional preloading: Do not fetch audio if narration is disabled.
+    - [x] Controls to stop animation and collapse the section.
+- [x] Implement the `PerformanceController` component (client-side script targeting pre-rendered HTML) for real-time manipulation.
 
 ## Phase 2: Core Exhibits (MVP)
 - [ ] **Exhibit 1: The Slow Starter.** A simulation of a slow initial page load/hydration. Users can dial in the delay before the app becomes interactive.
