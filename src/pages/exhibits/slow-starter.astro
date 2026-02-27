@@ -212,8 +212,18 @@ const description =
       if (!startTime) startTime = timestamp;
       const elapsed = Math.floor(timestamp - startTime);
 
-      if (!optFinished && optTimer) optTimer.textContent = `${elapsed}ms`;
-      if (!thrFinished && thrTimer) thrTimer.textContent = `${elapsed}ms`;
+      if (!optFinished && optTimer) {
+        optTimer.textContent =
+          elapsed >= OPTIMIZED_BASE
+            ? `${OPTIMIZED_BASE} - ${elapsed}ms`
+            : `${elapsed}ms`;
+      }
+      if (!thrFinished && thrTimer) {
+        thrTimer.textContent =
+          elapsed >= throttledDelay
+            ? `${throttledDelay} - ${elapsed}ms`
+            : `${elapsed}ms`;
+      }
 
       if (!optFinished || !thrFinished) {
         rafId = requestAnimationFrame(updateTimers);
