@@ -12,7 +12,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 
 ## Phase 1: Foundation (Scaffolding)
 - [x] Initialize Astro + TypeScript project (**SSR mode**).
-- [ ] Establish a "Vanilla CSS" design system focused on a museum-like aesthetic (clean, minimalist, focused), supporting both **Light and Dark modes** via `prefers-color-scheme`.
+- [x] Establish a "Vanilla CSS" design system focused on a museum-like aesthetic (clean, minimalist, focused), supporting both **Light and Dark modes** via `prefers-color-scheme`.
 - [ ] Implement cookie-based preference management (audio, animation, collapse).
 - [ ] Create an `ExhibitLayout.astro` component to provide a consistent frame, including the **Preparation Shield** logic and server-side application of user preferences from cookies.
 - [ ] Implement the `ExhibitDescription` component:
