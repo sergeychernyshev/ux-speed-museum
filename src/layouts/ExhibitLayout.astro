@@ -2,25 +2,28 @@
 import '../styles/global.css';
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
 
 // SSR Preference reading
-const audioEnabled = Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
-const animationsEnabled = Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
-const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
+const audioEnabled =
+  Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
+const animationsEnabled =
+  Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
+const descriptionCollapsed =
+  Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title} | UX Speed Museum</title>
-    
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} | UX Speed Museum</title>
+
     <style>
       .layout {
         display: grid;
@@ -35,7 +38,7 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
           grid-template-rows: auto auto 1fr;
         }
       }
-      
+
       header {
         grid-column: 1 / -1;
         padding: 1rem 1.5rem;
@@ -53,7 +56,7 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
         font-size: 1.5rem;
         margin-bottom: 0;
       }
-      
+
       nav {
         background: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
@@ -66,7 +69,7 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
           border-bottom: 1px solid var(--border-color);
         }
       }
-      
+
       main {
         padding: 1.5rem;
         display: flex;
@@ -93,7 +96,9 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        transition: opacity 0.5s ease-out, visibility 0.5s;
+        transition:
+          opacity 0.5s ease-out,
+          visibility 0.5s;
       }
 
       .preparation-shield.ready {
@@ -116,12 +121,16 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     </style>
-	</head>
-	<body>
+  </head>
+  <body>
     <div id="shield" class="preparation-shield">
       <div class="shield-content">
         <div class="spinner"></div>
@@ -129,14 +138,14 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
       </div>
     </div>
 
-		<div class="layout">
+    <div class="layout">
       <header>
         <h1>UX Speed Museum</h1>
         <div class="global-controls">
           <!-- Global controls will go here -->
         </div>
       </header>
-      
+
       <nav>
         <h3>Exhibits</h3>
         <ul>
@@ -144,7 +153,7 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
           <!-- Exhibit links will be added here -->
         </ul>
       </nav>
-      
+
       <main>
         <slot />
       </main>
@@ -162,5 +171,5 @@ const descriptionCollapsed = Astro.cookies.get('exhibit-description-collapsed')?
         }
       });
     </script>
-	</body>
+  </body>
 </html>

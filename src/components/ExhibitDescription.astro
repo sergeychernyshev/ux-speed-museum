@@ -7,22 +7,39 @@ interface Props {
 const { description, audioUrl } = Astro.props;
 
 // Read collapse preference from cookies (SSR)
-const collapsed = Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
-const audioEnabled = Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
-const animationsEnabled = Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
+const collapsed =
+  Astro.cookies.get('exhibit-description-collapsed')?.value === 'true';
+const audioEnabled =
+  Astro.cookies.get('exhibit-audio-enabled')?.value !== 'false';
+const animationsEnabled =
+  Astro.cookies.get('exhibit-animations-enabled')?.value !== 'false';
 
 // Split description into sentences
-const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s => s.endsWith('.') ? s : s + '.');
+const sentences = description
+  .split('. ')
+  .filter((s) => s.trim().length > 0)
+  .map((s) => (s.endsWith('.') ? s : s + '.'));
 ---
 
-<section class:list={['exhibit-description', { collapsed }]} id="description-section">
+<section
+  class:list={['exhibit-description', { collapsed }]}
+  id="description-section"
+>
   <div class="description-header">
     <h2>About this Exhibit</h2>
     <div class="description-controls">
-      <button id="toggle-narration" title="Toggle Narration" class={audioEnabled ? 'active' : ''}>
+      <button
+        id="toggle-narration"
+        title="Toggle Narration"
+        class={audioEnabled ? 'active' : ''}
+      >
         <span class="icon">🔊</span>
       </button>
-      <button id="toggle-animation" title="Toggle Animation" class={animationsEnabled ? 'active' : ''}>
+      <button
+        id="toggle-animation"
+        title="Toggle Animation"
+        class={animationsEnabled ? 'active' : ''}
+      >
         <span class="icon">✨</span>
       </button>
       <button id="toggle-collapse" title="Collapse Description">
@@ -32,14 +49,20 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
   </div>
 
   <div class="description-content" id="description-content">
-    {sentences.map((sentence, index) => (
-      <span class="sentence" data-index={index}>{sentence} </span>
-    ))}
+    {
+      sentences.map((sentence, index) => (
+        <span class="sentence" data-index={index}>
+          {sentence}{' '}
+        </span>
+      ))
+    }
   </div>
 
-  {audioUrl && audioEnabled && (
-    <audio id="narration-audio" src={audioUrl} preload="auto"></audio>
-  )}
+  {
+    audioUrl && audioEnabled && (
+      <audio id="narration-audio" src={audioUrl} preload="auto" />
+    )
+  }
 </section>
 
 <style>
@@ -124,7 +147,7 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
   toggleCollapse?.addEventListener('click', () => {
     const isCollapsed = section?.classList.toggle('collapsed');
     setPreference(PREF_KEYS.COLLAPSED, !!isCollapsed);
-    
+
     if (isCollapsed) {
       if (audio) audio.pause();
     } else {
@@ -161,11 +184,14 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
 
   function startAnimation() {
     if (section?.classList.contains('collapsed')) return;
-    
+
     let delay = 0;
     sentences.forEach((s, i) => {
       setTimeout(() => {
-        if (getPreference(PREF_KEYS.ANIMATIONS) && !section?.classList.contains('collapsed')) {
+        if (
+          getPreference(PREF_KEYS.ANIMATIONS) &&
+          !section?.classList.contains('collapsed')
+        ) {
           s.classList.add('visible');
         }
       }, delay);
@@ -174,12 +200,16 @@ const sentences = description.split('. ').filter(s => s.trim().length > 0).map(s
   }
 
   function stopAnimation() {
-    sentences.forEach(s => s.classList.add('visible'));
+    sentences.forEach((s) => s.classList.add('visible'));
   }
 
   // Initial reveal
   const isInitiallyCollapsed = section?.classList.contains('collapsed');
-  if (!isInitiallyCollapsed && getPreference(PREF_KEYS.ANIMATIONS) && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (
+    !isInitiallyCollapsed &&
+    getPreference(PREF_KEYS.ANIMATIONS) &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
     startAnimation();
   } else {
     stopAnimation();
