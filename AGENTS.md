@@ -29,7 +29,7 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
 
 ## Phase 2: Core Exhibits (MVP)
 
-- [ ] **Exhibit 1: The Slow Starter.**
+- [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of an e-commerce product page.
   - **Optimized Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline).
   - **Throttled Side:** Controllable "Rendering Delay" (0-5000ms) added via scrubber.
