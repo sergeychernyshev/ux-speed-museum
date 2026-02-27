@@ -25,7 +25,10 @@ const description =
       </div>
 
       <div class="comparison-panel">
-        <span class="panel-label">Throttled (500ms + Delay)</span>
+        <span class="panel-label">Throttled</span>
+        <p class="panel-note" id="throttled-note">
+          Starts rendering at 2500ms.
+        </p>
         <div class="viewport" id="throttled-viewport">
           <ProductPageMock id="throttled-page" />
         </div>
@@ -34,10 +37,10 @@ const description =
 
     <div class="controls-overlay">
       <PerformanceController
-        min={0}
-        max={5000}
+        min={500}
+        max={5500}
         step={100}
-        defaultValue={2000}
+        defaultValue={2500}
         label="Time to start rendering"
         unit="ms"
       />
@@ -89,6 +92,7 @@ const description =
       margin-bottom: 0.5rem;
       max-width: 250px;
       text-align: center;
+      height: 1rem; /* Reserve space */
     }
 
     .viewport {
@@ -113,12 +117,13 @@ const description =
 
   <script>
     const OPTIMIZED_BASE = 500;
-    let additionalDelay = 2000;
+    let throttledDelay = 2500;
     let timers: number[] = [];
 
     const stage = document.getElementById('comparison-stage');
     const optPage = document.getElementById('optimized-page');
     const thrPage = document.getElementById('throttled-page');
+    const thrNote = document.getElementById('throttled-note');
 
     function clearTimers() {
       timers.forEach((t) => clearTimeout(t));
@@ -145,7 +150,7 @@ const description =
       runSequence(optPage, OPTIMIZED_BASE);
 
       // Start Throttled sequence
-      runSequence(thrPage, OPTIMIZED_BASE + additionalDelay);
+      runSequence(thrPage, throttledDelay);
     }
 
     function runSequence(page: HTMLElement | null, startDelay: number) {
@@ -184,7 +189,9 @@ const description =
     // Listen for scrubber updates
     window.addEventListener('performance-update', (e: any) => {
       resetViews();
-      additionalDelay = e.detail.value;
+      throttledDelay = e.detail.value;
+      if (thrNote)
+        thrNote.textContent = `Starts rendering at ${throttledDelay}ms.`;
     });
 
     window.addEventListener('performance-update-end', () => {
