@@ -79,6 +79,6 @@ The application will be built as a multi-page site using Astro in **SSR (Server-
    - **Document PRs:** Every time a new commit is pushed to a PR, the PR description must be updated with comprehensive documentation of all changes and features implemented in that PR.
    - **Preview URLs:** Every PR must include a branch preview URL in the format `https://[branch-name]-ux-speed-museum.sergeychernyshev.workers.dev`.
    - **Automated Deployment:** Deployment to Cloudflare is handled automatically upon pushing changes to the branch/PR. Manual deployment is not required.
-   - Merge into the `main` branch **ONLY** via GitHub PR after your review and final confirmation.
+   - **Merging:** When the user says "let's merge", the current PR must be merged into the `main` branch and then closed. Merge into the `main` branch **ONLY** via GitHub PR after review and final confirmation.
 7. **Validation:** Verify behavioral and stylistic correctness after each step.
 8. **Communication:** Use very few emojis when communicating progress and updates. 📝
