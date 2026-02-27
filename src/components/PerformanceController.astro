@@ -1,0 +1,70 @@
+---
+interface Props {
+  min: number;
+  max: number;
+  step: number;
+  defaultValue: number;
+  label: string;
+  unit: string;
+}
+
+const { min, max, step, defaultValue, label, unit } = Astro.props;
+---
+
+<div class="performance-controller">
+  <div class="controller-header">
+    <label for="performance-scrubber">{label}</label>
+    <span class="value-display" id="value-display">{defaultValue}{unit}</span>
+  </div>
+  <input
+    type="range"
+    id="performance-scrubber"
+    min={min}
+    max={max}
+    step={step}
+    value={defaultValue}
+  />
+</div>
+
+<style>
+  .performance-controller {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .controller-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .value-display {
+    font-weight: bold;
+    color: var(--accent-color);
+  }
+
+  input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  const scrubber = document.getElementById('performance-scrubber') as HTMLInputElement;
+  const display = document.getElementById('value-display');
+  const unit = scrubber?.getAttribute('data-unit') || 'ms';
+
+  scrubber?.addEventListener('input', (e) => {
+    const value = (e.target as HTMLInputElement).value;
+    if (display) display.textContent = `${value}ms`;
+    
+    // Dispatch custom event for exhibit to listen to
+    window.dispatchEvent(new CustomEvent('performance-update', {
+      detail: { value: parseInt(value) }
+    }));
+  });
+</script>
