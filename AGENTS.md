@@ -4,101 +4,87 @@ This document outlines the architectural strategy and implementation phases for 
 
 ## Architectural Vision
 
-The application will be built as a multi-page site using Astro in **SSR (Server-Side Rendering) mode**. This allows the server to read user preference cookies (audio, animation, collapse state) and render the initial HTML accordingly, ensuring a zero-layout-shift (CLS) experience. Each "exhibit" remains a self-contained page where all potential states (hidden or visible) are pre-rendered.
+The application is built as a multi-page site using Astro in **SSR (Server-Side Rendering) mode**. This allows the server to read user preference cookies (audio, animation, collapse state) and render the initial HTML accordingly, ensuring a zero-layout-shift (CLS) experience. Each exhibit is a self-contained page where all potential states (hidden or visible) are pre-rendered.
 
 ### Navigation & Loading Strategy
 
 - **Custom Domain:** The project is hosted on `museum.uxspeed.dev`.
 - **Pre-fetch on Intent:** Use Astro's pre-fetching mechanisms (hover/tap) to warm up the browser cache.
-- **The Preparation Shield:** A script in the `<head>` of the `ExhibitLayout.astro` will show a "We are preparing your experience" message, hiding the exhibit until `window.onload` or a custom "assets-ready" event fires. This ensures the museum's performance is flawless before the _simulated_ slowness begins.
+- **The Preparation Shield:** An inline component positioned under the exhibit description that shows a "preparing your experience" state until all resources are ready.
 - **State Persistence:** User preferences are stored in cookies and applied during server-side rendering.
 
 ## Phase 1: Foundation (Scaffolding)
 
 - [x] Initialize Astro + TypeScript project (**Cloudflare Workers SSR mode**).
-- [x] Establish a "Vanilla CSS" design system focused on a museum-like aesthetic (clean, minimalist, focused), supporting both **Light and Dark modes** via `prefers-color-scheme`.
+- [x] Establish a "Vanilla CSS" design system with **Light and Dark mode** support.
 - [x] Implement cookie-based preference management (audio, animation, collapse).
-- [x] Create an `ExhibitLayout.astro` component to provide a consistent frame, including the **Preparation Shield** logic and server-side application of user preferences from cookies.
+- [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
 - [x] Implement the `ExhibitDescription` component:
-  - [x] Progressive sentence reveal animation (honoring `prefers-reduced-motion`).
-    - [x] Audio narration system with enable/disable toggle.
-    - [ ] Visible audio narration playback controls (play/pause/progress).
-    - [x] Conditional preloading: Do not fetch audio if narration is disabled.
-    - [ ] Ensure narration is audible and triggered appropriately during the exhibit reveal.
-    - [x] Controls to stop animation and collapse the section.- [x] Implement the `PerformanceController` component (client-side script targeting pre-rendered HTML) for real-time manipulation.
+  - [x] Progressive sentence reveal animation.
+  - [x] Audio narration system with enable/disable toggle.
+  - [x] Visible audio narration playback controls.
+  - [x] Conditional preloading of audio.
+  - [x] Controls to stop animation and collapse the section.
+- [x] Implement the `PerformanceController` component for real-time manipulation.
 
 ## Phase 2: Core Exhibits (MVP)
 
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
-  - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
-  - **Slow to Start Side:** Controllable "**Time to start rendering**" (500-5500ms) added via scrubber. The scrubber displays the total time (Base 500ms + Delay).
-  - **Scrubbing Logic:**
-    - When the user starts scrubbing, both views hide their content immediately (transparency/opacity reset).
-    - Backgrounds remain unchanged during scrubbing (no grey placeholders).
-    - When the user stops scrubbing, the rendering sequence restarts for both sides using the updated delay.
-    - **Content:** A realistic product page layout including:
-      - Navigation Bar (Logo, Menu links, Cart icon).
-      - Hero Section (Product Image, Title, Price, Buy Button).
-      - Product Details (Description text, Specifications).
-      - Footer links.
-      - **Animation:** Elements animate in to simulate the browser's paint sequence.
-        - **Visuals:**
-          - Side-by-side comparison of the visual assembly of the page.
-          - **Rendering Progress Bars:** A progress bar at the top of each viewport that fills as the paint sequence progresses. - **Simulation Timers:** A millisecond timer on each panel showing elapsed time since the start of the simulation. - Before rendering starts: Shows only elapsed time (e.g., `200ms`). - After rendering starts: Shows `{startRender} - {currentTimerValue}ms` (e.g., `500 - 750ms`). - Each timer stops independently as soon as its corresponding experience finishes rendering.
-            - **Interactivity:** The mock product page remains **non-interactive** after loading. - **Constraints:** Skeleton animations are disabled to focus purely on the paint timing.
-  - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
-  - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
-  - [ ] Implementation: Instead of side-by-side, display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
-  - [ ] Scrubbing logic: Use the `PerformanceController` scrubber to highlight/enable the input corresponding to the chosen latency level.
+  - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline).
+  - **Slow to Start Side:** Controllable "**Time to start rendering**" (500-5500ms) via scrubber.
+  - **Scrubbing Logic:** Content hides immediately; rendering sequence restarts on release.
+  - **Content:** Realistic Navigation, Hero, Image, Details, and Footer.
+  - **Animation:** Staggered 11-step paint sequence.
+  - **Interactivity:** Intentionally non-interactive to focus on visual assembly.
+  - **Visuals:** Rendering progress bars and left-aligned dual-value millisecond timers ({start} - {current}ms).
 
-- [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface where users can simulate 2G, 3G, and "Slow 4G" speeds with artificial request queuing.
-- [ ] **Exhibit 4: Layout Shift.** A news-style layout where images and ads load at different, controllable intervals to demonstrate CLS (Cumulative Layout Shift).
+- [ ] **Exhibit 2: The Input Abyss (Input Latency).**
+  - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
+  - [ ] Implementation: Display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
+  - [ ] Scrubbing logic: Use the scrubber to highlight/enable the input corresponding to the chosen latency level.
+
+- [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
+- [ ] **Exhibit 4: Layout Shift.** A news-style layout demonstrating CLS via delayed asset loading.
 
 ## Phase 3: Advanced Simulations
 
-- [ ] **Exhibit 5: Main Thread Blocking.** A simulation of heavy JavaScript execution (e.g., complex sorting) that freezes the UI, allowing users to see the impact of Long Tasks.
-- [ ] **Exhibit 6: Rendering Jitter.** Artificially dropping frames during animations or scrolling to demonstrate the importance of 60fps.
+- [ ] **Exhibit 5: Main Thread Blocking.** Simulation of heavy JavaScript execution freezing the UI.
+- [ ] **Exhibit 6: Rendering Jitter.** Artificially dropping frames during animations or scrolling.
 
 ## Phase 4: Polish & Education
 
-- [ ] Add "Deep Dive" sidebars for each exhibit explaining the underlying Web Vital (LCP, FID/INP, CLS).
-- [ ] Implement a **Side-by-Side Comparison** layout for every exhibit, ensuring "Optimized" and "Throttled" states are perfectly synchronized for comparison.
+- [ ] Add "Deep Dive" sidebars for each exhibit explaining the underlying Web Vital.
+- [ ] Implement a **Side-by-Side Comparison** layout for every exhibit.
 - [ ] Final visual polish and responsive testing.
 
 ## Implementation Guidelines
 
-- **Zero-Layout-Shift SSR:** All user preferences (collapsed state, etc.) must be rendered on the server based on cookies to prevent layout shifts.
-- **Accessibility & Motion:** All animations must respect `prefers-reduced-motion`. Narrative audio must be togglable and its preloading must be conditional to save bandwidth when disabled.
-- **No Spinners:** Never use spinners anywhere in the UI. Use alternative indicators like progress bars or text-based loading states.
-- **Loading Progress:** Animate loading bars according to actual asset download progress. Do not apply CSS progress animations if the loading shield is not shown.
-- **Inline Preparation Shield:** The shield is displayed inline within the exhibit page (under the description) instead of a fixed overlay. It hides the exhibit content until all resources are ready.
-- **Preparation Shield Optimization:** Do not show the shield at all if there are no additional resources to load (e.g., everything is already in cache or loaded).
-- **Responsive Design:** The UI must be fully responsive, supporting both desktop resolutions and mobile browsers through adaptive layouts (e.g., stacking sidebars on mobile).
-- **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered. Use CSS (e.g., `display: none` or `visibility: hidden`) for initial state management rather than client-side conditional rendering.
-- **No Tailwind:** Use Vanilla CSS to ensure we can manipulate the box model and transitions without framework interference.
-- **Code Styling:** Prettier is used for consistent code formatting across the project, including support for `.astro` and `.jsonc` files.
-- **Accessibility:** Ensure the "museum" is accessible even when the exhibits are "broken" by design.
-- **Performance:** Ironically, the app itself must be highly performant to ensure the _simulated_ slowness is accurate and predictable.
+- **Zero-Layout-Shift SSR:** All user preferences rendered on the server based on cookies.
+- **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
+- **Loading Progress:** Animate loading bars according to actual asset download progress.
+- **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.
+- **Responsive Design:** Fully responsive supporting mobile and desktop. 📱💻
+- **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered.
+- **No Tailwind:** Use Vanilla CSS for precise control.
+- **Code Styling:** Prettier is used for consistent formatting (`.astro`, `.jsonc`, etc.).
 
 ## Workflow Protocol
 
-1. **Research & Plan:** For each exhibit or major feature, first present a detailed walkthrough of the requirements and implementation strategy.
-2. **Document Requirements:** **ALWAYS** update this `AGENTS.md` file with any new requirements, constraints, or architectural decisions provided by the user before starting implementation.
-3. **Review:** Allow the user to modify requirements or provide feedback.
+1. **Research & Plan:** Present walkthrough of requirements before starting implementation.
+2. **Document Requirements:** **ALWAYS** update this `AGENTS.md` file with new requirements first.
+3. **Review:** Allow user feedback before proceeding.
 4. **Branching & Progress Tracking:**
-   - Always pull `main` from GitHub before starting a new step (`git pull origin main`).
-   - **DO NOT** start any new steps or create new feature branches until all existing Pull Requests are merged and closed.
-   - Create a new git branch for each step named after the step (e.g., `feature/phase-1-scaffolding`).
-   - Use Markdown checkboxes in `AGENTS.md` to track and persist progress between sessions.
-5. **Execution:** **ONLY** proceed with implementation on the feature branch once the user has explicitly stated they are "ready" or given the green light.
+   - Pull `main` from GitHub before starting (`git pull origin main`).
+   - Create feature branch named after the step (e.g., `feature/exhibit-2-input-abyss`).
+   - Use Markdown checkboxes to track progress.
+5. **Execution:** **ONLY** proceed once the user has explicitly stated "ready."
 6. **Commits & GitHub Pull Requests:**
-   - **Format Code:** Run `npm run format` before every commit to ensure consistent code styling according to Prettier.
-   - Commit changes incrementally as they are implemented.
-   - Create a Pull Request (PR) on GitHub for each feature branch.
-   - **Document PRs:** Every time a new commit is pushed to a PR, the PR description must be updated with comprehensive documentation of all changes and features implemented in that PR.
-   - **Preview URLs:** Every PR must include a branch preview URL in the format `https://[branch-name]-ux-speed-museum.sergeychernyshev.workers.dev`.
-   - **Automated Deployment:** Deployment to Cloudflare is handled automatically upon pushing changes to the branch/PR. Manual deployment is not required.
-   - **Merging:** When the user says "let's merge", the current PR must be merged into the `main` branch and then closed. Merge into the `main` branch **ONLY** via GitHub PR after review and final confirmation.
+   - **Format Code:** Run `npm run format` before every commit.
+   - Commit changes incrementally.
+   - Create a Pull Request (PR) for each feature branch.
+   - **Document PRs:** Update PR description with full documentation on every push.
+   - **Preview URLs:** Include link: `https://[branch-name]-ux-speed-museum.sergeychernyshev.workers.dev`.
+   - **Merging:** Merge via GitHub PR **ONLY** when user says "let's merge."
 7. **Validation:** Verify behavioral and stylistic correctness after each step.
-8. **Communication:** Use very few emojis when communicating progress and updates. 📝
+8. **Communication:** Use very few emojis. 📝
