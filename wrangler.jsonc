@@ -2,8 +2,7 @@
   "name": "ux-speed-museum",
   "compatibility_date": "2024-09-23",
   "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS"
+    "directory": "./dist"
   },
   "preview_urls": true,
   "workers_dev": true,
