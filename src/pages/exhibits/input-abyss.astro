@@ -107,6 +107,7 @@ function getINPStatus(ms: number) {
         defaultValue={380}
         label="Simulated Input Delay"
         unit="ms"
+        showReplay={true}
       />
     </div>
   </div>
@@ -447,6 +448,12 @@ function getINPStatus(ms: number) {
         const className = status === 'good' ? 'fcp-good' : (status === 'warn' ? 'fcp-needs-improvement' : 'fcp-poor');
         scrubberValueEl.className = `current-value ${className}`;
       }
+    });
+
+    window.addEventListener('performance-replay', () => {
+      updateHighlight();
+      // Re-enable immediately as it is an interaction exhibit
+      window.dispatchEvent(new CustomEvent('performance-update-end', { detail: { value: currentLatency } }));
     });
 
     // Initial state

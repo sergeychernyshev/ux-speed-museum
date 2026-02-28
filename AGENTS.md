@@ -19,9 +19,11 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
 - [x] Implement the `ExhibitDescription` component (Static text only).
 - [x] Implement the `PerformanceController` component for real-time manipulation.
+  - [x] **Integrated REPLAY Button:** Moved the REPLAY button into the `PerformanceController` header.
+    - [x] **Smart Visibility & Stability:** Button only appears after initial playback is complete and disables itself during playback. It uses `visibility: hidden` to avoid layout shifts in the header.
+    - [x] **Infinite Loop Prevention:** Events are now flagged with a `source` to distinguish between manual scrubber releases and automated simulation completions.
 
 ## Phase 2: Core Exhibits (MVP)
-
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
   - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
@@ -62,12 +64,12 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Leaping Side:** Content jumps as assets arrive without reserved space.
   - [x] **Visuals:** CLS score visualization and "jump" highlights.
   - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
-  - [ ] **Pending Fixes:**
-    - [ ] **Correct Aspect Ratio Precision:** Update CSS `aspect-ratio` properties to use the exact dimensions discovered via `ffprobe` (e.g., change `300 / 250` to `600 / 499` for the sidebar ad).
-    - [ ] **Unify Container Sizing:** Ensure both the `stable` placeholders and the `late` image containers use consistent `aspect-ratio` definitions instead of mixing fixed `height` (like the current `180px` hero height) with responsive `width`.
-    - [ ] **Account for Borders:** Align `box-sizing` and border styles between placeholders and active containers to prevent 1px shifts.
-    - [ ] **Fix Hero Image Cropping:** Transition the hero image to a `1280 / 698` aspect ratio to match its source dimensions.
-    - [ ] **Verify Visual Fill:** Audit `object-fit: cover` usage to ensure images completely fill their intended containers.
+  - [x] **Completed Fixes:**
+    - [x] **Fixed Height Placeholders:** Updated CSS `height` properties for banners (60px), hero (200px), and sidebar (125px) to ensure predictable space reservation and stability on the Stable side.
+    - [x] **Unify Container Sizing:** Ensured both sides use consistent `height` definitions.
+    - [x] **Account for Borders:** Aligned `box-sizing` and border styles to prevent 1px shifts.
+    - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
+    - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
 
 - [ ] **Exhibit 4: Network Throttle (LCP & Sequential Loading).**
   - **Concept:** Experience the psychological difference between progressive loading on slow networks vs. high-bandwidth connections.

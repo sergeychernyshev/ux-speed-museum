@@ -19,12 +19,16 @@ const description =
   <div class="exhibit-stage">
     <div class="comparison-container" id="comparison-stage">
       <div class="comparison-panel">
-        <span class="panel-label">Slow to Start</span>
-        <p class="panel-note" id="throttled-note">
-          Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
-        </p>
         <div class="experience-block">
-          <div class="timer-display" id="throttled-timer">0ms</div>
+          <div class="metric-header">
+            <div class="timer-display" id="throttled-timer">0ms</div>
+            <div class="panel-info">
+              <span class="panel-label">Slow to Start</span>
+              <p class="panel-note" id="throttled-note">
+                Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
+              </p>
+            </div>
+          </div>
           <div class="viewport" id="throttled-viewport">
             <div class="render-progress-container">
               <div class="render-progress-bar" id="throttled-progress"></div>
@@ -35,14 +39,18 @@ const description =
       </div>
 
       <div class="comparison-panel">
-        <span class="panel-label">Fast</span>
-        <p class="panel-note">
-          Only 5% of websites start rendering faster than <span class="fcp-good"
-            >500ms</span
-          >.
-        </p>
         <div class="experience-block">
-          <div class="timer-display" id="optimized-timer">0ms</div>
+          <div class="metric-header">
+            <div class="panel-info">
+              <span class="panel-label">Fast</span>
+              <p class="panel-note">
+                Only 5% of websites start rendering faster than <span class="fcp-good"
+                  >500ms</span
+                >.
+              </p>
+            </div>
+            <div class="timer-display" id="optimized-timer">0ms</div>
+          </div>
           <div class="viewport" id="optimized-viewport">
             <div class="render-progress-container">
               <div class="render-progress-bar" id="optimized-progress"></div>
@@ -61,6 +69,7 @@ const description =
         defaultValue={2500}
         label="Time to start rendering"
         unit="ms"
+        showReplay={true}
       />
     </div>
   </div>
@@ -95,13 +104,25 @@ const description =
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      align-items: flex-start; /* Align timer and viewport to left */
+      align-items: center;
       width: 100%;
     }
 
-    .panel-label,
-    .panel-note {
-      align-self: center; /* Keep labels centered if preferred, or left-align */
+    .metric-header {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .panel-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding-bottom: 0.5rem;
+      align-items: center;
+      text-align: center;
     }
 
     .panel-label {
@@ -116,9 +137,6 @@ const description =
       font-size: 0.7rem;
       color: var(--muted-text);
       font-style: italic;
-      margin-top: -0.5rem;
-      margin-bottom: 0.5rem;
-      text-align: center;
       height: 1rem; /* Reserve space */
     }
 
@@ -342,8 +360,15 @@ const description =
           }
 
           // Trigger completion callback on last step
-          if (index === steps.length - 1 && onComplete) {
-            onComplete();
+          if (index === steps.length - 1) {
+            if (onComplete) onComplete();
+            
+            // Re-dispatch update-end for controller visibility
+            window.dispatchEvent(
+              new CustomEvent('performance-update-end', {
+                detail: { value: throttledDelay },
+              })
+            );
           }
         }, accumulatedDelay);
 
@@ -366,7 +391,13 @@ const description =
       }
     });
 
-    window.addEventListener('performance-update-end', () => {
+    window.addEventListener('performance-update-end', (e: any) => {
+      if (e.detail?.source === 'scrubber') {
+        startRendering();
+      }
+    });
+
+    window.addEventListener('performance-replay', () => {
       startRendering();
     });
 

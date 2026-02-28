@@ -8,14 +8,34 @@ interface Props {
   unit?: string;
   id?: string;
   list?: string;
+  showReplay?: boolean;
 }
 
-const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubber", list } = Astro.props;
+const {
+  min,
+  max,
+  step,
+  defaultValue,
+  label,
+  unit = '',
+  id = 'performance-scrubber',
+  list,
+  showReplay = false,
+} = Astro.props;
 ---
 
 <div class="performance-controller">
   <div class="controller-header">
-    <label for={id}>{label}</label>
+    <div class="label-group">
+      <label for={id}>{label}</label>
+      {
+        showReplay && (
+          <button class="replay-btn" id={`${id}-replay`}>
+            <span class="play-icon">▶</span> REPLAY
+          </button>
+        )
+      }
+    </div>
     <span class="value-display" id={`${id}-display`}>
       <span class="current-value">{defaultValue}{unit}</span>
     </span>
@@ -38,21 +58,76 @@ const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubb
     border: 1px solid var(--border-color);
     padding: 1rem;
     border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
+    width: max-content;
+    min-width: 300px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .controller-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.5rem;
     gap: 1rem;
+  }
+
+  .label-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--muted-text);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .replay-btn {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0.1rem 0.3rem;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    visibility: hidden; /* Hidden but occupies space */
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.6rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition:
+      transform 0.1s,
+      opacity 0.2s;
+  }
+
+  .replay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .replay-btn:not(:disabled):hover {
+    opacity: 0.9;
+  }
+
+  .replay-btn:not(:disabled):active {
+    transform: scale(0.95);
+  }
+
+  .play-icon {
+    font-size: 0.5rem;
   }
 
   .value-display {
     font-weight: bold;
     color: var(--accent-color);
+    font-variant-numeric: tabular-nums;
+    min-width: 4rem;
+    text-align: right;
   }
 
   input[type='range'] {
@@ -63,14 +138,22 @@ const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubb
 
 <script>
   // Handle multiple controllers if necessary
-  document.querySelectorAll('.performance-controller').forEach(container => {
-    const scrubber = container.querySelector('input[type="range"]') as HTMLInputElement;
+  document.querySelectorAll('.performance-controller').forEach((container) => {
+    const scrubber = container.querySelector(
+      'input[type="range"]'
+    ) as HTMLInputElement;
     const valueDisplay = container.querySelector('.current-value');
+    const replayBtn = container.querySelector('.replay-btn');
     const unit = scrubber?.getAttribute('data-unit') || '';
 
     scrubber?.addEventListener('input', (e) => {
       const value = (e.target as HTMLInputElement).value;
       if (valueDisplay) valueDisplay.textContent = `${value}${unit}`;
+
+      // Disable replay while scrubbing/playing
+      if (replayBtn) {
+        (replayBtn as HTMLButtonElement).disabled = true;
+      }
 
       // Dispatch custom event for exhibit to listen to (scrubbing)
       window.dispatchEvent(
@@ -86,9 +169,32 @@ const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubb
       // Dispatch completion event (released)
       window.dispatchEvent(
         new CustomEvent('performance-update-end', {
-          detail: { value: parseInt(value), id: scrubber.id },
+          detail: { value: parseInt(value), id: scrubber.id, source: 'scrubber' },
         })
       );
     });
+
+    replayBtn?.addEventListener('click', () => {
+      // Disable self on click
+      (replayBtn as HTMLButtonElement).disabled = true;
+
+      window.dispatchEvent(
+        new CustomEvent('performance-replay', {
+          detail: { id: scrubber?.id },
+        })
+      );
+    });
+
+    // Listen for completion to show/enable button
+    window.addEventListener('performance-update-end', () => {
+      if (replayBtn) {
+        (replayBtn as HTMLElement).style.visibility = 'visible';
+        (replayBtn as HTMLButtonElement).disabled = false;
+      }
+    });
+
+    // Re-enable on replay finish (if exhibits don't trigger update-end)
+    // Most exhibits call startSequence/startSimulation which finishes with an event
+    // or we can just enable it after a delay if needed, but exhibits should trigger update-end.
   });
 </script>
