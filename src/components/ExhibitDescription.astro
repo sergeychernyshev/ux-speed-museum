@@ -43,6 +43,10 @@ const { title, description } = Astro.props;
     line-height: 1.6;
   }
 
+  .description-content :global(p + p) {
+    margin-top: 1rem;
+  }
+
   .description-content :global(a) {
     color: var(--accent-color);
     text-decoration: underline;
