@@ -45,17 +45,21 @@ const description =
             <div class="render-progress-container">
               <div class="render-progress-bar" id="leaping-progress"></div>
             </div>
-            <div class="mock-article" id="leaping-article">
-              <div class="late-banner" id="leaping-banner">
-                <img src="https://placehold.co/728x90/ffd43b/000000?text=SPECIAL+OFFER+50%+OFF" alt="Leaderboard Ad" />
+            <div class="mock-article" id="leaping-article" style="display: none;">
+              <div class="leaping-placeholder" id="leaping-banner-placeholder">
+                <div class="late-banner" id="leaping-banner">
+                  <img src="/shifty-ad.avif" alt="Leaderboard Ad" />
+                </div>
               </div>
               <div class="article-header">
                 <div class="article-category">Breaking News</div>
                 <h1>The Physics of Jumping Content</h1>
                 <div class="article-meta">By J. Jank • 2 min read</div>
               </div>
-              <div class="late-image-container" id="leaping-hero-wrapper">
-                <img src="/chronos.avif" alt="Hero Image" class="late-image" id="leaping-hero" />
+              <div class="leaping-placeholder" id="leaping-hero-placeholder">
+                <div class="late-image-container" id="leaping-hero-wrapper">
+                  <img src="/chronos.avif" alt="Hero Image" class="late-image" id="leaping-hero" />
+                </div>
               </div>
               <div class="article-body">
                 <div class="body-content-wrapper">
@@ -67,8 +71,10 @@ const description =
                       This text will move if the image to the right loads without pre-allocated space or if the font size changes unexpectedly.
                     </p>
                   </div>
-                  <div class="side-image-wrapper" id="leaping-side-wrapper">
-                    <img src="https://placehold.co/300x250/339af0/ffffff?text=AD+SPACE" alt="Sidebar Ad" class="late-image side" id="leaping-side" />
+                  <div class="leaping-placeholder" id="leaping-side-placeholder">
+                    <div class="side-image-wrapper" id="leaping-side-wrapper">
+                      <img src="/shift-the-ad.avif" alt="Sidebar Ad" class="late-image side" id="leaping-side" />
+                    </div>
                   </div>
                 </div>
                 <p>
@@ -88,10 +94,10 @@ const description =
             <div class="render-progress-container">
               <div class="render-progress-bar" id="stable-progress"></div>
             </div>
-            <div class="mock-article">
+            <div class="mock-article" id="stable-article" style="display: none;">
               <div class="stable-banner-placeholder">
                 <div class="late-banner" id="stable-banner">
-                  <img src="https://placehold.co/728x90/ffd43b/000000?text=SPECIAL+OFFER+50%+OFF" alt="Leaderboard Ad" />
+                  <img src="/shifty-ad.avif" alt="Leaderboard Ad" />
                 </div>
               </div>
               <div class="article-header">
@@ -113,7 +119,7 @@ const description =
                     </p>
                   </div>
                   <div class="stable-side-placeholder">
-                    <img src="https://placehold.co/300x250/339af0/ffffff?text=AD+SPACE" alt="Sidebar Ad" class="late-image side" id="stable-side" />
+                    <img src="/shift-the-ad.avif" alt="Sidebar Ad" class="late-image side" id="stable-side" />
                   </div>
                 </div>
                 <p>
@@ -129,11 +135,21 @@ const description =
     <div class="controls-overlay">
       <PerformanceController
         min={0}
-        max={4}
+        max={653}
         step={1}
-        defaultValue={2}
-        label="Simulated CLS Score"
+        defaultValue={228}
+        label="Cumulative Layout Shift (CLS)"
+        id="cls-scrubber"
+        list="cls-snaps"
       />
+      <datalist id="cls-snaps">
+        <option value="0"></option>
+        <option value="10"></option>
+        <option value="40"></option>
+        <option value="228"></option>
+        <option value="603"></option>
+        <option value="653"></option>
+      </datalist>
     </div>
   </div>
 
@@ -141,7 +157,7 @@ const description =
     .exhibit-stage {
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1rem;
       align-items: center;
     }
 
@@ -254,7 +270,7 @@ const description =
       display: flex;
       flex-direction: column;
       width: 100%;
-      gap: 0.5rem;
+      gap: 0;
     }
 
     .comparison-panel:first-child .experience-block {
@@ -265,31 +281,45 @@ const description =
       align-items: flex-end;
     }
 
+    .comparison-panel:last-child .viewport {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 0;
+    }
+
     .cls-display {
       font-family: monospace;
-      font-size: 1rem;
+      font-size: 1.25rem;
       font-weight: bold;
-      color: var(--accent-color);
+      color: var(--text-color);
       background: var(--card-bg);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
+      padding: 0.25rem 0.75rem;
+      width: max-content;
+      text-align: left;
       border: 1px solid var(--border-color);
+      border-bottom: none;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 5;
     }
 
     .viewport {
       width: 100%;
+      height: 30rem;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
+      border-top-left-radius: 0; /* Flush with tab */
       padding: 0;
       position: relative;
-      min-height: 500px;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     .render-progress-container {
-      position: absolute;
+      position: sticky;
       top: 0;
       left: 0;
       width: 100%;
@@ -354,21 +384,56 @@ const description =
       flex: 1;
     }
 
+    /* Placeholders (Common) */
+    .stable-banner-placeholder,
+    .stable-hero-placeholder,
+    .stable-side-placeholder,
+    .leaping-placeholder.stable {
+      background: var(--bg-color); /* Higher contrast against sidebar-bg */
+      border: 1px dashed var(--border-color);
+      box-sizing: border-box;
+    }
+
+    /* Leaping Placeholders (Dynamic) */
+    .leaping-placeholder {
+      display: contents; /* No reserved space by default */
+    }
+
+    .leaping-placeholder.stable {
+      display: block;
+    }
+
+    #leaping-banner-placeholder.stable,
+    .stable-banner-placeholder {
+      width: 100%;
+      aspect-ratio: 728 / 90;
+    }
+
+    #leaping-hero-placeholder.stable,
+    .stable-hero-placeholder {
+      height: 180px;
+      width: 100%;
+    }
+
+    #leaping-side-placeholder.stable,
+    .stable-side-placeholder {
+      width: 150px;
+      aspect-ratio: 600 / 499;
+    }
+
     /* Leaping States */
     .late-banner {
+      width: 100%;
+      aspect-ratio: 728 / 90;
       height: 0;
       overflow: hidden;
-      background: #ffd43b;
-      color: #000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      font-size: 0.8rem;
     }
 
     .late-banner.visible {
-      height: 90px; /* Standard Leaderboard height */
+      height: auto;
     }
 
     .late-image-container {
@@ -384,13 +449,13 @@ const description =
 
     .side-image-wrapper {
       width: 0;
-      height: 125px; /* Scaled from 250px standard to fit viewport */
+      aspect-ratio: 600 / 499;
       overflow: hidden;
       background: var(--sidebar-bg);
     }
 
     .side-image-wrapper.visible {
-      width: 150px; /* Scaled from 300px standard */
+      width: 150px;
     }
 
     .late-banner img,
@@ -407,31 +472,12 @@ const description =
     }
 
     /* Font Size Shift */
-    .mock-article.font-shift .article-body p {
+    .mock-article.text-shift .article-body p {
       font-size: 1rem;
     }
 
-    .mock-article.font-shift h1 {
+    .mock-article.title-shift h1 {
       font-size: 1.6rem;
-    }
-
-    /* Stable Placeholders */
-    .stable-banner-placeholder {
-      height: 90px;
-      width: 100%;
-      background: var(--sidebar-bg);
-    }
-
-    .stable-hero-placeholder {
-      height: 180px;
-      width: 100%;
-      background: var(--sidebar-bg);
-    }
-
-    .stable-side-placeholder {
-      width: 150px;
-      height: 125px;
-      background: var(--sidebar-bg);
     }
 
     /* Controls */
@@ -451,6 +497,7 @@ const description =
     
     // Leaping Elements
     const leapingArticle = document.getElementById('leaping-article');
+    const stableArticle = document.getElementById('stable-article');
     const leapingBanner = document.getElementById('leaping-banner');
     const leapingHeroWrapper = document.getElementById('leaping-hero-wrapper');
     const leapingHero = document.getElementById('leaping-hero');
@@ -462,12 +509,24 @@ const description =
     const stableHero = document.getElementById('stable-hero');
     const stableSide = document.getElementById('stable-side');
 
+    // Leaping Placeholders
+    const leapingBannerPlaceholder = document.getElementById(
+      'leaping-banner-placeholder'
+    );
+    const leapingHeroPlaceholder = document.getElementById(
+      'leaping-hero-placeholder'
+    );
+    const leapingSidePlaceholder = document.getElementById(
+      'leaping-side-placeholder'
+    );
+
     const leapingNote = document.getElementById('leaping-note');
     const leapingClsEl = document.getElementById('leaping-cls');
     const stableClsEl = document.getElementById('stable-cls');
     const leapingProgress = document.getElementById('leaping-progress');
     const stableProgress = document.getElementById('stable-progress');
     const replayTrigger = document.getElementById('replay-trigger');
+    const stage = document.getElementById('comparison-stage');
 
     function getCLSClass(score: number) {
       if (score <= 0.1) return 'fcp-good';
@@ -475,28 +534,78 @@ const description =
       return 'fcp-poor';
     }
 
-    function updateCLS(el: HTMLElement | null, score: number) {
+    function updateCLS(el: HTMLElement | null, score: number | null) {
       if (el) {
-        el.textContent = `CLS: ${score.toFixed(3)}`;
-        el.className = `cls-display ${getCLSClass(score)}`;
+        if (score === null) {
+          el.innerHTML = `CLS: -.---`;
+        } else {
+          el.innerHTML = `CLS: <span class="${getCLSClass(score)}">${score.toFixed(3)}</span>`;
+        }
       }
     }
 
-    function startSimulation() {
-      timers.forEach(t => clearTimeout(t));
+    function resetViews() {
+      timers.forEach((t) => clearTimeout(t));
       timers = [];
-      
+      stage?.classList.add('scrubbing');
+
+      if (leapingArticle) leapingArticle.style.display = 'none';
+      if (stableArticle) stableArticle.style.display = 'none';
+
       // Reset states
       leapingBanner?.classList.remove('visible');
       leapingHeroWrapper?.classList.remove('visible');
       leapingHero?.classList.remove('visible');
       leapingSideWrapper?.classList.remove('visible');
       leapingSide?.classList.remove('visible');
-      leapingArticle?.classList.remove('font-shift');
+      leapingArticle?.classList.remove('title-shift', 'text-shift');
 
       stableBanner?.classList.remove('visible');
       stableHero?.classList.remove('visible');
       stableSide?.classList.remove('visible');
+
+      if (leapingProgress) {
+        leapingProgress.style.transition = 'none';
+        leapingProgress.style.width = '0%';
+      }
+      if (stableProgress) {
+        stableProgress.style.transition = 'none';
+        stableProgress.style.width = '0%';
+      }
+
+      updateCLS(leapingClsEl, null);
+      updateCLS(stableClsEl, null);
+    }
+
+    function startSimulation() {
+      timers.forEach((t) => clearTimeout(t));
+      timers = [];
+      stage?.classList.remove('scrubbing');
+
+      if (leapingArticle) leapingArticle.style.display = 'block';
+      if (stableArticle) stableArticle.style.display = 'block';
+
+      // Reset states
+      leapingBanner?.classList.remove('visible');
+      leapingHeroWrapper?.classList.remove('visible');
+      leapingHero?.classList.remove('visible');
+      leapingSideWrapper?.classList.remove('visible');
+      leapingSide?.classList.remove('visible');
+      leapingArticle?.classList.remove('title-shift', 'text-shift');
+
+      stableBanner?.classList.remove('visible');
+      stableHero?.classList.remove('visible');
+      stableSide?.classList.remove('visible');
+
+      // Reset placeholders
+      leapingBannerPlaceholder?.classList.remove('stable');
+      leapingHeroPlaceholder?.classList.remove('stable');
+      leapingSidePlaceholder?.classList.remove('stable');
+
+      // If activeShifts < threshold, the leaping side should behave stably (reserve space)
+      if (activeShifts < 3) leapingBannerPlaceholder?.classList.add('stable');
+      if (activeShifts < 4) leapingHeroPlaceholder?.classList.add('stable');
+      if (activeShifts < 5) leapingSidePlaceholder?.classList.add('stable');
 
       // Reset progress without animation
       if (leapingProgress) {
@@ -509,8 +618,8 @@ const description =
       }
 
       // Force reflow
-      void (leapingProgress?.offsetHeight);
-      void (stableProgress?.offsetHeight);
+      void leapingProgress?.offsetHeight;
+      void stableProgress?.offsetHeight;
 
       // Re-enable transition
       if (leapingProgress) leapingProgress.style.transition = '';
@@ -527,65 +636,116 @@ const description =
       };
 
       // 1. Initial Load
-      updateProgress(20);
+      updateProgress(10);
 
-      // 2. Top Banner (Shift if activeShifts >= 1)
-      timers.push(window.setTimeout(() => {
-        leapingBanner?.classList.add('visible');
-        stableBanner?.classList.add('visible');
-        updateProgress(40);
-        if (activeShifts >= 1) currentCls += 0.18; // 90px / 500px
-        updateCLS(leapingClsEl, currentCls);
-      }, loadDelay));
+      // 2. Title Font (Shift if activeShifts >= 1)
+      timers.push(
+        window.setTimeout(() => {
+          if (activeShifts >= 1) {
+            leapingArticle?.classList.add('title-shift');
+            currentCls += 0.01;
+          }
+          updateCLS(leapingClsEl, currentCls);
+          updateProgress(25);
+        }, loadDelay)
+      );
 
-      // 3. Hero Image (Shift if activeShifts >= 2)
-      timers.push(window.setTimeout(() => {
-        leapingHeroWrapper?.classList.add('visible');
-        leapingHero?.classList.add('visible');
-        stableHero?.classList.add('visible');
-        updateProgress(70);
-        if (activeShifts >= 2) currentCls += 0.36;
-        updateCLS(leapingClsEl, currentCls);
-      }, loadDelay + 500));
+      // 3. Text Font (Shift if activeShifts >= 2)
+      timers.push(
+        window.setTimeout(() => {
+          if (activeShifts >= 2) {
+            leapingArticle?.classList.add('text-shift');
+            currentCls += 0.03;
+          }
+          updateCLS(leapingClsEl, currentCls);
+          updateProgress(40);
+        }, loadDelay + 500)
+      );
 
-      // 4. Side Image (Shift if activeShifts >= 3)
-      timers.push(window.setTimeout(() => {
-        leapingSideWrapper?.classList.add('visible');
-        leapingSide?.classList.add('visible');
-        stableSide?.classList.add('visible');
-        updateProgress(90);
-        if (activeShifts >= 3) currentCls += 0.08;
-        updateCLS(leapingClsEl, currentCls);
-      }, loadDelay + 1000));
+      // 4. Top Banner (Shift if activeShifts >= 3)
+      timers.push(
+        window.setTimeout(() => {
+          leapingBanner?.classList.add('visible');
+          stableBanner?.classList.add('visible');
+          updateProgress(60);
+          if (activeShifts >= 3) {
+            // Impact: 1.0, Distance: 90/480 = 0.1875. Score: 0.188
+            currentCls += 0.188;
+          }
+          updateCLS(leapingClsEl, currentCls);
+        }, loadDelay + 1000)
+      );
 
-      // 5. Font Size (Shift if activeShifts >= 4)
-      timers.push(window.setTimeout(() => {
-        if (activeShifts >= 4) {
-          leapingArticle?.classList.add('font-shift');
-          currentCls += 0.22; // Increased from 0.15 to account for title shift
-        }
-        updateCLS(leapingClsEl, currentCls);
-        updateProgress(100);
-      }, loadDelay + 1500));
+      // 5. Hero Image (Shift if activeShifts >= 4)
+      timers.push(
+        window.setTimeout(() => {
+          leapingHeroWrapper?.classList.add('visible');
+          leapingHero?.classList.add('visible');
+          stableHero?.classList.add('visible');
+          updateProgress(80);
+          if (activeShifts >= 4) {
+            // Impact: 1.0, Distance: 180/480 = 0.375. Score: 0.375
+            currentCls += 0.375;
+          }
+          updateCLS(leapingClsEl, currentCls);
+        }, loadDelay + 1500)
+      );
+
+      // 6. Side Image (Shift if activeShifts >= 5)
+      timers.push(
+        window.setTimeout(() => {
+          leapingSideWrapper?.classList.add('visible');
+          leapingSide?.classList.add('visible');
+          stableSide?.classList.add('visible');
+          updateProgress(100);
+          if (activeShifts >= 5) {
+            // Localized shift. Score: 0.050
+            currentCls += 0.05;
+          }
+          updateCLS(leapingClsEl, currentCls);
+        }, loadDelay + 2000)
+      );
     }
 
     window.addEventListener('performance-update', (e: any) => {
-      activeShifts = e.detail.value;
+      resetViews();
+      
+      const val = e.detail.value;
+      const validSnaps = [0, 10, 40, 228, 603, 653];
+      // Snap to closest valid value
+      const snappedVal = validSnaps.reduce((prev, curr) => {
+        return Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev;
+      });
+
+      const targetCls = snappedVal / 1000;
+      
+      // Update scrubber UI to the snapped position
+      const scrubber = document.getElementById('cls-scrubber') as HTMLInputElement;
+      if (scrubber) scrubber.value = snappedVal.toString();
+
+      // Map CLS thresholds back to number of shifts
+      if (snappedVal >= 653) activeShifts = 5;
+      else if (snappedVal >= 603) activeShifts = 4;
+      else if (snappedVal >= 228) activeShifts = 3;
+      else if (snappedVal >= 40) activeShifts = 2;
+      else if (snappedVal >= 10) activeShifts = 1;
+      else activeShifts = 0;
+
       if (leapingNote) {
-        const clsStatus = activeShifts >= 3 ? 'fcp-poor' : (activeShifts >= 1 ? 'fcp-needs-improvement' : 'fcp-good');
+        const clsStatus =
+          activeShifts >= 4
+            ? 'fcp-poor'
+            : activeShifts >= 3
+              ? 'fcp-needs-improvement'
+              : 'fcp-good';
         leapingNote.innerHTML = `<span class="${clsStatus}">${activeShifts}</span> elements causing shifts.`;
       }
 
-      // Update the scrubber display to show actual CLS score
+      // Update the scrubber display to show actual target CLS score
       const scrubberValueEl = document.querySelector('.current-value');
       if (scrubberValueEl) {
-        let totalCls = 0;
-        if (activeShifts >= 1) totalCls += 0.18;
-        if (activeShifts >= 2) totalCls += 0.36;
-        if (activeShifts >= 3) totalCls += 0.08;
-        if (activeShifts >= 4) totalCls += 0.22;
-        scrubberValueEl.textContent = totalCls.toFixed(3);
-        scrubberValueEl.className = `current-value ${getCLSClass(totalCls)}`;
+        scrubberValueEl.textContent = targetCls.toFixed(3);
+        scrubberValueEl.className = `current-value ${getCLSClass(targetCls)}`;
       }
     });
 
@@ -600,9 +760,12 @@ const description =
     // Initial state for scrubber display
     const initialScrubberValue = document.querySelector('.current-value');
     if (initialScrubberValue) {
-      initialScrubberValue.textContent = '0.540';
-      initialScrubberValue.className = 'current-value fcp-poor';
+      initialScrubberValue.textContent = '0.228';
+      initialScrubberValue.className = 'current-value fcp-needs-improvement';
     }
+
+    // Initialize activeShifts based on default value (228 -> 0.228 -> 3 shifts)
+    activeShifts = 3;
 
     startSimulation();
   </script>

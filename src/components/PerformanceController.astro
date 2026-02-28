@@ -7,9 +7,10 @@ interface Props {
   label: string;
   unit?: string;
   id?: string;
+  list?: string;
 }
 
-const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubber" } = Astro.props;
+const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubber", list } = Astro.props;
 ---
 
 <div class="performance-controller">
@@ -27,6 +28,7 @@ const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubb
     step={step}
     value={defaultValue}
     data-unit={unit}
+    list={list}
   />
 </div>
 
