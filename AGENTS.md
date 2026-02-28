@@ -38,7 +38,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - **FCP Colorization:** The `{start}` value is color-coded by FCP thresholds: **Green** (≤1800ms), **Orange** (≤3000ms), and **Red** (>3000ms).
   - [ ] **Pending Fixes:**
     - [ ] **Timer Color Sync:** Ensure the "ms" unit and the arrow in the timer display share the same color-coding as the numeric value (Green/Orange/Red) during the rendering sequence.
-    - [ ] **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect to mimic low-bandwidth image decoding.
+    - [x] **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect to mimic low-bandwidth image decoding.
 
 - [x] **Exhibit 2: The Input Abyss (Input Latency).**
   - [x] **Concept:** Visceral experience of delayed interactive feedback (Input Delay).
@@ -102,7 +102,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 ## Implementation Guidelines
 
 - **Zero-Layout-Shift:** Initial HTML pre-rendered to prevent layout shifts.
-- **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect across all exhibits to mimic low-bandwidth image decoding.
+- [x] **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect across all exhibits to mimic low-bandwidth image decoding.
 - **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
 - **Loading Progress:** Animate loading bars according to actual asset download progress.
 - **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.

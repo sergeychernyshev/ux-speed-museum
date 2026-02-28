@@ -92,8 +92,8 @@ const description =
             </div>
             <div class="mock-article" id="stable-article" style="display: none;">
               <div class="stable-banner-placeholder">
-                <div class="late-banner visible" id="stable-banner">
-                  <img src="/shifty-ad.avif" alt="Leaderboard Ad" class="visible" />
+                <div class="late-banner" id="stable-banner">
+                  <img src="/shifty-ad.avif" alt="Leaderboard Ad" />
                 </div>
               </div>
               <div class="article-header">
@@ -102,8 +102,8 @@ const description =
                 <div class="article-meta">By J. Jank • 2 min read</div>
               </div>
               <div class="stable-hero-placeholder">
-                <div class="late-image-container visible" id="stable-hero-wrapper">
-                  <img src="/shifty-physics.avif" alt="Hero Image" class="late-image visible" id="stable-hero" />
+                <div class="late-image-container" id="stable-hero-wrapper">
+                  <img src="/shifty-physics.avif" alt="Hero Image" class="late-image" id="stable-hero" />
                 </div>
               </div>
               <div class="article-body">
@@ -117,8 +117,8 @@ const description =
                     </p>
                   </div>
                   <div class="stable-side-placeholder">
-                    <div class="side-image-wrapper visible" id="stable-side-wrapper">
-                      <img src="/shift-the-ad.avif" alt="Sidebar Ad" class="late-image side visible" id="stable-side" />
+                    <div class="side-image-wrapper" id="stable-side-wrapper">
+                      <img src="/shift-the-ad.avif" alt="Sidebar Ad" class="late-image side" id="stable-side" />
                     </div>
                   </div>
                 </div>
@@ -425,12 +425,63 @@ const description =
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: none;
+      clip-path: inset(0 0 100% 0);
     }
 
-    .late-banner.visible img,
-    .late-image.visible {
-      display: block;
+    /* Varied stutter patterns for different images */
+    .late-banner.visible img {
+      animation: stutter-banner 1.2s linear forwards;
+    }
+
+    .late-image-container.visible .late-image {
+      animation: stutter-hero 2s linear forwards;
+    }
+
+    .side-image-wrapper.visible .late-image {
+      animation: stutter-side 1.5s linear forwards;
+    }
+
+    @keyframes stutter-banner {
+      0% { clip-path: inset(0 0 100% 0); }
+      15% { clip-path: inset(0 0 95% 0); }
+      25% { clip-path: inset(0 0 85% 0); }
+      40% { clip-path: inset(0 0 80% 0); }
+      55% { clip-path: inset(0 0 40% 0); }
+      70% { clip-path: inset(0 0 35% 0); }
+      85% { clip-path: inset(0 0 10% 0); }
+      100% { clip-path: inset(0 0 0% 0); }
+    }
+
+    @keyframes stutter-hero {
+      0% { clip-path: inset(0 0 100% 0); }
+      10% { clip-path: inset(0 0 98% 0); }
+      20% { clip-path: inset(0 0 92% 0); }
+      30% { clip-path: inset(0 0 88% 0); }
+      40% { clip-path: inset(0 0 55% 0); }
+      50% { clip-path: inset(0 0 52% 0); }
+      60% { clip-path: inset(0 0 48% 0); }
+      75% { clip-path: inset(0 0 20% 0); }
+      85% { clip-path: inset(0 0 18% 0); }
+      95% { clip-path: inset(0 0 5% 0); }
+      100% { clip-path: inset(0 0 0% 0); }
+    }
+
+    @keyframes stutter-side {
+      0% { clip-path: inset(0 0 100% 0); }
+      10% { clip-path: inset(0 0 95% 0); }
+      20% { clip-path: inset(0 0 90% 0); }
+      35% { clip-path: inset(0 0 85% 0); }
+      50% { clip-path: inset(0 0 45% 0); }
+      65% { clip-path: inset(0 0 40% 0); }
+      80% { clip-path: inset(0 0 15% 0); }
+      90% { clip-path: inset(0 0 10% 0); }
+      100% { clip-path: inset(0 0 0% 0); }
+    }
+
+    :global(.scrubbing) .late-banner img,
+    :global(.scrubbing) .late-image {
+      animation: none !important;
+      clip-path: inset(0 0 100% 0) !important;
     }
 
     /* Font Size Shift */
@@ -466,7 +517,9 @@ const description =
     
     // Stable Elements
     const stableBanner = document.getElementById('stable-banner');
+    const stableHeroWrapper = document.getElementById('stable-hero-wrapper');
     const stableHero = document.getElementById('stable-hero');
+    const stableSideWrapper = document.getElementById('stable-side-wrapper');
     const stableSide = document.getElementById('stable-side');
 
     // Leaping Placeholders
@@ -554,7 +607,9 @@ const description =
       leapingArticle?.classList.remove('title-shift', 'text-shift');
 
       stableBanner?.classList.remove('visible');
+      stableHeroWrapper?.classList.remove('visible');
       stableHero?.classList.remove('visible');
+      stableSideWrapper?.classList.remove('visible');
       stableSide?.classList.remove('visible');
 
       // Reset placeholders
@@ -640,6 +695,7 @@ const description =
         window.setTimeout(() => {
           leapingHeroWrapper?.classList.add('visible');
           leapingHero?.classList.add('visible');
+          stableHeroWrapper?.classList.add('visible');
           stableHero?.classList.add('visible');
           updateProgress(80);
           if (activeShifts >= 4) {
@@ -654,6 +710,7 @@ const description =
         window.setTimeout(() => {
           leapingSideWrapper?.classList.add('visible');
           leapingSide?.classList.add('visible');
+          stableSideWrapper?.classList.add('visible');
           stableSide?.classList.add('visible');
           updateProgress(100);
           if (activeShifts >= 5) {
