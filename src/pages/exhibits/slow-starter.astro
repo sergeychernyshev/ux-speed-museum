@@ -361,6 +361,7 @@ const description =
       // Update scrubber display color manually
       const scrubberValueEl = document.querySelector('.current-value');
       if (scrubberValueEl) {
+        scrubberValueEl.textContent = `${throttledDelay}ms`;
         scrubberValueEl.className = `current-value ${getFCPClass(throttledDelay)}`;
       }
     });
