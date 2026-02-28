@@ -1,0 +1,447 @@
+---
+import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
+import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import PerformanceController from '../../components/PerformanceController.astro';
+
+const title = 'The Input Abyss';
+const description = `
+  <p>Interactivity is the conversation between a user and an interface. When that conversation has a delay, the experience feels broken, sluggish, or unresponsive. This exhibit demonstrates <strong>Input Delay</strong>—the time between a user action (like a click or keypress) and the visual feedback from the system.</p>
+  
+  <p>It is measured using an <a href="https://web.dev/articles/inp" target="_blank" rel="noopener">Interaction to Next Paint</a> metric. First row of controls corresponds to <span class="fcp-good">"good"</span> range of the metric (≤ 200ms), second row corresponds to <span class="fcp-needs-improvement">"needs improvement"</span> range (≤ 500ms), and third row corresponds to <span class="fcp-poor">"poor"</span> range (> 500ms).</p>
+  
+  <p>Experience how even small latencies (over 100ms) start to erode the feeling of direct control. Feel how infuriating it becomes as you move into "poor" range. Notice how different input elements (buttons, text inputs and checkboxes) feel when visual feedback is delayed.</p>
+`;
+
+// Row 1: 0, 50, 100, 150, 200
+const rowA = [0, 50, 100, 150, 200];
+// Row 2: 260, 320, 380, 440, 500
+const rowB = [260, 320, 380, 440, 500];
+// Row 3: 800, 1100, 1400, 1700, 2000
+const rowC = [800, 1100, 1400, 1700, 2000];
+const allSteps = [...rowA, ...rowB, ...rowC];
+
+function getINPStatus(ms: number) {
+  if (ms <= 200) return 'good';
+  if (ms <= 500) return 'warn';
+  return 'poor';
+}
+---
+
+<ExhibitLayout title={title} image="/input-abyss.webp">
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
+
+  <div class="exhibit-stage">
+    <div class="input-gallery">
+      <div class="button-grid">
+        {
+          allSteps.map((latency) => (
+            <div class="button-card" data-latency={latency}>
+              <span class="latency-label" data-status={getINPStatus(latency)}>
+                {latency}ms
+              </span>
+              <button class="test-button" data-latency={latency}>
+                <span class="counter">👍</span>
+              </button>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="input-gallery">
+      <div class="button-grid">
+        {
+          allSteps.map((latency) => (
+            <div class="button-card input-matrix-card" data-latency={latency}>
+              <span class="latency-label" data-status={getINPStatus(latency)}>
+                {latency}ms
+              </span>
+              <div class="matrix-input-wrapper">
+                <input
+                  type="text"
+                  class="matrix-test-input"
+                  data-latency={latency}
+                  placeholder="Type..."
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="input-gallery">
+      <div class="button-grid">
+        {
+          allSteps.map((latency) => (
+            <div
+              class="button-card checkbox-matrix-card"
+              data-latency={latency}
+            >
+              <span class="latency-label" data-status={getINPStatus(latency)}>
+                {latency}ms
+              </span>
+              <div class="matrix-checkbox-wrapper">
+                <input
+                  type="checkbox"
+                  class="matrix-test-checkbox"
+                  data-latency={latency}
+                  checked
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="controls-overlay">
+      <PerformanceController
+        min={0}
+        max={2000}
+        step={10}
+        defaultValue={380}
+        label="Simulated Input Delay"
+        unit="ms"
+      />
+    </div>
+  </div>
+
+  <style>
+    .exhibit-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-gallery {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .gallery-header {
+      text-align: center;
+    }
+
+    .panel-note {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .button-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease-out;
+      opacity: 0.6;
+      background: var(--sidebar-bg);
+    }
+
+    .button-card.active {
+      opacity: 1;
+      border-color: var(--accent-color);
+      border-width: 2px;
+      margin: -1px; /* Offset border width to prevent layout shift */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .latency-label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      font-family: monospace;
+      color: var(--muted-text);
+      opacity: 0.7;
+    }
+
+    .button-card.active .latency-label {
+      opacity: 1;
+    }
+
+    .button-card.active .latency-label[data-status='good'] {
+      color: #2fb344;
+    }
+
+    .button-card.active .latency-label[data-status='warn'] {
+      color: #f59f00;
+    }
+
+    .button-card.active .latency-label[data-status='poor'] {
+      color: #d63939;
+    }
+
+    .test-button {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0.4rem 0.5rem;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.2s;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .test-button.clicked {
+      /* No color or scale change during wait */
+    }
+
+    .matrix-input-wrapper {
+      width: 100%;
+    }
+
+    .matrix-test-input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--text-color);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .matrix-test-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .matrix-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+    }
+
+    .matrix-test-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .controls-overlay {
+      position: sticky;
+      bottom: 2rem;
+      z-index: 100;
+    }
+  </style>
+
+  <script>
+    let currentLatency = 380;
+    const buttons = document.querySelectorAll('.test-button');
+    const cards = document.querySelectorAll('.button-card');
+    const matrixInput = document.getElementById(
+      'matrix-input'
+    ) as HTMLInputElement;
+    const matrixEcho = document.getElementById('matrix-echo');
+
+    function updateHighlight() {
+      let minDiff = Infinity;
+
+      // First find the minimum difference
+      cards.forEach((card) => {
+        const latency = parseInt(card.getAttribute('data-latency') || '0');
+        const diff = Math.abs(latency - currentLatency);
+        if (diff < minDiff) {
+          minDiff = diff;
+        }
+      });
+
+      // Then highlight all cards that share this minDiff
+      cards.forEach((card) => {
+        const latency = parseInt(card.getAttribute('data-latency') || '0');
+        const diff = Math.abs(latency - currentLatency);
+        if (diff === minDiff) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+    }
+
+    cards.forEach((card) => {
+      const latency = parseInt(card.getAttribute('data-latency') || '0');
+
+      card.addEventListener('click', (e) => {
+        // Only trigger if we didn't click an interactive element directly
+        // (to avoid double sync or interfering with button/checkbox logic)
+        const target = e.target as HTMLElement;
+        if (
+          target.tagName !== 'BUTTON' &&
+          target.tagName !== 'INPUT' &&
+          !target.closest('button') &&
+          !target.closest('input')
+        ) {
+          currentLatency = latency;
+          const scrubber = document.querySelector(
+            'input[type="range"]'
+          ) as HTMLInputElement;
+          if (scrubber) {
+            scrubber.value = latency.toString();
+            scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+          updateHighlight();
+        }
+      });
+    });
+
+    const emojis = ['👍', '💖', '🚀', '🎉', '🤩'];
+
+    buttons.forEach((btn) => {
+      let currentIndex = 0;
+      const latency = parseInt(btn.getAttribute('data-latency') || '0');
+      const counterEl = btn.querySelector('.counter');
+
+      btn.addEventListener('click', () => {
+        btn.classList.add('clicked');
+
+        // 1. Update global latency immediately
+        currentLatency = latency;
+
+        // 2. Update the scrubber (PerformanceController)
+        const scrubber = document.querySelector(
+          'input[type="range"]'
+        ) as HTMLInputElement;
+        if (scrubber) {
+          scrubber.value = latency.toString();
+          scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+          scrubber.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        // 3. Move the highlight
+        updateHighlight();
+
+        // 4. Action delay (Emoji cycle)
+        setTimeout(() => {
+          currentIndex = (currentIndex + 1) % emojis.length;
+          if (counterEl) counterEl.textContent = emojis[currentIndex];
+          btn.classList.remove('clicked');
+        }, latency);
+      });
+    });
+
+    matrixInput?.addEventListener('input', (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const val = target.value;
+
+      // Typing uses the CURRENT global latency from the scrubber
+      const latencyToUse = currentLatency;
+
+      setTimeout(() => {
+        if (matrixEcho) matrixEcho.textContent = val;
+      }, latencyToUse);
+    });
+
+    const matrixInputs = document.querySelectorAll(
+      '.matrix-test-input'
+    ) as NodeListOf<HTMLInputElement>;
+
+    matrixInputs.forEach((input) => {
+      const latency = parseInt(input.getAttribute('data-latency') || '0');
+      let displayValue = '';
+
+      const syncState = () => {
+        currentLatency = latency;
+        const scrubber = document.querySelector(
+          'input[type="range"]'
+        ) as HTMLInputElement;
+        if (scrubber) {
+          scrubber.value = latency.toString();
+          scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        updateHighlight();
+      };
+
+      input.addEventListener('focus', syncState);
+
+      input.addEventListener('input', (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        const actualValue = target.value;
+
+        // Immediately revert to the last confirmed "display" value
+        // to hide the character that the browser just inserted.
+        target.value = displayValue;
+
+        // Sync scrubber and highlight
+        syncState();
+
+        // Delay the update of the visible value
+        setTimeout(() => {
+          displayValue = actualValue;
+          target.value = displayValue;
+        }, latency);
+      });
+    });
+
+    const matrixCheckboxes = document.querySelectorAll(
+      '.matrix-test-checkbox'
+    ) as NodeListOf<HTMLInputElement>;
+
+    matrixCheckboxes.forEach((checkbox) => {
+      const latency = parseInt(checkbox.getAttribute('data-latency') || '0');
+
+      const syncState = () => {
+        currentLatency = latency;
+        const scrubber = document.querySelector(
+          'input[type="range"]'
+        ) as HTMLInputElement;
+        if (scrubber) {
+          scrubber.value = latency.toString();
+          scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        updateHighlight();
+      };
+
+      checkbox.addEventListener('focus', syncState);
+
+      checkbox.addEventListener('click', (e: MouseEvent) => {
+        // Prevent immediate state change
+        e.preventDefault();
+
+        syncState();
+
+        setTimeout(() => {
+          // Manually toggle after latency
+          checkbox.checked = !checkbox.checked;
+        }, latency);
+      });
+    });
+
+    window.addEventListener('performance-update', (e: any) => {
+      currentLatency = e.detail.value;
+      updateHighlight();
+    });
+
+    // Initial state
+    updateHighlight();
+  </script>
+</ExhibitLayout>

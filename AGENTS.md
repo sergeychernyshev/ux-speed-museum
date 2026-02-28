@@ -4,20 +4,18 @@ This document outlines the architectural strategy and implementation phases for 
 
 ## Architectural Vision
 
-The application is built as a multi-page site using Astro in **SSR (Server-Side Rendering) mode**. This allows the server to read user preference cookies and render the initial HTML accordingly, ensuring a zero-layout-shift (CLS) experience. Each exhibit is a self-contained page where all potential states (hidden or visible) are pre-rendered.
+The application is built as a multi-page site using Astro in **Static Site Generation (SSG) mode**. Each exhibit is a self-contained page where all potential states (hidden or visible) are pre-rendered.
 
 ### Navigation & Loading Strategy
 
 - **Custom Domain:** The project is hosted on `museum.uxspeed.dev`.
 - **Pre-fetch on Intent:** Use Astro's pre-fetching mechanisms (hover/tap) to warm up the browser cache.
 - **The Preparation Shield:** An inline component positioned under the exhibit description that shows a "preparing your experience" state until all resources are ready.
-- **State Persistence:** User preferences are stored in cookies and applied during server-side rendering.
 
 ## Phase 1: Foundation (Scaffolding)
 
-- [x] Initialize Astro + TypeScript project (**Cloudflare Workers SSR mode**).
+- [x] Initialize Astro + TypeScript project (**Static Site Generation mode**).
 - [x] Establish a "Vanilla CSS" design system with **Light and Dark mode** support.
-- [x] Implement cookie-based preference management.
 - [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
 - [x] Implement the `ExhibitDescription` component (Static text only).
 - [x] Implement the `PerformanceController` component for real-time manipulation.
@@ -38,9 +36,19 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
     - **FCP Colorization:** The `{start}` value is color-coded by FCP thresholds: **Green** (≤1800ms), **Orange** (≤3000ms), and **Red** (>3000ms).
 
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
-  - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
-  - [ ] Implementation: Display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
-  - [ ] Scrubbing logic: Use the scrubber to highlight/enable the input corresponding to the chosen latency level.
+  - **Concept:** Visceral experience of delayed interactive feedback (Input Delay).
+  - **Fast Side:** Fixed **0ms** latency (Instant feedback).
+  - **Slow Side:** Controllable "**Input Latency**" (0-2000ms) via scrubber.
+  - **Input Types:**
+    - **Buttons:** Visual "pressed" state and action completion (e.g., counter increment).
+    - **Text Fields:** Delayed character appearance while typing.
+    - **Checkboxes/Radios:** Delayed toggle state change.
+  - **Visuals:** 
+    - Real-time interaction timers showing `{latency}ms`.
+    - Ghosting or "pending" states to indicate the input was received but not yet processed.
+    - Side-by-side comparison layout following Exhibit 1's pattern.
+  - **Interactivity:** Fully interactive elements on both sides to compare the "feel" of lag.
+  - **Thresholds:** Latency color-coded: **Green** (≤100ms), **Orange** (≤300ms), **Red** (>300ms) based on standard response time perceptions.
 
 - [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
 - [ ] **Exhibit 4: Layout Shift.** A news-style layout demonstrating CLS via delayed asset loading.
@@ -58,7 +66,7 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
 
 ## Implementation Guidelines
 
-- **Zero-Layout-Shift SSR:** Initial HTML rendered based on cookies to prevent shifts.
+- **Zero-Layout-Shift:** Initial HTML pre-rendered to prevent layout shifts.
 - **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
 - **Loading Progress:** Animate loading bars according to actual asset download progress.
 - **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.
