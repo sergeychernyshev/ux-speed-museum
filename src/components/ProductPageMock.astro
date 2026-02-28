@@ -113,13 +113,13 @@ const { id } = Astro.props;
     clip-path: inset(0 0 100% 0);
   }
 
-  /* Different stutter patterns */
+  /* Different stutter patterns with jerky jumps */
   #throttled-page .product-image.painted {
-    animation: stutter-1 1.8s linear forwards;
+    animation: stutter-1 1.17s steps(1, end) forwards;
   }
 
   #optimized-page .product-image.painted {
-    animation: stutter-2 1.2s linear forwards;
+    animation: stutter-2 0.78s steps(1, end) forwards;
   }
 
   @keyframes stutter-1 {

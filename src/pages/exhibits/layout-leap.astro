@@ -428,17 +428,17 @@ const description =
       clip-path: inset(0 0 100% 0);
     }
 
-    /* Varied stutter patterns for different images */
+    /* Varied stutter patterns for different images with discrete jumps */
     .late-banner.visible img {
-      animation: stutter-banner 1.2s linear forwards;
+      animation: stutter-banner 0.78s steps(1, end) forwards;
     }
 
     .late-image-container.visible .late-image {
-      animation: stutter-hero 2s linear forwards;
+      animation: stutter-hero 1.3s steps(1, end) forwards;
     }
 
     .side-image-wrapper.visible .late-image {
-      animation: stutter-side 1.5s linear forwards;
+      animation: stutter-side 0.98s steps(1, end) forwards;
     }
 
     @keyframes stutter-banner {
@@ -763,7 +763,7 @@ const description =
       }
 
       // Update the scrubber display to show actual target CLS score
-      const scrubberValueEl = document.querySelector('.current-value');
+      const scrubberValueEl = document.getElementById('cls-scrubber-value');
       if (scrubberValueEl) {
         scrubberValueEl.textContent = targetCls.toFixed(3);
         scrubberValueEl.className = `current-value ${getCLSClass(targetCls)}`;
@@ -777,14 +777,16 @@ const description =
     });
 
     window.addEventListener('performance-replay', () => {
+      resetViews();
       startSimulation();
     });
 
     // Initial state for scrubber display
-    const initialScrubberValue = document.querySelector('.current-value');
+    const initialScrubberValue = document.getElementById('cls-scrubber-value');
     if (initialScrubberValue) {
-      initialScrubberValue.textContent = '0.178';
-      initialScrubberValue.className = 'current-value fcp-needs-improvement';
+      const initialCls = 0.178;
+      initialScrubberValue.textContent = initialCls.toFixed(3);
+      initialScrubberValue.className = `current-value ${getCLSClass(initialCls)}`;
     }
 
     // Initialize activeShifts based on default value (178 -> 0.178 -> 3 shifts)

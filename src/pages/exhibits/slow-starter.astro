@@ -187,8 +187,8 @@ const description =
       color: var(--accent-color);
       background: var(--card-bg);
       padding: 0.25rem 0.75rem;
-      width: max-content;
-      text-align: left;
+      min-width: 12rem; /* Stable width for the transition text */
+      font-variant-numeric: tabular-nums;
       opacity: 1;
       transition: opacity 0.2s;
       border: 1px solid var(--border-color);
@@ -198,6 +198,9 @@ const description =
       margin-bottom: 0;
       position: relative;
       z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .timer-display.hidden {
@@ -256,8 +259,14 @@ const description =
         });
       });
 
-      if (optProgress) optProgress.style.width = '0%';
-      if (thrProgress) thrProgress.style.width = '0%';
+      if (optProgress) {
+        optProgress.style.transition = 'none';
+        optProgress.style.width = '0%';
+      }
+      if (thrProgress) {
+        thrProgress.style.transition = 'none';
+        thrProgress.style.width = '0%';
+      }
 
       // Hide timers instead of resetting text
       optTimer?.classList.add('hidden');
@@ -297,6 +306,14 @@ const description =
       optFinished = false;
       thrFinished = false;
 
+      // Force reflow to ensure 0% width is applied without transition
+      void optProgress?.offsetHeight;
+      void thrProgress?.offsetHeight;
+
+      // Re-enable transition
+      if (optProgress) optProgress.style.transition = '';
+      if (thrProgress) thrProgress.style.transition = '';
+
       // Reveal and initialize timers
       if (optTimer) {
         optTimer.textContent = '0ms';
@@ -309,13 +326,13 @@ const description =
 
       rafId = requestAnimationFrame(updateTimers);
 
-      // Start Optimized sequence
-      runSequence(optPage, optProgress, OPTIMIZED_BASE, () => {
+      // Start Optimized sequence (no event dispatch)
+      runSequence(optPage, optProgress, OPTIMIZED_BASE, false, () => {
         optFinished = true;
       });
 
-      // Start Throttled sequence
-      runSequence(thrPage, thrProgress, throttledDelay, () => {
+      // Start Throttled sequence (triggers REPLAY button visibility)
+      runSequence(thrPage, thrProgress, throttledDelay, true, () => {
         thrFinished = true;
       });
     }
@@ -324,6 +341,7 @@ const description =
       page: HTMLElement | null,
       progress: HTMLElement | null,
       startDelay: number,
+      dispatchEnd: boolean = false,
       onComplete?: () => void
     ) {
       if (!page) return;
@@ -363,12 +381,14 @@ const description =
           if (index === steps.length - 1) {
             if (onComplete) onComplete();
             
-            // Re-dispatch update-end for controller visibility
-            window.dispatchEvent(
-              new CustomEvent('performance-update-end', {
-                detail: { value: throttledDelay },
-              })
-            );
+            // Re-dispatch update-end ONLY if requested (for throttled side)
+            if (dispatchEnd) {
+              window.dispatchEvent(
+                new CustomEvent('performance-update-end', {
+                  detail: { value: throttledDelay },
+                })
+              );
+            }
           }
         }, accumulatedDelay);
 
@@ -384,7 +404,7 @@ const description =
         thrNote.innerHTML = `Starts rendering at <span class="${getFCPClass(throttledDelay)}">${throttledDelay}ms</span>.`;
 
       // Update scrubber display color manually
-      const scrubberValueEl = document.querySelector('.current-value');
+      const scrubberValueEl = document.getElementById('performance-scrubber-value');
       if (scrubberValueEl) {
         scrubberValueEl.textContent = `${throttledDelay}ms`;
         scrubberValueEl.className = `current-value ${getFCPClass(throttledDelay)}`;
@@ -398,10 +418,18 @@ const description =
     });
 
     window.addEventListener('performance-replay', () => {
+      resetViews();
+      // Small delay to allow reset classes to propagate if needed, or just call start
       startRendering();
     });
 
     // Initial run
+    const initialScrubberValue = document.getElementById('performance-scrubber-value');
+    if (initialScrubberValue) {
+      initialScrubberValue.textContent = `${throttledDelay}ms`;
+      initialScrubberValue.className = `current-value ${getFCPClass(throttledDelay)}`;
+    }
+
     startRendering();
   </script>
 </ExhibitLayout>

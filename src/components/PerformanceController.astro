@@ -37,7 +37,7 @@ const {
       }
     </div>
     <span class="value-display" id={`${id}-display`}>
-      <span class="current-value">{defaultValue}{unit}</span>
+      <span class="current-value" id={`${id}-value`}>{defaultValue}{unit}</span>
     </span>
   </div>
   <input
@@ -146,13 +146,20 @@ const {
     const replayBtn = container.querySelector('.replay-btn');
     const unit = scrubber?.getAttribute('data-unit') || '';
 
+    let isInteracting = false;
+
+    scrubber?.addEventListener('pointerdown', () => {
+      isInteracting = true;
+    });
+
     scrubber?.addEventListener('input', (e) => {
       const value = (e.target as HTMLInputElement).value;
       if (valueDisplay) valueDisplay.textContent = `${value}${unit}`;
 
-      // Disable replay while scrubbing/playing
+      // Disable and hide replay while scrubbing/playing
       if (replayBtn) {
         (replayBtn as HTMLButtonElement).disabled = true;
+        (replayBtn as HTMLElement).style.visibility = 'hidden';
       }
 
       // Dispatch custom event for exhibit to listen to (scrubbing)
@@ -163,15 +170,25 @@ const {
       );
     });
 
-    scrubber?.addEventListener('change', (e) => {
-      const value = (e.target as HTMLInputElement).value;
+    // Use pointerup as the single source of truth for "release"
+    scrubber?.addEventListener('pointerup', (e) => {
+      if (isInteracting) {
+        window.dispatchEvent(
+          new CustomEvent('performance-update-end', {
+            detail: { 
+              value: parseInt((e.target as HTMLInputElement).value), 
+              id: scrubber.id, 
+              source: 'scrubber' 
+            },
+          })
+        );
+        isInteracting = false;
+      }
+    });
 
-      // Dispatch completion event (released)
-      window.dispatchEvent(
-        new CustomEvent('performance-update-end', {
-          detail: { value: parseInt(value), id: scrubber.id, source: 'scrubber' },
-        })
-      );
+    // Backup for cases where pointerup might be missed (e.g. mouse leaves window)
+    window.addEventListener('pointerup', () => {
+      isInteracting = false;
     });
 
     replayBtn?.addEventListener('click', () => {
@@ -186,8 +203,9 @@ const {
     });
 
     // Listen for completion to show/enable button
-    window.addEventListener('performance-update-end', () => {
-      if (replayBtn) {
+    window.addEventListener('performance-update-end', (e: any) => {
+      // Only show button if the event comes from a simulation completion, not scrubber release
+      if (replayBtn && e.detail?.source !== 'scrubber') {
         (replayBtn as HTMLElement).style.visibility = 'visible';
         (replayBtn as HTMLButtonElement).disabled = false;
       }

@@ -258,6 +258,13 @@ function getINPStatus(ms: number) {
 
   <script>
     let currentLatency = 380;
+
+    function getINPStatus(ms: number) {
+      if (ms <= 200) return 'good';
+      if (ms <= 500) return 'warn';
+      return 'poor';
+    }
+
     const buttons = document.querySelectorAll('.test-button');
     const cards = document.querySelectorAll('.button-card');
     const matrixInput = document.getElementById(
@@ -442,7 +449,7 @@ function getINPStatus(ms: number) {
       updateHighlight();
 
       // Update scrubber display color
-      const scrubberValueEl = document.querySelector('.current-value');
+      const scrubberValueEl = document.getElementById('performance-scrubber-value');
       if (scrubberValueEl) {
         const status = getINPStatus(currentLatency);
         const className = status === 'good' ? 'fcp-good' : (status === 'warn' ? 'fcp-needs-improvement' : 'fcp-poor');
@@ -457,6 +464,13 @@ function getINPStatus(ms: number) {
     });
 
     // Initial state
+    const initialScrubberValue = document.getElementById('performance-scrubber-value');
+    if (initialScrubberValue) {
+      const status = getINPStatus(currentLatency);
+      const className = status === 'good' ? 'fcp-good' : (status === 'warn' ? 'fcp-needs-improvement' : 'fcp-poor');
+      initialScrubberValue.className = `current-value ${className}`;
+    }
+
     updateHighlight();
   </script>
 </ExhibitLayout>
