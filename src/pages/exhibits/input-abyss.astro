@@ -61,6 +61,24 @@ function getINPStatus(ms: number) {
       </div>
     </div>
 
+    <div class="input-gallery">
+      <div class="button-grid">
+        {allSteps.map((latency) => (
+          <div class="button-card checkbox-matrix-card" data-latency={latency}>
+            <span class="latency-label" data-status={getINPStatus(latency)}>{latency}ms</span>
+            <div class="matrix-checkbox-wrapper">
+              <input 
+                type="checkbox" 
+                class="matrix-test-checkbox" 
+                data-latency={latency}
+                checked
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
     <div class="controls-overlay">
       <PerformanceController
         min={0}
@@ -197,6 +215,19 @@ function getINPStatus(ms: number) {
       border-color: var(--accent-color);
     }
 
+    .matrix-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+    }
+
+    .matrix-test-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
     .controls-overlay {
       position: sticky;
       bottom: 2rem;
@@ -313,6 +344,36 @@ function getINPStatus(ms: number) {
         setTimeout(() => {
           displayValue = actualValue;
           target.value = displayValue;
+        }, latency);
+      });
+    });
+
+    const matrixCheckboxes = document.querySelectorAll('.matrix-test-checkbox') as NodeListOf<HTMLInputElement>;
+
+    matrixCheckboxes.forEach(checkbox => {
+      const latency = parseInt(checkbox.getAttribute('data-latency') || '0');
+      
+      const syncState = () => {
+        currentLatency = latency;
+        const scrubber = document.querySelector('input[type="range"]') as HTMLInputElement;
+        if (scrubber) {
+          scrubber.value = latency.toString();
+          scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        updateHighlight();
+      };
+
+      checkbox.addEventListener('focus', syncState);
+
+      checkbox.addEventListener('click', (e: MouseEvent) => {
+        // Prevent immediate state change
+        e.preventDefault();
+        
+        syncState();
+
+        setTimeout(() => {
+          // Manually toggle after latency
+          checkbox.checked = !checkbox.checked;
         }, latency);
       });
     });
