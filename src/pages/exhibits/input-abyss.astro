@@ -43,11 +43,21 @@ function getINPStatus(ms: number) {
       </div>
     </div>
 
-    <div class="input-gallery typing-section">
-      <div class="input-test-area">
-        <label for="matrix-input">Type here (Current Latency):</label>
-        <input type="text" id="matrix-input" placeholder="Feel the typing lag..." />
-        <div class="echo-display" id="matrix-echo"></div>
+    <div class="input-gallery">
+      <div class="button-grid">
+        {allSteps.map((latency) => (
+          <div class="button-card input-matrix-card" data-latency={latency}>
+            <span class="latency-label" data-status={getINPStatus(latency)}>{latency}ms</span>
+            <div class="matrix-input-wrapper">
+              <input 
+                type="text" 
+                class="matrix-test-input" 
+                data-latency={latency} 
+                placeholder="Type..."
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -111,6 +121,7 @@ function getINPStatus(ms: number) {
       border: 1px solid transparent;
       transition: all 0.2s ease-out;
       opacity: 0.6;
+      background: var(--sidebar-bg);
     }
 
     .button-card.active {
@@ -118,7 +129,6 @@ function getINPStatus(ms: number) {
       border-color: var(--accent-color);
       border-width: 2px;
       margin: -1px; /* Offset border width to prevent layout shift */
-      background: var(--sidebar-bg);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
@@ -167,48 +177,24 @@ function getINPStatus(ms: number) {
       /* No color or scale change during wait */
     }
 
-    .typing-section {
+    .matrix-input-wrapper {
       width: 100%;
-      max-width: 600px;
     }
 
-    .input-test-area {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .input-test-area label {
-      font-size: 0.8rem;
-      color: var(--muted-text);
-    }
-
-    .input-test-area input {
-      width: 100%;
-      padding: 1rem;
-      border: 2px solid var(--border-color);
-      border-radius: 8px;
-      background: var(--card-bg);
-      color: var(--text-color);
-      font-size: 1.1rem;
-      transition: border-color 0.2s;
-    }
-
-    .input-test-area input:focus {
-      outline: none;
-      border-color: var(--accent-color);
-    }
-
-    .echo-display {
-      min-height: 2rem;
-      font-size: 1.25rem;
-      font-family: monospace;
-      color: var(--accent-color);
-      word-break: break-all;
-      text-align: left;
+    .matrix-test-input {
       width: 100%;
       padding: 0.5rem;
+      border: 1px solid var(--text-color);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .matrix-test-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
     }
 
     .controls-overlay {
@@ -226,20 +212,27 @@ function getINPStatus(ms: number) {
     const matrixEcho = document.getElementById('matrix-echo');
 
     function updateHighlight() {
-      let closestCard = cards[0];
       let minDiff = Infinity;
 
+      // First find the minimum difference
       cards.forEach(card => {
         const latency = parseInt(card.getAttribute('data-latency') || '0');
         const diff = Math.abs(latency - currentLatency);
-        card.classList.remove('active');
         if (diff < minDiff) {
           minDiff = diff;
-          closestCard = card;
         }
       });
 
-      closestCard.classList.add('active');
+      // Then highlight all cards that share this minDiff
+      cards.forEach(card => {
+        const latency = parseInt(card.getAttribute('data-latency') || '0');
+        const diff = Math.abs(latency - currentLatency);
+        if (diff === minDiff) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
     }
 
     const emojis = ['👍', '💖', '🚀', '🎉', '🤩'];
@@ -285,6 +278,43 @@ function getINPStatus(ms: number) {
       setTimeout(() => {
         if (matrixEcho) matrixEcho.textContent = val;
       }, latencyToUse);
+    });
+
+    const matrixInputs = document.querySelectorAll('.matrix-test-input') as NodeListOf<HTMLInputElement>;
+
+    matrixInputs.forEach(input => {
+      const latency = parseInt(input.getAttribute('data-latency') || '0');
+      let displayValue = "";
+
+      const syncState = () => {
+        currentLatency = latency;
+        const scrubber = document.querySelector('input[type="range"]') as HTMLInputElement;
+        if (scrubber) {
+          scrubber.value = latency.toString();
+          scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        updateHighlight();
+      };
+
+      input.addEventListener('focus', syncState);
+      
+      input.addEventListener('input', (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        const actualValue = target.value;
+        
+        // Immediately revert to the last confirmed "display" value 
+        // to hide the character that the browser just inserted.
+        target.value = displayValue;
+
+        // Sync scrubber and highlight
+        syncState();
+
+        // Delay the update of the visible value
+        setTimeout(() => {
+          displayValue = actualValue;
+          target.value = displayValue;
+        }, latency);
+      });
     });
 
     window.addEventListener('performance-update', (e: any) => {
