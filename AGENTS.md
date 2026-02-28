@@ -34,6 +34,9 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - **Visuals:** Rendering progress bars and dual-value millisecond timers. Timers are styled as bordered tabs sitting flush against the top of each experience frame (no gap) and are left-aligned.
     - **Timer Format:** Before rendering: `{current}ms`. After rendering starts: `{start} → {current}ms`. The arrow uses standard text color.
     - **FCP Colorization:** The `{start}` value is color-coded by FCP thresholds: **Green** (≤1800ms), **Orange** (≤3000ms), and **Red** (>3000ms).
+  - [ ] **Pending Fixes:**
+    - [ ] **Timer Color Sync:** Ensure the "ms" unit and the arrow in the timer display share the same color-coding as the numeric value (Green/Orange/Red) during the rendering sequence.
+    - [ ] **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect to mimic low-bandwidth image decoding.
 
 - [x] **Exhibit 2: The Input Abyss (Input Latency).**
   - [x] **Concept:** Visceral experience of delayed interactive feedback (Input Delay).
@@ -59,8 +62,29 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Leaping Side:** Content jumps as assets arrive without reserved space.
   - [x] **Visuals:** CLS score visualization and "jump" highlights.
   - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
+  - [ ] **Pending Fixes:**
+    - [ ] **Correct Aspect Ratio Precision:** Update CSS `aspect-ratio` properties to use the exact dimensions discovered via `ffprobe` (e.g., change `300 / 250` to `600 / 499` for the sidebar ad).
+    - [ ] **Unify Container Sizing:** Ensure both the `stable` placeholders and the `late` image containers use consistent `aspect-ratio` definitions instead of mixing fixed `height` (like the current `180px` hero height) with responsive `width`.
+    - [ ] **Account for Borders:** Align `box-sizing` and border styles between placeholders and active containers to prevent 1px shifts.
+    - [ ] **Fix Hero Image Cropping:** Transition the hero image to a `1280 / 698` aspect ratio to match its source dimensions.
+    - [ ] **Verify Visual Fill:** Audit `object-fit: cover` usage to ensure images completely fill their intended containers.
 
-- [ ] **Exhibit 4: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
+- [ ] **Exhibit 4: Network Throttle (LCP & Sequential Loading).**
+  - **Concept:** Experience the psychological difference between progressive loading on slow networks vs. high-bandwidth connections.
+  - **Fast Side:** Fixed "Fiber" speed (Instant/Near-instant).
+  - **Slow Side:** Controllable "Network Profile" (2G, 3G, Slow 4G) via scrubber or discrete selector.
+  - **Mechanics:**
+    - A social media feed or photo gallery layout.
+    - Resources (images, text, profile avatars) load sequentially based on simulated bandwidth and latency.
+    - **The "Waterfall" Effect:** Visualize the queue of resources loading one by one.
+  - **Content:** 
+    - 5-6 social media posts with different asset sizes.
+    - Images should use simulated progressive loading.
+  - **Visuals:**
+    - LCP timer and highlight on the largest image.
+    - Per-resource progress bars showing "Downloading..."
+    - RTT (Round Trip Time) indicator and current download speed (e.g., "50 kbps").
+  - **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
 
 ## Phase 3: Advanced Simulations
 
@@ -76,6 +100,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 ## Implementation Guidelines
 
 - **Zero-Layout-Shift:** Initial HTML pre-rendered to prevent layout shifts.
+- **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect across all exhibits to mimic low-bandwidth image decoding.
 - **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
 - **Loading Progress:** Animate loading bars according to actual asset download progress.
 - **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.
