@@ -58,7 +58,7 @@ const description =
               </div>
               <div class="leaping-placeholder" id="leaping-hero-placeholder">
                 <div class="late-image-container" id="leaping-hero-wrapper">
-                  <img src="/chronos.avif" alt="Hero Image" class="late-image" id="leaping-hero" />
+                  <img src="/shifty-physics.avif" alt="Hero Image" class="late-image" id="leaping-hero" />
                 </div>
               </div>
               <div class="article-body">
@@ -106,7 +106,7 @@ const description =
                 <div class="article-meta">By J. Jank • 2 min read</div>
               </div>
               <div class="stable-hero-placeholder">
-                <img src="/chronos.avif" alt="Hero Image" class="late-image" id="stable-hero" />
+                <img src="/shifty-physics.avif" alt="Hero Image" class="late-image" id="stable-hero" />
               </div>
               <div class="article-body">
                 <div class="body-content-wrapper">
@@ -135,9 +135,9 @@ const description =
     <div class="controls-overlay">
       <PerformanceController
         min={0}
-        max={653}
+        max={837}
         step={1}
-        defaultValue={228}
+        defaultValue={178}
         label="Cumulative Layout Shift (CLS)"
         id="cls-scrubber"
         list="cls-snaps"
@@ -146,9 +146,9 @@ const description =
         <option value="0"></option>
         <option value="10"></option>
         <option value="40"></option>
-        <option value="228"></option>
-        <option value="603"></option>
-        <option value="653"></option>
+        <option value="178"></option>
+        <option value="759"></option>
+        <option value="837"></option>
       </datalist>
     </div>
   </div>
@@ -406,7 +406,7 @@ const description =
     #leaping-banner-placeholder.stable,
     .stable-banner-placeholder {
       width: 100%;
-      aspect-ratio: 728 / 90;
+      aspect-ratio: 1356 / 180;
     }
 
     #leaping-hero-placeholder.stable,
@@ -418,13 +418,13 @@ const description =
     #leaping-side-placeholder.stable,
     .stable-side-placeholder {
       width: 150px;
-      aspect-ratio: 600 / 499;
+      aspect-ratio: 300 / 250;
     }
 
     /* Leaping States */
     .late-banner {
       width: 100%;
-      aspect-ratio: 728 / 90;
+      aspect-ratio: 1356 / 180;
       height: 0;
       overflow: hidden;
       display: flex;
@@ -449,7 +449,7 @@ const description =
 
     .side-image-wrapper {
       width: 0;
-      aspect-ratio: 600 / 499;
+      aspect-ratio: 300 / 250;
       overflow: hidden;
       background: var(--sidebar-bg);
     }
@@ -669,8 +669,7 @@ const description =
           stableBanner?.classList.add('visible');
           updateProgress(60);
           if (activeShifts >= 3) {
-            // Impact: 1.0, Distance: 90/480 = 0.1875. Score: 0.188
-            currentCls += 0.188;
+            currentCls += 0.138;
           }
           updateCLS(leapingClsEl, currentCls);
         }, loadDelay + 1000)
@@ -684,8 +683,7 @@ const description =
           stableHero?.classList.add('visible');
           updateProgress(80);
           if (activeShifts >= 4) {
-            // Impact: 1.0, Distance: 180/480 = 0.375. Score: 0.375
-            currentCls += 0.375;
+            currentCls += 0.581;
           }
           updateCLS(leapingClsEl, currentCls);
         }, loadDelay + 1500)
@@ -699,8 +697,7 @@ const description =
           stableSide?.classList.add('visible');
           updateProgress(100);
           if (activeShifts >= 5) {
-            // Localized shift. Score: 0.050
-            currentCls += 0.05;
+            currentCls += 0.078;
           }
           updateCLS(leapingClsEl, currentCls);
         }, loadDelay + 2000)
@@ -711,7 +708,7 @@ const description =
       resetViews();
       
       const val = e.detail.value;
-      const validSnaps = [0, 10, 40, 228, 603, 653];
+      const validSnaps = [0, 10, 40, 178, 759, 837];
       // Snap to closest valid value
       const snappedVal = validSnaps.reduce((prev, curr) => {
         return Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev;
@@ -724,9 +721,9 @@ const description =
       if (scrubber) scrubber.value = snappedVal.toString();
 
       // Map CLS thresholds back to number of shifts
-      if (snappedVal >= 653) activeShifts = 5;
-      else if (snappedVal >= 603) activeShifts = 4;
-      else if (snappedVal >= 228) activeShifts = 3;
+      if (snappedVal >= 837) activeShifts = 5;
+      else if (snappedVal >= 759) activeShifts = 4;
+      else if (snappedVal >= 178) activeShifts = 3;
       else if (snappedVal >= 40) activeShifts = 2;
       else if (snappedVal >= 10) activeShifts = 1;
       else activeShifts = 0;
@@ -760,11 +757,11 @@ const description =
     // Initial state for scrubber display
     const initialScrubberValue = document.querySelector('.current-value');
     if (initialScrubberValue) {
-      initialScrubberValue.textContent = '0.228';
+      initialScrubberValue.textContent = '0.178';
       initialScrubberValue.className = 'current-value fcp-needs-improvement';
     }
 
-    // Initialize activeShifts based on default value (228 -> 0.228 -> 3 shifts)
+    // Initialize activeShifts based on default value (178 -> 0.178 -> 3 shifts)
     activeShifts = 3;
 
     startSimulation();
