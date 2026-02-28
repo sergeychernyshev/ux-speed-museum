@@ -1,0 +1,298 @@
+---
+import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
+import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import PerformanceController from '../../components/PerformanceController.astro';
+
+const title = 'The Input Abyss';
+const description =
+  'Interactivity is the conversation between a user and an interface. When that conversation has a delay, the experience feels broken, sluggish, or unresponsive. This exhibit demonstrates <strong>Input Delay</strong>—the time between a user action (like a click or keypress) and the visual feedback from the system. Experience how even small latencies (over 100ms) start to erode the feeling of direct control.';
+
+// Row 1: 0, 50, 100, 150, 200
+const rowA = [0, 50, 100, 150, 200];
+// Row 2: 260, 320, 380, 440, 500
+const rowB = [260, 320, 380, 440, 500];
+// Row 3: 800, 1100, 1400, 1700, 2000
+const rowC = [800, 1100, 1400, 1700, 2000];
+const allSteps = [...rowA, ...rowB, ...rowC];
+
+function getINPStatus(ms: number) {
+  if (ms <= 200) return 'good';
+  if (ms <= 500) return 'warn';
+  return 'poor';
+}
+---
+
+<ExhibitLayout title={title}>
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
+
+  <div class="exhibit-stage">
+    <div class="input-gallery">
+      <div class="button-grid">
+        {allSteps.map((latency) => (
+          <div class="button-card" data-latency={latency}>
+            <span class="latency-label" data-status={getINPStatus(latency)}>{latency}ms</span>
+            <button class="test-button" data-latency={latency}>
+              <span class="counter">👍</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="input-gallery typing-section">
+      <div class="input-test-area">
+        <label for="matrix-input">Type here (Current Latency):</label>
+        <input type="text" id="matrix-input" placeholder="Feel the typing lag..." />
+        <div class="echo-display" id="matrix-echo"></div>
+      </div>
+    </div>
+
+    <div class="controls-overlay">
+      <PerformanceController
+        min={0}
+        max={2000}
+        step={10}
+        defaultValue={380}
+        label="Simulated Input Delay"
+        unit="ms"
+      />
+    </div>
+  </div>
+
+  <style>
+    .exhibit-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-gallery {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .gallery-header {
+      text-align: center;
+    }
+
+    .panel-note {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .button-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease-out;
+      opacity: 0.6;
+    }
+
+    .button-card.active {
+      opacity: 1;
+      border-color: var(--accent-color);
+      border-width: 2px;
+      margin: -1px; /* Offset border width to prevent layout shift */
+      background: var(--sidebar-bg);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .latency-label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      font-family: monospace;
+      color: var(--muted-text);
+      opacity: 0.7;
+    }
+
+    .button-card.active .latency-label {
+      opacity: 1;
+    }
+
+    .button-card.active .latency-label[data-status="good"] {
+      color: #2fb344;
+    }
+
+    .button-card.active .latency-label[data-status="warn"] {
+      color: #f59f00;
+    }
+
+    .button-card.active .latency-label[data-status="poor"] {
+      color: #d63939;
+    }
+
+    .test-button {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0.4rem 0.5rem;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.2s;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .test-button.clicked {
+      /* No color or scale change during wait */
+    }
+
+    .typing-section {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .input-test-area {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-test-area label {
+      font-size: 0.8rem;
+      color: var(--muted-text);
+    }
+
+    .input-test-area input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 1.1rem;
+      transition: border-color 0.2s;
+    }
+
+    .input-test-area input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .echo-display {
+      min-height: 2rem;
+      font-size: 1.25rem;
+      font-family: monospace;
+      color: var(--accent-color);
+      word-break: break-all;
+      text-align: left;
+      width: 100%;
+      padding: 0.5rem;
+    }
+
+    .controls-overlay {
+      position: sticky;
+      bottom: 2rem;
+      z-index: 100;
+    }
+  </style>
+
+  <script>
+    let currentLatency = 380;
+    const buttons = document.querySelectorAll('.test-button');
+    const cards = document.querySelectorAll('.button-card');
+    const matrixInput = document.getElementById('matrix-input') as HTMLInputElement;
+    const matrixEcho = document.getElementById('matrix-echo');
+
+    function updateHighlight() {
+      let closestCard = cards[0];
+      let minDiff = Infinity;
+
+      cards.forEach(card => {
+        const latency = parseInt(card.getAttribute('data-latency') || '0');
+        const diff = Math.abs(latency - currentLatency);
+        card.classList.remove('active');
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestCard = card;
+        }
+      });
+
+      closestCard.classList.add('active');
+    }
+
+    const emojis = ['👍', '💖', '🚀', '🎉', '🤩'];
+
+    buttons.forEach(btn => {
+      let currentIndex = 0;
+      const latency = parseInt(btn.getAttribute('data-latency') || '0');
+      const counterEl = btn.querySelector('.counter');
+
+      btn.addEventListener('click', () => {
+        btn.classList.add('clicked');
+        
+        // 1. Update global latency immediately
+        currentLatency = latency;
+        
+        // 2. Update the scrubber (PerformanceController)
+        const scrubber = document.querySelector('input[type="range"]') as HTMLInputElement;
+        if (scrubber) {
+          scrubber.value = latency.toString();
+          scrubber.dispatchEvent(new Event('input', { bubbles: true }));
+          scrubber.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        // 3. Move the highlight
+        updateHighlight();
+        
+        // 4. Action delay (Emoji cycle)
+        setTimeout(() => {
+          currentIndex = (currentIndex + 1) % emojis.length;
+          if (counterEl) counterEl.textContent = emojis[currentIndex];
+          btn.classList.remove('clicked');
+        }, latency);
+      });
+    });
+
+    matrixInput?.addEventListener('input', (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const val = target.value;
+      
+      // Typing uses the CURRENT global latency from the scrubber
+      const latencyToUse = currentLatency;
+      
+      setTimeout(() => {
+        if (matrixEcho) matrixEcho.textContent = val;
+      }, latencyToUse);
+    });
+
+    window.addEventListener('performance-update', (e: any) => {
+      currentLatency = e.detail.value;
+      updateHighlight();
+    });
+
+    // Initial state
+    updateHighlight();
+  </script>
+</ExhibitLayout>

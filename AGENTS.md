@@ -38,9 +38,19 @@ The application is built as a multi-page site using Astro in **SSR (Server-Side 
     - **FCP Colorization:** The `{start}` value is color-coded by FCP thresholds: **Green** (≤1800ms), **Orange** (≤3000ms), and **Red** (>3000ms).
 
 - [ ] **Exhibit 2: The Input Abyss (Input Latency).**
-  - [ ] Create sub-pages for: Buttons, Text Fields, Checkboxes, and Radio Buttons.
-  - [ ] Implementation: Display a range of inputs (e.g., 0ms to 2000ms latency) on the same screen.
-  - [ ] Scrubbing logic: Use the scrubber to highlight/enable the input corresponding to the chosen latency level.
+  - **Concept:** Visceral experience of delayed interactive feedback (Input Delay).
+  - **Fast Side:** Fixed **0ms** latency (Instant feedback).
+  - **Slow Side:** Controllable "**Input Latency**" (0-2000ms) via scrubber.
+  - **Input Types:**
+    - **Buttons:** Visual "pressed" state and action completion (e.g., counter increment).
+    - **Text Fields:** Delayed character appearance while typing.
+    - **Checkboxes/Radios:** Delayed toggle state change.
+  - **Visuals:** 
+    - Real-time interaction timers showing `{latency}ms`.
+    - Ghosting or "pending" states to indicate the input was received but not yet processed.
+    - Side-by-side comparison layout following Exhibit 1's pattern.
+  - **Interactivity:** Fully interactive elements on both sides to compare the "feel" of lag.
+  - **Thresholds:** Latency color-coded: **Green** (≤100ms), **Orange** (≤300ms), **Red** (>300ms) based on standard response time perceptions.
 
 - [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
 - [ ] **Exhibit 4: Layout Shift.** A news-style layout demonstrating CLS via delayed asset loading.
