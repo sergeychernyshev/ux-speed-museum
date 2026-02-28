@@ -50,8 +50,17 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Interactivity:** Fully interactive elements on both sides to compare the "feel" of lag.
   - [x] **Thresholds:** Latency color-coded: **Green** (≤100ms), **Orange** (≤300ms), **Red** (>300ms) based on standard response time perceptions.
 
-- [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
-- [ ] **Exhibit 4: Layout Shift.** A news-style layout demonstrating CLS via delayed asset loading.
+- [x] **Exhibit 3: The Layout Leap (Layout Shift).**
+  - [x] **Concept:** Experience the "jank" and frustration of Cumulative Layout Shift (CLS).
+  - [x] **Mechanics:** A news-article or blog layout where images, ads, or dynamic notices load with artificial delays, causing content to jump.
+  - [x] **The "Oops" Moment:** A button (e.g., "Cancel") that moves exactly when the user is about to click it, causing them to click something else (e.g., "Buy Now" or "Delete").
+  - [x] **Comparison:**
+    - [x] **Stable Side:** Pre-allocated aspect ratios (placeholders) ensure zero shift.
+    - [x] **Leaping Side:** Content jumps as assets arrive without reserved space.
+  - [x] **Visuals:** CLS score visualization and "jump" highlights.
+  - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
+
+- [ ] **Exhibit 4: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
 
 ## Phase 3: Advanced Simulations
 

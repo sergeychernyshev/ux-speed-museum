@@ -1,0 +1,609 @@
+---
+import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
+import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import PerformanceController from '../../components/PerformanceController.astro';
+
+const title = 'The Layout Leap';
+const description =
+  'Have you ever tried to click a link or a button just as the page finished loading, and—*oops*—the content shifted? That is <a href="https://web.dev/articles/cls" target="_blank" rel="noopener">Cumulative Layout Shift (CLS)</a>. This exhibit demonstrates how different types of late-loading elements—banners, hero images, sidebar assets, and even font changes—contribute to page instability. Use the scrubber to increase the number of "leaping" elements and compare the stable experience on the right.';
+---
+
+<ExhibitLayout title={title}>
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
+
+  <div class="exhibit-stage">
+    <div class="stage-header">
+      <div class="header-panel">
+        <span class="panel-label">Leaping</span>
+        <p class="panel-note" id="leaping-note">
+          <span class="fcp-poor">2</span> elements causing shifts.
+        </p>
+      </div>
+
+      <button class="replay-btn" id="replay-trigger">
+        <span class="play-icon">▶</span> REPLAY
+      </button>
+
+      <div class="header-panel">
+        <span class="panel-label">Stable</span>
+        <p class="panel-note">
+          All elements have reserved space.
+        </p>
+      </div>
+    </div>
+
+    <div class="comparison-container" id="comparison-stage">
+      <!-- Leaping Side (Left) -->
+      <div class="comparison-panel">
+        <div class="experience-block">
+          <div class="cls-display" id="leaping-cls">CLS: 0.000</div>
+          <div class="viewport" id="leaping-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="leaping-progress"></div>
+            </div>
+            <div class="mock-article" id="leaping-article">
+              <div class="late-banner" id="leaping-banner">
+                <img src="https://placehold.co/728x90/ffd43b/000000?text=SPECIAL+OFFER+50%+OFF" alt="Leaderboard Ad" />
+              </div>
+              <div class="article-header">
+                <div class="article-category">Breaking News</div>
+                <h1>The Physics of Jumping Content</h1>
+                <div class="article-meta">By J. Jank • 2 min read</div>
+              </div>
+              <div class="late-image-container" id="leaping-hero-wrapper">
+                <img src="/chronos.avif" alt="Hero Image" class="late-image" id="leaping-hero" />
+              </div>
+              <div class="article-body">
+                <div class="body-content-wrapper">
+                  <div class="text-column">
+                    <p>
+                      Content stability is often overlooked until it moves. When assets load without dimensions, the browser cannot reserve space.
+                    </p>
+                    <p>
+                      This text will move if the image to the right loads without pre-allocated space or if the font size changes unexpectedly.
+                    </p>
+                  </div>
+                  <div class="side-image-wrapper" id="leaping-side-wrapper">
+                    <img src="https://placehold.co/300x250/339af0/ffffff?text=AD+SPACE" alt="Sidebar Ad" class="late-image side" id="leaping-side" />
+                  </div>
+                </div>
+                <p>
+                  Every jump, however small, increases the CLS score and disrupts the user experience.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stable Side (Right) -->
+      <div class="comparison-panel">
+        <div class="experience-block">
+          <div class="cls-display" id="stable-cls">CLS: 0.000</div>
+          <div class="viewport" id="stable-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="stable-progress"></div>
+            </div>
+            <div class="mock-article">
+              <div class="stable-banner-placeholder">
+                <div class="late-banner" id="stable-banner">
+                  <img src="https://placehold.co/728x90/ffd43b/000000?text=SPECIAL+OFFER+50%+OFF" alt="Leaderboard Ad" />
+                </div>
+              </div>
+              <div class="article-header">
+                <div class="article-category">Breaking News</div>
+                <h1>The Physics of Jumping Content</h1>
+                <div class="article-meta">By J. Jank • 2 min read</div>
+              </div>
+              <div class="stable-hero-placeholder">
+                <img src="/chronos.avif" alt="Hero Image" class="late-image" id="stable-hero" />
+              </div>
+              <div class="article-body">
+                <div class="body-content-wrapper">
+                  <div class="text-column">
+                    <p>
+                      Content stability is often overlooked until it moves. When assets load without dimensions, the browser cannot reserve space.
+                    </p>
+                    <p>
+                      This text will move if the image to the right loads without pre-allocated space or if the font size changes unexpectedly.
+                    </p>
+                  </div>
+                  <div class="stable-side-placeholder">
+                    <img src="https://placehold.co/300x250/339af0/ffffff?text=AD+SPACE" alt="Sidebar Ad" class="late-image side" id="stable-side" />
+                  </div>
+                </div>
+                <p>
+                  Every jump, however small, increases the CLS score and disrupts the user experience.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-overlay">
+      <PerformanceController
+        min={0}
+        max={4}
+        step={1}
+        defaultValue={2}
+        label="Simulated CLS Score"
+      />
+    </div>
+  </div>
+
+  <style>
+    .exhibit-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .stage-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .stage-header {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .replay-btn {
+        order: -1;
+      }
+    }
+
+    .header-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-panel:first-child {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .header-panel:last-child {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .replay-btn {
+      background: var(--text-color);
+      color: var(--bg-color);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .replay-btn:hover {
+      opacity: 0.9;
+    }
+
+    .replay-btn:active {
+      transform: scale(0.95);
+    }
+
+    .play-icon {
+      font-size: 0.8rem;
+    }
+
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      width: 100%;
+      min-height: 600px;
+    }
+
+    .comparison-panel:first-child {
+      order: -1;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comparison-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .panel-label {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      color: var(--muted-text);
+    }
+
+    .panel-note {
+      font-size: 0.7rem;
+      color: var(--muted-text);
+      font-style: italic;
+      margin-top: -0.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      height: 1rem;
+    }
+
+    .experience-block {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 0.5rem;
+    }
+
+    .comparison-panel:first-child .experience-block {
+      align-items: flex-start;
+    }
+
+    .comparison-panel:last-child .experience-block {
+      align-items: flex-end;
+    }
+
+    .cls-display {
+      font-family: monospace;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      background: var(--card-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .viewport {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0;
+      position: relative;
+      min-height: 500px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .render-progress-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--border-color);
+      z-index: 10;
+    }
+
+    .render-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-color);
+      transition: width 0.5s ease-in-out;
+    }
+
+    .mock-article {
+      text-align: left;
+      color: var(--text-color);
+    }
+
+    .article-header {
+      padding: 1.5rem;
+    }
+
+    .article-category {
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .mock-article h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .article-meta {
+      font-size: 0.75rem;
+      color: var(--muted-text);
+    }
+
+    .article-body {
+      padding: 0 1.5rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .article-body p {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .body-content-wrapper {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .text-column {
+      flex: 1;
+    }
+
+    /* Leaping States */
+    .late-banner {
+      height: 0;
+      overflow: hidden;
+      background: #ffd43b;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+
+    .late-banner.visible {
+      height: 90px; /* Standard Leaderboard height */
+    }
+
+    .late-image-container {
+      width: 100%;
+      height: 0;
+      overflow: hidden;
+      background: var(--sidebar-bg);
+    }
+
+    .late-image-container.visible {
+      height: 180px;
+    }
+
+    .side-image-wrapper {
+      width: 0;
+      height: 125px; /* Scaled from 250px standard to fit viewport */
+      overflow: hidden;
+      background: var(--sidebar-bg);
+    }
+
+    .side-image-wrapper.visible {
+      width: 150px; /* Scaled from 300px standard */
+    }
+
+    .late-banner img,
+    .late-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .late-banner.visible img,
+    .late-image.visible {
+      display: block;
+    }
+
+    /* Font Size Shift */
+    .mock-article.font-shift .article-body p {
+      font-size: 1rem;
+    }
+
+    .mock-article.font-shift h1 {
+      font-size: 1.6rem;
+    }
+
+    /* Stable Placeholders */
+    .stable-banner-placeholder {
+      height: 90px;
+      width: 100%;
+      background: var(--sidebar-bg);
+    }
+
+    .stable-hero-placeholder {
+      height: 180px;
+      width: 100%;
+      background: var(--sidebar-bg);
+    }
+
+    .stable-side-placeholder {
+      width: 150px;
+      height: 125px;
+      background: var(--sidebar-bg);
+    }
+
+    /* Controls */
+    .controls-overlay {
+      position: sticky;
+      bottom: 2rem;
+      z-index: 100;
+      width: 100%;
+      max-width: 500px;
+    }
+  </style>
+
+  <script>
+    let activeShifts = 2;
+    const loadDelay = 1000;
+    let timers: number[] = [];
+    
+    // Leaping Elements
+    const leapingArticle = document.getElementById('leaping-article');
+    const leapingBanner = document.getElementById('leaping-banner');
+    const leapingHeroWrapper = document.getElementById('leaping-hero-wrapper');
+    const leapingHero = document.getElementById('leaping-hero');
+    const leapingSideWrapper = document.getElementById('leaping-side-wrapper');
+    const leapingSide = document.getElementById('leaping-side');
+    
+    // Stable Elements
+    const stableBanner = document.getElementById('stable-banner');
+    const stableHero = document.getElementById('stable-hero');
+    const stableSide = document.getElementById('stable-side');
+
+    const leapingNote = document.getElementById('leaping-note');
+    const leapingClsEl = document.getElementById('leaping-cls');
+    const stableClsEl = document.getElementById('stable-cls');
+    const leapingProgress = document.getElementById('leaping-progress');
+    const stableProgress = document.getElementById('stable-progress');
+    const replayTrigger = document.getElementById('replay-trigger');
+
+    function getCLSClass(score: number) {
+      if (score <= 0.1) return 'fcp-good';
+      if (score <= 0.25) return 'fcp-needs-improvement';
+      return 'fcp-poor';
+    }
+
+    function updateCLS(el: HTMLElement | null, score: number) {
+      if (el) {
+        el.textContent = `CLS: ${score.toFixed(3)}`;
+        el.className = `cls-display ${getCLSClass(score)}`;
+      }
+    }
+
+    function startSimulation() {
+      timers.forEach(t => clearTimeout(t));
+      timers = [];
+      
+      // Reset states
+      leapingBanner?.classList.remove('visible');
+      leapingHeroWrapper?.classList.remove('visible');
+      leapingHero?.classList.remove('visible');
+      leapingSideWrapper?.classList.remove('visible');
+      leapingSide?.classList.remove('visible');
+      leapingArticle?.classList.remove('font-shift');
+
+      stableBanner?.classList.remove('visible');
+      stableHero?.classList.remove('visible');
+      stableSide?.classList.remove('visible');
+
+      // Reset progress without animation
+      if (leapingProgress) {
+        leapingProgress.style.transition = 'none';
+        leapingProgress.style.width = '0%';
+      }
+      if (stableProgress) {
+        stableProgress.style.transition = 'none';
+        stableProgress.style.width = '0%';
+      }
+
+      // Force reflow
+      void (leapingProgress?.offsetHeight);
+      void (stableProgress?.offsetHeight);
+
+      // Re-enable transition
+      if (leapingProgress) leapingProgress.style.transition = '';
+      if (stableProgress) stableProgress.style.transition = '';
+
+      updateCLS(leapingClsEl, 0);
+      updateCLS(stableClsEl, 0);
+
+      let currentCls = 0;
+
+      const updateProgress = (percent: number) => {
+        if (leapingProgress) leapingProgress.style.width = `${percent}%`;
+        if (stableProgress) stableProgress.style.width = `${percent}%`;
+      };
+
+      // 1. Initial Load
+      updateProgress(20);
+
+      // 2. Top Banner (Shift if activeShifts >= 1)
+      timers.push(window.setTimeout(() => {
+        leapingBanner?.classList.add('visible');
+        stableBanner?.classList.add('visible');
+        updateProgress(40);
+        if (activeShifts >= 1) currentCls += 0.18; // 90px / 500px
+        updateCLS(leapingClsEl, currentCls);
+      }, loadDelay));
+
+      // 3. Hero Image (Shift if activeShifts >= 2)
+      timers.push(window.setTimeout(() => {
+        leapingHeroWrapper?.classList.add('visible');
+        leapingHero?.classList.add('visible');
+        stableHero?.classList.add('visible');
+        updateProgress(70);
+        if (activeShifts >= 2) currentCls += 0.36;
+        updateCLS(leapingClsEl, currentCls);
+      }, loadDelay + 500));
+
+      // 4. Side Image (Shift if activeShifts >= 3)
+      timers.push(window.setTimeout(() => {
+        leapingSideWrapper?.classList.add('visible');
+        leapingSide?.classList.add('visible');
+        stableSide?.classList.add('visible');
+        updateProgress(90);
+        if (activeShifts >= 3) currentCls += 0.08;
+        updateCLS(leapingClsEl, currentCls);
+      }, loadDelay + 1000));
+
+      // 5. Font Size (Shift if activeShifts >= 4)
+      timers.push(window.setTimeout(() => {
+        if (activeShifts >= 4) {
+          leapingArticle?.classList.add('font-shift');
+          currentCls += 0.22; // Increased from 0.15 to account for title shift
+        }
+        updateCLS(leapingClsEl, currentCls);
+        updateProgress(100);
+      }, loadDelay + 1500));
+    }
+
+    window.addEventListener('performance-update', (e: any) => {
+      activeShifts = e.detail.value;
+      if (leapingNote) {
+        const clsStatus = activeShifts >= 3 ? 'fcp-poor' : (activeShifts >= 1 ? 'fcp-needs-improvement' : 'fcp-good');
+        leapingNote.innerHTML = `<span class="${clsStatus}">${activeShifts}</span> elements causing shifts.`;
+      }
+
+      // Update the scrubber display to show actual CLS score
+      const scrubberValueEl = document.querySelector('.current-value');
+      if (scrubberValueEl) {
+        let totalCls = 0;
+        if (activeShifts >= 1) totalCls += 0.18;
+        if (activeShifts >= 2) totalCls += 0.36;
+        if (activeShifts >= 3) totalCls += 0.08;
+        if (activeShifts >= 4) totalCls += 0.22;
+        scrubberValueEl.textContent = totalCls.toFixed(3);
+        scrubberValueEl.className = `current-value ${getCLSClass(totalCls)}`;
+      }
+    });
+
+    window.addEventListener('performance-update-end', () => {
+      startSimulation();
+    });
+
+    replayTrigger?.addEventListener('click', () => {
+      startSimulation();
+    });
+
+    // Initial state for scrubber display
+    const initialScrubberValue = document.querySelector('.current-value');
+    if (initialScrubberValue) {
+      initialScrubberValue.textContent = '0.540';
+      initialScrubberValue.className = 'current-value fcp-poor';
+    }
+
+    startSimulation();
+  </script>
+</ExhibitLayout>

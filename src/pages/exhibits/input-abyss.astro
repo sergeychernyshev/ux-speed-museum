@@ -439,6 +439,14 @@ function getINPStatus(ms: number) {
     window.addEventListener('performance-update', (e: any) => {
       currentLatency = e.detail.value;
       updateHighlight();
+
+      // Update scrubber display color
+      const scrubberValueEl = document.querySelector('.current-value');
+      if (scrubberValueEl) {
+        const status = getINPStatus(currentLatency);
+        const className = status === 'good' ? 'fcp-good' : (status === 'warn' ? 'fcp-needs-improvement' : 'fcp-poor');
+        scrubberValueEl.className = `current-value ${className}`;
+      }
     });
 
     // Initial state

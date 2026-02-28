@@ -357,6 +357,12 @@ const description =
       throttledDelay = e.detail.value;
       if (thrNote)
         thrNote.innerHTML = `Starts rendering at <span class="${getFCPClass(throttledDelay)}">${throttledDelay}ms</span>.`;
+
+      // Update scrubber display color manually
+      const scrubberValueEl = document.querySelector('.current-value');
+      if (scrubberValueEl) {
+        scrubberValueEl.className = `current-value ${getFCPClass(throttledDelay)}`;
+      }
     });
 
     window.addEventListener('performance-update-end', () => {

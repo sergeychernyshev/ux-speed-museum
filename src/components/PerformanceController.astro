@@ -5,24 +5,28 @@ interface Props {
   step: number;
   defaultValue: number;
   label: string;
-  unit: string;
+  unit?: string;
+  id?: string;
 }
 
-const { min, max, step, defaultValue, label, unit } = Astro.props;
+const { min, max, step, defaultValue, label, unit = '', id = "performance-scrubber" } = Astro.props;
 ---
 
 <div class="performance-controller">
   <div class="controller-header">
-    <label for="performance-scrubber">{label}</label>
-    <span class="value-display" id="value-display">{defaultValue}{unit}</span>
+    <label for={id}>{label}</label>
+    <span class="value-display" id={`${id}-display`}>
+      <span class="current-value">{defaultValue}</span>{unit}
+    </span>
   </div>
   <input
     type="range"
-    id="performance-scrubber"
+    id={id}
     min={min}
     max={max}
     step={step}
     value={defaultValue}
+    data-unit={unit}
   />
 </div>
 
@@ -56,48 +60,33 @@ const { min, max, step, defaultValue, label, unit } = Astro.props;
 </style>
 
 <script>
-  const scrubber = document.getElementById(
-    'performance-scrubber'
-  ) as HTMLInputElement;
-  const display = document.getElementById('value-display');
-  const unit = scrubber?.getAttribute('data-unit') || 'ms';
+  // Handle multiple controllers if necessary
+  document.querySelectorAll('.performance-controller').forEach(container => {
+    const scrubber = container.querySelector('input[type="range"]') as HTMLInputElement;
+    const valueDisplay = container.querySelector('.current-value');
+    const unit = scrubber?.getAttribute('data-unit') || '';
 
-  function updateColor(value: number) {
-    if (!display) return;
-    display.classList.remove('fcp-good', 'fcp-needs-improvement', 'fcp-poor');
-    if (value <= 1800) {
-      display.classList.add('fcp-good');
-    } else if (value <= 3000) {
-      display.classList.add('fcp-needs-improvement');
-    } else {
-      display.classList.add('fcp-poor');
-    }
-  }
+    scrubber?.addEventListener('input', (e) => {
+      const value = (e.target as HTMLInputElement).value;
+      if (valueDisplay) valueDisplay.textContent = value;
 
-  // Initial color
-  if (scrubber) updateColor(parseInt(scrubber.value));
+      // Dispatch custom event for exhibit to listen to (scrubbing)
+      window.dispatchEvent(
+        new CustomEvent('performance-update', {
+          detail: { value: parseInt(value), id: scrubber.id },
+        })
+      );
+    });
 
-  scrubber?.addEventListener('input', (e) => {
-    const value = (e.target as HTMLInputElement).value;
-    if (display) display.textContent = `${value}${unit}`;
-    updateColor(parseInt(value));
+    scrubber?.addEventListener('change', (e) => {
+      const value = (e.target as HTMLInputElement).value;
 
-    // Dispatch custom event for exhibit to listen to (scrubbing)
-    window.dispatchEvent(
-      new CustomEvent('performance-update', {
-        detail: { value: parseInt(value) },
-      })
-    );
-  });
-
-  scrubber?.addEventListener('change', (e) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    // Dispatch completion event (released)
-    window.dispatchEvent(
-      new CustomEvent('performance-update-end', {
-        detail: { value: parseInt(value) },
-      })
-    );
+      // Dispatch completion event (released)
+      window.dispatchEvent(
+        new CustomEvent('performance-update-end', {
+          detail: { value: parseInt(value), id: scrubber.id },
+        })
+      );
+    });
   });
 </script>
