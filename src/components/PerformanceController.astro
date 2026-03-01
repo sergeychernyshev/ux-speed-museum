@@ -9,6 +9,7 @@ interface Props {
   id?: string;
   list?: string;
   showReplay?: boolean;
+  showPause?: boolean;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   id = 'performance-scrubber',
   list,
   showReplay = false,
+  showPause = showReplay,
 } = Astro.props;
 ---
 
@@ -28,13 +30,22 @@ const {
   <div class="controller-header">
     <div class="label-group">
       <label for={id}>{label}</label>
-      {
-        showReplay && (
-          <button class="replay-btn" id={`${id}-replay`}>
-            <span class="play-icon">▶</span> REPLAY
-          </button>
-        )
-      }
+      <div class="control-actions">
+        {
+          showReplay && (
+            <button class="replay-btn" id={`${id}-replay`}>
+              <span class="play-icon">▶</span> REPLAY
+            </button>
+          )
+        }
+        {
+          showPause && (
+            <button class="pause-btn" id={`${id}-pause`}>
+              <span class="pause-icon">||</span> <span class="pause-text">PAUSE</span>
+            </button>
+          )
+        }
+      </div>
     </div>
     <span class="value-display" id={`${id}-display`}>
       <span class="current-value" id={`${id}-value`}>{defaultValue}{unit}</span>
@@ -85,7 +96,13 @@ const {
     letter-spacing: 0.02em;
   }
 
-  .replay-btn {
+  .control-actions {
+    display: grid;
+    place-items: center;
+  }
+
+  .replay-btn, .pause-btn {
+    grid-area: 1 / 1;
     background: var(--text-color);
     color: var(--bg-color);
     border: none;
@@ -96,29 +113,31 @@ const {
     visibility: hidden; /* Hidden but occupies space */
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.3rem;
     font-size: 0.6rem;
+    min-width: 4rem; /* Ensure consistent width for overlap */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition:
       transform 0.1s,
       opacity 0.2s;
   }
 
-  .replay-btn:disabled {
+  .replay-btn:disabled, .pause-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
 
-  .replay-btn:not(:disabled):hover {
+  .replay-btn:not(:disabled):hover, .pause-btn:not(:disabled):hover {
     opacity: 0.9;
   }
 
-  .replay-btn:not(:disabled):active {
+  .replay-btn:not(:disabled):active, .pause-btn:not(:disabled):active {
     transform: scale(0.95);
   }
 
-  .play-icon {
+  .play-icon, .pause-icon {
     font-size: 0.5rem;
   }
 
@@ -144,9 +163,13 @@ const {
     ) as HTMLInputElement;
     const valueDisplay = container.querySelector('.current-value');
     const replayBtn = container.querySelector('.replay-btn');
+    const pauseBtn = container.querySelector('.pause-btn');
+    const pauseText = pauseBtn?.querySelector('.pause-text');
+    const pauseIcon = pauseBtn?.querySelector('.pause-icon');
     const unit = scrubber?.getAttribute('data-unit') || '';
 
     let isInteracting = false;
+    let isPaused = false;
 
     scrubber?.addEventListener('pointerdown', () => {
       isInteracting = true;
@@ -156,10 +179,15 @@ const {
       const value = (e.target as HTMLInputElement).value;
       if (valueDisplay) valueDisplay.textContent = `${value}${unit}`;
 
-      // Disable and hide replay while scrubbing/playing
+      // Disable and hide buttons while scrubbing
       if (replayBtn) {
         (replayBtn as HTMLButtonElement).disabled = true;
         (replayBtn as HTMLElement).style.visibility = 'hidden';
+      }
+      if (pauseBtn) {
+        (pauseBtn as HTMLButtonElement).disabled = true;
+        (pauseBtn as HTMLElement).style.visibility = 'hidden';
+        resetPauseState();
       }
 
       // Dispatch custom event for exhibit to listen to (scrubbing)
@@ -169,6 +197,12 @@ const {
         })
       );
     });
+
+    function resetPauseState() {
+      isPaused = false;
+      if (pauseText) pauseText.textContent = 'PAUSE';
+      if (pauseIcon) pauseIcon.textContent = '||';
+    }
 
     // Use pointerup as the single source of truth for "release"
     scrubber?.addEventListener('pointerup', (e) => {
@@ -183,6 +217,13 @@ const {
           })
         );
         isInteracting = false;
+        
+        // Show pause button when simulation starts
+        if (pauseBtn) {
+          (pauseBtn as HTMLElement).style.visibility = 'visible';
+          (pauseBtn as HTMLButtonElement).disabled = false;
+          resetPauseState();
+        }
       }
     });
 
@@ -194,6 +235,13 @@ const {
     replayBtn?.addEventListener('click', () => {
       // Disable self on click
       (replayBtn as HTMLButtonElement).disabled = true;
+      (replayBtn as HTMLElement).style.visibility = 'hidden';
+
+      if (pauseBtn) {
+        (pauseBtn as HTMLElement).style.visibility = 'visible';
+        (pauseBtn as HTMLButtonElement).disabled = false;
+        resetPauseState();
+      }
 
       window.dispatchEvent(
         new CustomEvent('performance-replay', {
@@ -202,12 +250,31 @@ const {
       );
     });
 
-    // Listen for completion to show/enable button
+    pauseBtn?.addEventListener('click', () => {
+      isPaused = !isPaused;
+      if (pauseText) pauseText.textContent = isPaused ? 'RESUME' : 'PAUSE';
+      if (pauseIcon) pauseIcon.textContent = isPaused ? '▶' : '||';
+
+      window.dispatchEvent(
+        new CustomEvent('performance-toggle-pause', {
+          detail: { id: scrubber?.id, isPaused },
+        })
+      );
+    });
+
+    // Listen for completion to show/enable replay button, hide pause button
     window.addEventListener('performance-update-end', (e: any) => {
       // Only show button if the event comes from a simulation completion, not scrubber release
-      if (replayBtn && e.detail?.source !== 'scrubber') {
-        (replayBtn as HTMLElement).style.visibility = 'visible';
-        (replayBtn as HTMLButtonElement).disabled = false;
+      if (e.detail?.source !== 'scrubber') {
+        if (replayBtn) {
+          (replayBtn as HTMLElement).style.visibility = 'visible';
+          (replayBtn as HTMLButtonElement).disabled = false;
+        }
+        if (pauseBtn) {
+          (pauseBtn as HTMLElement).style.visibility = 'hidden';
+          (pauseBtn as HTMLButtonElement).disabled = true;
+          resetPauseState();
+        }
       }
     });
 

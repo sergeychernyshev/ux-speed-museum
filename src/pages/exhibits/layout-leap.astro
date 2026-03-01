@@ -579,6 +579,11 @@ const description =
       clip-path: inset(0 0 100% 0) !important;
     }
 
+    :global(.paused) .late-banner img,
+    :global(.paused) .late-image {
+      animation-play-state: paused !important;
+    }
+
     /* Font Size Shift */
     .mock-article.text-shift .article-body p {
       font-size: 1rem;
@@ -600,6 +605,12 @@ const description =
     let activeShifts = 2;
     const loadDelay = 1000;
     let timers: number[] = [];
+    let isPaused = false;
+    let pauseStartTime = 0;
+    let currentStepIndex = 0;
+    let currentCls = 0;
+    let simulationStartTime = 0;
+    let currentStepRemainingDelay = 0;
 
     // Leaping Elements
     const leapingArticle = document.getElementById('leaping-article');
@@ -633,7 +644,6 @@ const description =
     const stableClsEl = document.getElementById('stable-cls');
     const leapingProgress = document.getElementById('leaping-progress');
     const stableProgress = document.getElementById('stable-progress');
-    const replayTrigger = document.getElementById('replay-trigger');
     const stage = document.getElementById('comparison-stage');
 
     function getCLSClass(score: number) {
@@ -656,42 +666,13 @@ const description =
       timers.forEach((t) => clearTimeout(t));
       timers = [];
       stage?.classList.add('scrubbing');
+      stage?.classList.remove('paused');
+      isPaused = false;
+      currentStepIndex = 0;
+      currentCls = 0;
 
       if (leapingArticle) leapingArticle.style.display = 'none';
       if (stableArticle) stableArticle.style.display = 'none';
-
-      // Reset states
-      leapingBanner?.classList.remove('visible');
-      leapingHeroWrapper?.classList.remove('visible');
-      leapingHero?.classList.remove('visible');
-      leapingSideWrapper?.classList.remove('visible');
-      leapingSide?.classList.remove('visible');
-      leapingArticle?.classList.remove('title-shift', 'text-shift');
-
-      stableBanner?.classList.remove('visible');
-      stableHero?.classList.remove('visible');
-      stableSide?.classList.remove('visible');
-
-      if (leapingProgress) {
-        leapingProgress.style.transition = 'none';
-        leapingProgress.style.width = '0%';
-      }
-      if (stableProgress) {
-        stableProgress.style.transition = 'none';
-        stableProgress.style.width = '0%';
-      }
-
-      updateCLS(leapingClsEl, null);
-      updateCLS(stableClsEl, null);
-    }
-
-    function startSimulation() {
-      timers.forEach((t) => clearTimeout(t));
-      timers = [];
-      stage?.classList.remove('scrubbing');
-
-      if (leapingArticle) leapingArticle.style.display = 'block';
-      if (stableArticle) stableArticle.style.display = 'block';
 
       // Reset states
       leapingBanner?.classList.remove('visible');
@@ -707,12 +688,137 @@ const description =
       stableSideWrapper?.classList.remove('visible');
       stableSide?.classList.remove('visible');
 
+      if (leapingProgress) {
+        leapingProgress.style.transition = 'none';
+        leapingProgress.style.width = '0%';
+      }
+      if (stableProgress) {
+        stableProgress.style.transition = 'none';
+        stableProgress.style.width = '0%';
+      }
+
+      updateCLS(leapingClsEl, null);
+      updateCLS(stableClsEl, null);
+    }
+
+    function updateProgress(percent: number) {
+      if (leapingProgress) leapingProgress.style.width = `${percent}%`;
+      if (stableProgress) stableProgress.style.width = `${percent}%`;
+    }
+
+    const steps = [
+      {
+        id: 'initial',
+        delay: 0,
+        action: () => updateProgress(10),
+      },
+      {
+        id: 'title-font',
+        delay: loadDelay,
+        action: () => {
+          if (activeShifts >= 1) {
+            leapingArticle?.classList.add('title-shift');
+            currentCls += 0.01;
+          }
+          updateCLS(leapingClsEl, currentCls);
+          updateProgress(25);
+        },
+      },
+      {
+        id: 'text-font',
+        delay: 500,
+        action: () => {
+          if (activeShifts >= 2) {
+            leapingArticle?.classList.add('text-shift');
+            currentCls += 0.03;
+          }
+          updateCLS(leapingClsEl, currentCls);
+          updateProgress(40);
+        },
+      },
+      {
+        id: 'banner',
+        delay: 1000,
+        action: () => {
+          leapingBanner?.classList.add('visible');
+          stableBanner?.classList.add('visible');
+          updateProgress(60);
+          if (activeShifts >= 3) {
+            currentCls += 0.138;
+          }
+          updateCLS(leapingClsEl, currentCls);
+        },
+      },
+      {
+        id: 'hero',
+        delay: 500,
+        action: () => {
+          leapingHeroWrapper?.classList.add('visible');
+          leapingHero?.classList.add('visible');
+          stableHeroWrapper?.classList.add('visible');
+          stableHero?.classList.add('visible');
+          updateProgress(80);
+          if (activeShifts >= 4) {
+            currentCls += 0.581;
+          }
+          updateCLS(leapingClsEl, currentCls);
+        },
+      },
+      {
+        id: 'side',
+        delay: 500,
+        action: () => {
+          leapingSideWrapper?.classList.add('visible');
+          leapingSide?.classList.add('visible');
+          stableSideWrapper?.classList.add('visible');
+          stableSide?.classList.add('visible');
+          updateProgress(100);
+          if (activeShifts >= 5) {
+            currentCls += 0.078;
+          }
+          updateCLS(leapingClsEl, currentCls);
+
+          // Simulation complete
+          window.dispatchEvent(
+            new CustomEvent('performance-update-end', {
+              detail: { value: currentCls * 1000 },
+            })
+          );
+        },
+      },
+    ];
+
+    function runSimulationStep() {
+      if (isPaused || currentStepIndex >= steps.length) return;
+
+      const step = steps[currentStepIndex];
+      const timer = window.setTimeout(() => {
+        if (isPaused) return;
+
+        step.action();
+        currentStepIndex++;
+        if (currentStepIndex < steps.length) {
+          currentStepRemainingDelay = steps[currentStepIndex].delay;
+          simulationStartTime = performance.now();
+          runSimulationStep();
+        }
+      }, currentStepRemainingDelay);
+
+      timers.push(timer);
+    }
+
+    function startSimulation() {
+      resetViews();
+      stage?.classList.remove('scrubbing');
+
+      if (leapingArticle) leapingArticle.style.display = 'block';
+      if (stableArticle) stableArticle.style.display = 'block';
+
       // Reset placeholders
       leapingBannerPlaceholder?.classList.remove('stable');
       leapingHeroPlaceholder?.classList.remove('stable');
       leapingSidePlaceholder?.classList.remove('stable');
 
-      // If activeShifts < threshold, the leaping side should behave stably (reserve space)
       if (activeShifts < 3) leapingBannerPlaceholder?.classList.add('stable');
       if (activeShifts < 4) leapingHeroPlaceholder?.classList.add('stable');
       if (activeShifts < 5) leapingSidePlaceholder?.classList.add('stable');
@@ -738,89 +844,31 @@ const description =
       updateCLS(leapingClsEl, 0);
       updateCLS(stableClsEl, 0);
 
-      let currentCls = 0;
+      currentStepIndex = 0;
+      currentStepRemainingDelay = steps[0].delay;
+      simulationStartTime = performance.now();
+      runSimulationStep();
+    }
 
-      const updateProgress = (percent: number) => {
-        if (leapingProgress) leapingProgress.style.width = `${percent}%`;
-        if (stableProgress) stableProgress.style.width = `${percent}%`;
-      };
+    function togglePause(paused: boolean) {
+      if (isPaused === paused) return;
+      isPaused = paused;
 
-      // 1. Initial Load
-      updateProgress(10);
-
-      // 2. Title Font (Shift if activeShifts >= 1)
-      timers.push(
-        window.setTimeout(() => {
-          if (activeShifts >= 1) {
-            leapingArticle?.classList.add('title-shift');
-            currentCls += 0.01;
-          }
-          updateCLS(leapingClsEl, currentCls);
-          updateProgress(25);
-        }, loadDelay)
-      );
-
-      // 3. Text Font (Shift if activeShifts >= 2)
-      timers.push(
-        window.setTimeout(() => {
-          if (activeShifts >= 2) {
-            leapingArticle?.classList.add('text-shift');
-            currentCls += 0.03;
-          }
-          updateCLS(leapingClsEl, currentCls);
-          updateProgress(40);
-        }, loadDelay + 500)
-      );
-
-      // 4. Top Banner (Shift if activeShifts >= 3)
-      timers.push(
-        window.setTimeout(() => {
-          leapingBanner?.classList.add('visible');
-          stableBanner?.classList.add('visible');
-          updateProgress(60);
-          if (activeShifts >= 3) {
-            currentCls += 0.138;
-          }
-          updateCLS(leapingClsEl, currentCls);
-        }, loadDelay + 1000)
-      );
-
-      // 5. Hero Image (Shift if activeShifts >= 4)
-      timers.push(
-        window.setTimeout(() => {
-          leapingHeroWrapper?.classList.add('visible');
-          leapingHero?.classList.add('visible');
-          stableHeroWrapper?.classList.add('visible');
-          stableHero?.classList.add('visible');
-          updateProgress(80);
-          if (activeShifts >= 4) {
-            currentCls += 0.581;
-          }
-          updateCLS(leapingClsEl, currentCls);
-        }, loadDelay + 1500)
-      );
-
-      // 6. Side Image (Shift if activeShifts >= 5)
-      timers.push(
-        window.setTimeout(() => {
-          leapingSideWrapper?.classList.add('visible');
-          leapingSide?.classList.add('visible');
-          stableSideWrapper?.classList.add('visible');
-          stableSide?.classList.add('visible');
-          updateProgress(100);
-          if (activeShifts >= 5) {
-            currentCls += 0.078;
-          }
-          updateCLS(leapingClsEl, currentCls);
-
-          // Simulation complete
-          window.dispatchEvent(
-            new CustomEvent('performance-update-end', {
-              detail: { value: currentCls * 1000 },
-            })
-          );
-        }, loadDelay + 2000)
-      );
+      if (isPaused) {
+        stage?.classList.add('paused');
+        timers.forEach(clearTimeout);
+        timers = [];
+        // Calculate remaining delay for the current step
+        const elapsedSinceLastStep = performance.now() - simulationStartTime;
+        currentStepRemainingDelay = Math.max(
+          0,
+          currentStepRemainingDelay - elapsedSinceLastStep
+        );
+      } else {
+        stage?.classList.remove('paused');
+        simulationStartTime = performance.now();
+        runSimulationStep();
+      }
     }
 
     window.addEventListener('performance-update', (e: any) => {
@@ -878,12 +926,18 @@ const description =
       startSimulation();
     });
 
+    window.addEventListener('performance-toggle-pause', (e: any) => {
+      togglePause(e.detail.isPaused);
+    });
+
     // Initial state for scrubber display
     const initialScrubberValue = document.getElementById('cls-scrubber-value');
     if (initialScrubberValue) {
       const initialCls = 0.178;
       initialScrubberValue.textContent = initialCls.toFixed(3);
-      initialScrubberValue.className = `current-value ${getCLSClass(initialCls)}`;
+      initialScrubberValue.className = `current-value ${getCLSClass(
+        initialCls
+      )}`;
     }
 
     // Initialize activeShifts based on default value (178 -> 0.178 -> 3 shifts)
