@@ -97,12 +97,12 @@ const {
   }
 
   .control-actions {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
+    display: grid;
+    place-items: center;
   }
 
   .replay-btn, .pause-btn {
+    grid-area: 1 / 1;
     background: var(--text-color);
     color: var(--bg-color);
     border: none;
@@ -113,8 +113,10 @@ const {
     visibility: hidden; /* Hidden but occupies space */
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.3rem;
     font-size: 0.6rem;
+    min-width: 4rem; /* Ensure consistent width for overlap */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition:
       transform 0.1s,
