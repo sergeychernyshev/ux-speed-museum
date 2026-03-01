@@ -438,7 +438,7 @@ const description =
           state.accumulatedDelay += steps[state.currentStepIndex].delay;
           runSequence(state, steps);
         }
-      }, Math.max(0, step.delay));
+      }, Math.max(0, delay));
 
       timers.push(timer);
     }
