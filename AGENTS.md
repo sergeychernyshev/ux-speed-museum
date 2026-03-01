@@ -19,10 +19,10 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
 - [x] Implement the `ExhibitDescription` component (Static text only).
 - [x] Implement the `PerformanceController` component for real-time manipulation.
-  - [x] **Integrated REPLAY Button:** Moved the REPLAY button into the `PerformanceController` header.
-    - [x] **Smart Visibility & Stability:** Button only appears after initial playback is complete and disables itself during playback. It uses `visibility: hidden` to avoid layout shifts in the header.
-    - [x] **Infinite Loop Prevention:** Events are now flagged with a `source` to distinguish between manual scrubber releases and automated simulation completions.
-
+      - [x] **Integrated REPLAY Button:** Moved the REPLAY button into the `PerformanceController` header.
+      - [x] **Pause/Resume Functionality:** Added a PAUSE/RESUME button to the controller, allowing users to freeze simulations mid-load to inspect the current state.
+      - [x] **Smart Visibility & Stability:** Buttons only appear when relevant and use `visibility: hidden` to avoid layout shifts.
+      - [x] **Infinite Loop Prevention:** Events are now flagged with a `source` to distinguish between manual scrubber releases and automated simulation completions.
 ## Phase 2: Core Exhibits (MVP)
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.

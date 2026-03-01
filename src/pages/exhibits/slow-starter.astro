@@ -212,6 +212,10 @@ const description =
       bottom: 2rem;
       z-index: 100;
     }
+
+    :global(.paused) :global(.product-image) {
+      animation-play-state: paused !important;
+    }
   </style>
 
   <script>
@@ -232,6 +236,38 @@ const description =
     let rafId = 0;
     let optFinished = false;
     let thrFinished = false;
+    let isPaused = false;
+    let pauseStartTime = 0;
+    let totalPausedTime = 0;
+
+    // Sequence tracking for pause/resume
+    interface SequenceState {
+      page: HTMLElement | null;
+      progress: HTMLElement | null;
+      startDelay: number;
+      dispatchEnd: boolean;
+      onComplete?: () => void;
+      currentStepIndex: number;
+      accumulatedDelay: number;
+      startTime: number;
+    }
+
+    let optState: SequenceState | null = null;
+    let thrState: SequenceState | null = null;
+
+    const steps = [
+      { selector: '.product-page-mock', class: 'visible', delay: 0 },
+      { selector: '.mock-nav', class: 'painted', delay: 100 },
+      { selector: '.mock-hero', class: 'painted', delay: 200 },
+      { selector: '.product-image', class: 'painted', delay: 400 },
+      { selector: '.product-title', class: 'painted', delay: 100 },
+      { selector: '.product-price', class: 'painted', delay: 50 },
+      { selector: '.buy-button', class: 'painted', delay: 100 },
+      { selector: '.mock-description', class: 'painted', delay: 300 },
+      { selector: '.desc-text', class: 'painted', delay: 100 },
+      { selector: '.spec-list', class: 'painted', delay: 100 },
+      { selector: '.mock-footer', class: 'painted', delay: 200 },
+    ];
 
     function clearTimers() {
       timers.forEach((t) => clearTimeout(t));
@@ -248,8 +284,14 @@ const description =
     function resetViews() {
       clearTimers();
       stage?.classList.add('scrubbing');
+      stage?.classList.remove('paused');
       optFinished = false;
       thrFinished = false;
+      isPaused = false;
+      pauseStartTime = 0;
+      totalPausedTime = 0;
+      optState = null;
+      thrState = null;
 
       [optPage, thrPage].forEach((page) => {
         if (!page) return;
@@ -274,8 +316,11 @@ const description =
     }
 
     function updateTimers(timestamp: number) {
+      if (isPaused) return;
       if (!startTime) startTime = timestamp;
-      const elapsed = Math.floor(timestamp - startTime);
+      
+      const effectiveStartTime = startTime + totalPausedTime;
+      const elapsed = Math.floor(timestamp - effectiveStartTime);
 
       const arrow =
         '<span style="color: var(--text-color); margin: 0 0.75rem;">→</span>';
@@ -305,6 +350,9 @@ const description =
       startTime = 0;
       optFinished = false;
       thrFinished = false;
+      isPaused = false;
+      pauseStartTime = 0;
+      totalPausedTime = 0;
 
       // Force reflow to ensure 0% width is applied without transition
       void optProgress?.offsetHeight;
@@ -326,74 +374,100 @@ const description =
 
       rafId = requestAnimationFrame(updateTimers);
 
-      // Start Optimized sequence (no event dispatch)
-      runSequence(optPage, optProgress, OPTIMIZED_BASE, false, () => {
-        optFinished = true;
-      });
+      optState = {
+        page: optPage,
+        progress: optProgress,
+        startDelay: OPTIMIZED_BASE,
+        dispatchEnd: false,
+        onComplete: () => { optFinished = true; },
+        currentStepIndex: 0,
+        accumulatedDelay: OPTIMIZED_BASE,
+        startTime: performance.now()
+      };
 
-      // Start Throttled sequence (triggers REPLAY button visibility)
-      runSequence(thrPage, thrProgress, throttledDelay, true, () => {
-        thrFinished = true;
-      });
+      thrState = {
+        page: thrPage,
+        progress: thrProgress,
+        startDelay: throttledDelay,
+        dispatchEnd: true,
+        onComplete: () => { thrFinished = true; },
+        currentStepIndex: 0,
+        accumulatedDelay: throttledDelay,
+        startTime: performance.now()
+      };
+
+      runSequence(optState, steps);
+      runSequence(thrState, steps);
     }
 
-    function runSequence(
-      page: HTMLElement | null,
-      progress: HTMLElement | null,
-      startDelay: number,
-      dispatchEnd: boolean = false,
-      onComplete?: () => void
-    ) {
-      if (!page) return;
+    function runSequence(state: SequenceState, steps: any[]) {
+      if (!state.page || isPaused) return;
 
-      const steps = [
-        { selector: '.product-page-mock', class: 'visible', delay: 0 },
-        { selector: '.mock-nav', class: 'painted', delay: 100 },
-        { selector: '.mock-hero', class: 'painted', delay: 200 },
-        { selector: '.product-image', class: 'painted', delay: 400 },
-        { selector: '.product-title', class: 'painted', delay: 100 },
-        { selector: '.product-price', class: 'painted', delay: 50 },
-        { selector: '.buy-button', class: 'painted', delay: 100 },
-        { selector: '.mock-description', class: 'painted', delay: 300 },
-        { selector: '.desc-text', class: 'painted', delay: 100 },
-        { selector: '.spec-list', class: 'painted', delay: 100 },
-        { selector: '.mock-footer', class: 'painted', delay: 200 },
-      ];
+      const step = steps[state.currentStepIndex];
+      if (!step) return;
 
-      let accumulatedDelay = startDelay;
+      const now = performance.now();
+      const delay = state.accumulatedDelay - (now - state.startTime);
 
-      steps.forEach((step, index) => {
-        accumulatedDelay += step.delay;
-        const timer = window.setTimeout(() => {
-          if (step.selector === '.product-page-mock') {
-            page.classList.add(step.class);
-          } else {
-            page.querySelector(step.selector)?.classList.add(step.class);
+      const timer = window.setTimeout(() => {
+        if (isPaused) return;
+
+        if (step.selector === '.product-page-mock') {
+          state.page?.classList.add(step.class);
+        } else {
+          state.page?.querySelector(step.selector)?.classList.add(step.class);
+        }
+
+        if (state.progress) {
+          const percent = ((state.currentStepIndex + 1) / steps.length) * 100;
+          state.progress.style.width = `${percent}%`;
+        }
+
+        if (state.currentStepIndex === steps.length - 1) {
+          if (state.onComplete) state.onComplete();
+          if (state.dispatchEnd) {
+            window.dispatchEvent(
+              new CustomEvent('performance-update-end', {
+                detail: { value: throttledDelay },
+              })
+            );
           }
+        } else {
+          state.currentStepIndex++;
+          state.accumulatedDelay += steps[state.currentStepIndex].delay;
+          runSequence(state, steps);
+        }
+      }, Math.max(0, step.delay));
 
-          // Update progress bar
-          if (progress) {
-            const percent = ((index + 1) / steps.length) * 100;
-            progress.style.width = `${percent}%`;
-          }
+      timers.push(timer);
+    }
 
-          // Trigger completion callback on last step
-          if (index === steps.length - 1) {
-            if (onComplete) onComplete();
-            
-            // Re-dispatch update-end ONLY if requested (for throttled side)
-            if (dispatchEnd) {
-              window.dispatchEvent(
-                new CustomEvent('performance-update-end', {
-                  detail: { value: throttledDelay },
-                })
-              );
-            }
-          }
-        }, accumulatedDelay);
+    function togglePause(paused: boolean) {
+      if (isPaused === paused) return;
+      isPaused = paused;
 
-        timers.push(timer);
-      });
+      if (isPaused) {
+        stage?.classList.add('paused');
+        pauseStartTime = performance.now();
+        timers.forEach(clearTimeout);
+        timers = [];
+      } else {
+        stage?.classList.remove('paused');
+        const pauseDuration = performance.now() - pauseStartTime;
+        totalPausedTime += pauseDuration;
+        
+        // Resume timers
+        rafId = requestAnimationFrame(updateTimers);
+        
+        if (optState) {
+          optState.startTime += pauseDuration;
+          runSequence(optState, steps);
+        }
+        if (thrState) {
+          thrState.startTime += pauseDuration;
+          runSequence(thrState, steps);
+        }
+      }
     }
 
     // Listen for scrubber updates
@@ -421,6 +495,10 @@ const description =
       resetViews();
       // Small delay to allow reset classes to propagate if needed, or just call start
       startRendering();
+    });
+
+    window.addEventListener('performance-toggle-pause', (e: any) => {
+      togglePause(e.detail.isPaused);
     });
 
     // Initial run
