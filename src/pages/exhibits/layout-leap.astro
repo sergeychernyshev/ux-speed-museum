@@ -5,7 +5,7 @@ import PerformanceController from '../../components/PerformanceController.astro'
 
 const title = 'The Layout Leap';
 const description =
-  'Have you ever tried to click a link or a button just as the page finished loading, and—*oops*—the content shifted? That is <a href="https://web.dev/articles/cls" target="_blank" rel="noopener">Cumulative Layout Shift (CLS)</a>. This exhibit demonstrates how different types of late-loading elements—banners, hero images, sidebar assets, and even font changes—contribute to page instability. Use the scrubber to increase the number of "leaping" elements and compare the stable experience on the right.';
+  'Have you ever read an article on a news page on a news site, and—*oops*—the content shifted and you lost where you were reading? That is <a href="https://web.dev/articles/cls" target="_blank" rel="noopener">Cumulative Layout Shift (CLS)</a>. This exhibit demonstrates how different types of late-loading elements—banners, hero images, sidebar assets, and even font changes—contribute to page instability. Use the scrubber to increase the number of "leaping" elements and compare the stable experience on the right.';
 ---
 
 <ExhibitLayout title={title}>
@@ -33,7 +33,11 @@ const description =
             <div class="render-progress-container">
               <div class="render-progress-bar" id="leaping-progress"></div>
             </div>
-            <div class="mock-article" id="leaping-article" style="display: none;">
+            <div
+              class="mock-article"
+              id="leaping-article"
+              style="display: none;"
+            >
               <div class="leaping-placeholder" id="leaping-banner-placeholder">
                 <div class="late-banner" id="leaping-banner">
                   <img src="/shifty-ad.avif" alt="Leaderboard Ad" />
@@ -46,27 +50,45 @@ const description =
               </div>
               <div class="leaping-placeholder" id="leaping-hero-placeholder">
                 <div class="late-image-container" id="leaping-hero-wrapper">
-                  <img src="/shifty-physics.avif" alt="Hero Image" class="late-image" id="leaping-hero" />
+                  <img
+                    src="/shifty-physics.avif"
+                    alt="Hero Image"
+                    class="late-image"
+                    id="leaping-hero"
+                  />
                 </div>
               </div>
               <div class="article-body">
                 <div class="body-content-wrapper">
                   <div class="text-column">
                     <p>
-                      Content stability is often overlooked until it moves. When assets load without dimensions, the browser cannot reserve space.
+                      Content stability is often overlooked until it moves. When
+                      assets load without dimensions, the browser cannot reserve
+                      space.
                     </p>
                     <p>
-                      This text will move if the image to the right loads without pre-allocated space or if the font size changes unexpectedly.
+                      This text will move if the image to the right loads
+                      without pre-allocated space or if the font size changes
+                      unexpectedly.
                     </p>
                   </div>
-                  <div class="leaping-placeholder" id="leaping-side-placeholder">
+                  <div
+                    class="leaping-placeholder"
+                    id="leaping-side-placeholder"
+                  >
                     <div class="side-image-wrapper" id="leaping-side-wrapper">
-                      <img src="/shift-the-ad.avif" alt="Sidebar Ad" class="late-image side" id="leaping-side" />
+                      <img
+                        src="/shift-the-ad.avif"
+                        alt="Sidebar Ad"
+                        class="late-image side"
+                        id="leaping-side"
+                      />
                     </div>
                   </div>
                 </div>
                 <p>
-                  Every jump, however small, increases the CLS score and disrupts the user experience.
+                  Every jump, however small, increases the CLS score and
+                  disrupts the user experience.
                 </p>
               </div>
             </div>
@@ -80,9 +102,7 @@ const description =
           <div class="metric-header">
             <div class="panel-info">
               <span class="panel-label">Stable</span>
-              <p class="panel-note">
-                All elements have reserved space.
-              </p>
+              <p class="panel-note">All elements have reserved space.</p>
             </div>
             <div class="cls-display" id="stable-cls">CLS: 0.000</div>
           </div>
@@ -90,7 +110,11 @@ const description =
             <div class="render-progress-container">
               <div class="render-progress-bar" id="stable-progress"></div>
             </div>
-            <div class="mock-article" id="stable-article" style="display: none;">
+            <div
+              class="mock-article"
+              id="stable-article"
+              style="display: none;"
+            >
               <div class="stable-banner-placeholder">
                 <div class="late-banner" id="stable-banner">
                   <img src="/shifty-ad.avif" alt="Leaderboard Ad" />
@@ -103,27 +127,42 @@ const description =
               </div>
               <div class="stable-hero-placeholder">
                 <div class="late-image-container" id="stable-hero-wrapper">
-                  <img src="/shifty-physics.avif" alt="Hero Image" class="late-image" id="stable-hero" />
+                  <img
+                    src="/shifty-physics.avif"
+                    alt="Hero Image"
+                    class="late-image"
+                    id="stable-hero"
+                  />
                 </div>
               </div>
               <div class="article-body">
                 <div class="body-content-wrapper">
                   <div class="text-column">
                     <p>
-                      Content stability is often overlooked until it moves. When assets load without dimensions, the browser cannot reserve space.
+                      Content stability is often overlooked until it moves. When
+                      assets load without dimensions, the browser cannot reserve
+                      space.
                     </p>
                     <p>
-                      This text will move if the image to the right loads without pre-allocated space or if the font size changes unexpectedly.
+                      This text will move if the image to the right loads
+                      without pre-allocated space or if the font size changes
+                      unexpectedly.
                     </p>
                   </div>
                   <div class="stable-side-placeholder">
                     <div class="side-image-wrapper" id="stable-side-wrapper">
-                      <img src="/shift-the-ad.avif" alt="Sidebar Ad" class="late-image side" id="stable-side" />
+                      <img
+                        src="/shift-the-ad.avif"
+                        alt="Sidebar Ad"
+                        class="late-image side"
+                        id="stable-side"
+                      />
                     </div>
                   </div>
                 </div>
                 <p>
-                  Every jump, however small, increases the CLS score and disrupts the user experience.
+                  Every jump, however small, increases the CLS score and
+                  disrupts the user experience.
                 </p>
               </div>
             </div>
@@ -442,40 +481,96 @@ const description =
     }
 
     @keyframes stutter-banner {
-      0% { clip-path: inset(0 0 100% 0); }
-      15% { clip-path: inset(0 0 95% 0); }
-      25% { clip-path: inset(0 0 85% 0); }
-      40% { clip-path: inset(0 0 80% 0); }
-      55% { clip-path: inset(0 0 40% 0); }
-      70% { clip-path: inset(0 0 35% 0); }
-      85% { clip-path: inset(0 0 10% 0); }
-      100% { clip-path: inset(0 0 0% 0); }
+      0% {
+        clip-path: inset(0 0 100% 0);
+      }
+      15% {
+        clip-path: inset(0 0 95% 0);
+      }
+      25% {
+        clip-path: inset(0 0 85% 0);
+      }
+      40% {
+        clip-path: inset(0 0 80% 0);
+      }
+      55% {
+        clip-path: inset(0 0 40% 0);
+      }
+      70% {
+        clip-path: inset(0 0 35% 0);
+      }
+      85% {
+        clip-path: inset(0 0 10% 0);
+      }
+      100% {
+        clip-path: inset(0 0 0% 0);
+      }
     }
 
     @keyframes stutter-hero {
-      0% { clip-path: inset(0 0 100% 0); }
-      10% { clip-path: inset(0 0 98% 0); }
-      20% { clip-path: inset(0 0 92% 0); }
-      30% { clip-path: inset(0 0 88% 0); }
-      40% { clip-path: inset(0 0 55% 0); }
-      50% { clip-path: inset(0 0 52% 0); }
-      60% { clip-path: inset(0 0 48% 0); }
-      75% { clip-path: inset(0 0 20% 0); }
-      85% { clip-path: inset(0 0 18% 0); }
-      95% { clip-path: inset(0 0 5% 0); }
-      100% { clip-path: inset(0 0 0% 0); }
+      0% {
+        clip-path: inset(0 0 100% 0);
+      }
+      10% {
+        clip-path: inset(0 0 98% 0);
+      }
+      20% {
+        clip-path: inset(0 0 92% 0);
+      }
+      30% {
+        clip-path: inset(0 0 88% 0);
+      }
+      40% {
+        clip-path: inset(0 0 55% 0);
+      }
+      50% {
+        clip-path: inset(0 0 52% 0);
+      }
+      60% {
+        clip-path: inset(0 0 48% 0);
+      }
+      75% {
+        clip-path: inset(0 0 20% 0);
+      }
+      85% {
+        clip-path: inset(0 0 18% 0);
+      }
+      95% {
+        clip-path: inset(0 0 5% 0);
+      }
+      100% {
+        clip-path: inset(0 0 0% 0);
+      }
     }
 
     @keyframes stutter-side {
-      0% { clip-path: inset(0 0 100% 0); }
-      10% { clip-path: inset(0 0 95% 0); }
-      20% { clip-path: inset(0 0 90% 0); }
-      35% { clip-path: inset(0 0 85% 0); }
-      50% { clip-path: inset(0 0 45% 0); }
-      65% { clip-path: inset(0 0 40% 0); }
-      80% { clip-path: inset(0 0 15% 0); }
-      90% { clip-path: inset(0 0 10% 0); }
-      100% { clip-path: inset(0 0 0% 0); }
+      0% {
+        clip-path: inset(0 0 100% 0);
+      }
+      10% {
+        clip-path: inset(0 0 95% 0);
+      }
+      20% {
+        clip-path: inset(0 0 90% 0);
+      }
+      35% {
+        clip-path: inset(0 0 85% 0);
+      }
+      50% {
+        clip-path: inset(0 0 45% 0);
+      }
+      65% {
+        clip-path: inset(0 0 40% 0);
+      }
+      80% {
+        clip-path: inset(0 0 15% 0);
+      }
+      90% {
+        clip-path: inset(0 0 10% 0);
+      }
+      100% {
+        clip-path: inset(0 0 0% 0);
+      }
     }
 
     :global(.scrubbing) .late-banner img,
@@ -505,7 +600,7 @@ const description =
     let activeShifts = 2;
     const loadDelay = 1000;
     let timers: number[] = [];
-    
+
     // Leaping Elements
     const leapingArticle = document.getElementById('leaping-article');
     const stableArticle = document.getElementById('stable-article');
@@ -514,7 +609,7 @@ const description =
     const leapingHero = document.getElementById('leaping-hero');
     const leapingSideWrapper = document.getElementById('leaping-side-wrapper');
     const leapingSide = document.getElementById('leaping-side');
-    
+
     // Stable Elements
     const stableBanner = document.getElementById('stable-banner');
     const stableHeroWrapper = document.getElementById('stable-hero-wrapper');
@@ -730,7 +825,7 @@ const description =
 
     window.addEventListener('performance-update', (e: any) => {
       resetViews();
-      
+
       const val = e.detail.value;
       const validSnaps = [0, 10, 40, 178, 759, 837];
       // Snap to closest valid value
@@ -739,9 +834,11 @@ const description =
       });
 
       const targetCls = snappedVal / 1000;
-      
+
       // Update scrubber UI to the snapped position
-      const scrubber = document.getElementById('cls-scrubber') as HTMLInputElement;
+      const scrubber = document.getElementById(
+        'cls-scrubber'
+      ) as HTMLInputElement;
       if (scrubber) scrubber.value = snappedVal.toString();
 
       // Map CLS thresholds back to number of shifts
