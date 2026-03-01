@@ -71,22 +71,22 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
     - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
 
-- [x] **Exhibit 4: Network Throttle (LCP & Sequential Loading).**
-  - [x] **Concept:** Experience the psychological difference between progressive loading on slow networks vs. high-bandwidth connections.
-  - [x] **Fast Side:** Fixed "Fiber" speed (Instant/Near-instant).
-  - [x] **Slow Side:** Controllable "Network Profile" (2G, 3G, Slow 4G) via scrubber or discrete selector.
-  - [x] **Mechanics:**
-    - [x] A social media feed or photo gallery layout.
-    - [x] Resources (images, text, profile avatars) load sequentially based on simulated bandwidth and latency.
-    - [x] **The "Waterfall" Effect:** Visualize the queue of resources loading one by one.
-  - [x] **Content:** 
-    - [x] 3 social media posts with different asset sizes.
-    - [x] Images should use simulated progressive loading.
-  - [x] **Visuals:**
-    - [x] LCP timer and highlight on the largest image.
-    - [x] Per-resource progress bars showing "Downloading..."
-    - [x] RTT (Round Trip Time) indicator and current download speed (e.g., "50 kbps").
-  - [x] **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
+- [ ] **Exhibit 4: Network Throttle (LCP & Sequential Loading).**
+  - **Concept:** Experience the psychological difference between progressive loading on slow networks vs. high-bandwidth connections.
+  - **Fast Side:** Fixed "Fiber" speed (Instant/Near-instant).
+  - **Slow Side:** Controllable "Network Profile" (2G, 3G, Slow 4G) via scrubber or discrete selector.
+  - **Mechanics:**
+    - A social media feed or photo gallery layout.
+    - Resources (images, text, profile avatars) load sequentially based on simulated bandwidth and latency.
+    - **The "Waterfall" Effect:** Visualize the queue of resources loading one by one.
+  - **Content:** 
+    - 5-6 social media posts with different asset sizes.
+    - Images should use simulated progressive loading.
+  - **Visuals:**
+    - LCP timer and highlight on the largest image.
+    - Per-resource progress bars showing "Downloading..."
+    - RTT (Round Trip Time) indicator and current download speed (e.g., "50 kbps").
+  - **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
 
 ## Phase 3: Advanced Simulations
 
