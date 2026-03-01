@@ -12,6 +12,8 @@ const { title, image, showShield = true } = Astro.props;
 const SITE_URL = 'https://museum.uxspeed.dev';
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 const socialImageURL = image ? new URL(image, SITE_URL) : null;
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <html lang="en">
@@ -277,7 +279,7 @@ const socialImageURL = image ? new URL(image, SITE_URL) : null;
             <li>
               <a
                 href="/"
-                class:list={{ active: Astro.url.pathname === '/' }}
+                class:list={{ active: currentPath === '/' }}
                 data-astro-prefetch
               >
                 Home
@@ -287,7 +289,7 @@ const socialImageURL = image ? new URL(image, SITE_URL) : null;
               <a
                 href="/exhibits/slow-starter"
                 class:list={{
-                  active: Astro.url.pathname === '/exhibits/slow-starter',
+                  active: currentPath === '/exhibits/slow-starter',
                 }}
                 data-astro-prefetch
               >
@@ -298,7 +300,7 @@ const socialImageURL = image ? new URL(image, SITE_URL) : null;
               <a
                 href="/exhibits/input-abyss"
                 class:list={{
-                  active: Astro.url.pathname === '/exhibits/input-abyss',
+                  active: currentPath === '/exhibits/input-abyss',
                 }}
                 data-astro-prefetch
               >
@@ -309,7 +311,7 @@ const socialImageURL = image ? new URL(image, SITE_URL) : null;
               <a
                 href="/exhibits/layout-leap"
                 class:list={{
-                  active: Astro.url.pathname === '/exhibits/layout-leap',
+                  active: currentPath === '/exhibits/layout-leap',
                 }}
                 data-astro-prefetch
               >
