@@ -71,23 +71,6 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
     - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
 
-- [ ] **Exhibit 4: Network Throttle (LCP & Sequential Loading).**
-  - **Concept:** Experience the psychological difference between progressive loading on slow networks vs. high-bandwidth connections.
-  - **Fast Side:** Fixed "Fiber" speed (Instant/Near-instant).
-  - **Slow Side:** Controllable "Network Profile" (2G, 3G, Slow 4G) via scrubber or discrete selector.
-  - **Mechanics:**
-    - A social media feed or photo gallery layout.
-    - Resources (images, text, profile avatars) load sequentially based on simulated bandwidth and latency.
-    - **The "Waterfall" Effect:** Visualize the queue of resources loading one by one.
-  - **Content:** 
-    - 5-6 social media posts with different asset sizes.
-    - Images should use simulated progressive loading.
-  - **Visuals:**
-    - LCP timer and highlight on the largest image.
-    - Per-resource progress bars showing "Downloading..."
-    - RTT (Round Trip Time) indicator and current download speed (e.g., "50 kbps").
-  - **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
-
 ## Phase 3: Advanced Simulations
 
 - [ ] **Exhibit 5: Main Thread Blocking.** Simulation of heavy JavaScript execution freezing the UI.
