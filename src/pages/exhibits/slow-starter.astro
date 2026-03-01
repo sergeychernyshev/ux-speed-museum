@@ -19,12 +19,16 @@ const description =
   <div class="exhibit-stage">
     <div class="comparison-container" id="comparison-stage">
       <div class="comparison-panel">
-        <span class="panel-label">Slow to Start</span>
-        <p class="panel-note" id="throttled-note">
-          Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
-        </p>
         <div class="experience-block">
-          <div class="timer-display" id="throttled-timer">0ms</div>
+          <div class="metric-header">
+            <div class="timer-display" id="throttled-timer">0ms</div>
+            <div class="panel-info">
+              <span class="panel-label">Slow to Start</span>
+              <p class="panel-note" id="throttled-note">
+                Starts rendering at <span class="fcp-needs-improvement">2500ms</span>.
+              </p>
+            </div>
+          </div>
           <div class="viewport" id="throttled-viewport">
             <div class="render-progress-container">
               <div class="render-progress-bar" id="throttled-progress"></div>
@@ -35,14 +39,18 @@ const description =
       </div>
 
       <div class="comparison-panel">
-        <span class="panel-label">Fast</span>
-        <p class="panel-note">
-          Only 5% of websites start rendering faster than <span class="fcp-good"
-            >500ms</span
-          >.
-        </p>
         <div class="experience-block">
-          <div class="timer-display" id="optimized-timer">0ms</div>
+          <div class="metric-header">
+            <div class="panel-info">
+              <span class="panel-label">Fast</span>
+              <p class="panel-note">
+                Only 5% of websites start rendering faster than <span class="fcp-good"
+                  >500ms</span
+                >.
+              </p>
+            </div>
+            <div class="timer-display" id="optimized-timer">0ms</div>
+          </div>
           <div class="viewport" id="optimized-viewport">
             <div class="render-progress-container">
               <div class="render-progress-bar" id="optimized-progress"></div>
@@ -61,6 +69,7 @@ const description =
         defaultValue={2500}
         label="Time to start rendering"
         unit="ms"
+        showReplay={true}
       />
     </div>
   </div>
@@ -95,13 +104,25 @@ const description =
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      align-items: flex-start; /* Align timer and viewport to left */
+      align-items: center;
       width: 100%;
     }
 
-    .panel-label,
-    .panel-note {
-      align-self: center; /* Keep labels centered if preferred, or left-align */
+    .metric-header {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .panel-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding-bottom: 0.5rem;
+      align-items: center;
+      text-align: center;
     }
 
     .panel-label {
@@ -116,9 +137,6 @@ const description =
       font-size: 0.7rem;
       color: var(--muted-text);
       font-style: italic;
-      margin-top: -0.5rem;
-      margin-bottom: 0.5rem;
-      text-align: center;
       height: 1rem; /* Reserve space */
     }
 
@@ -169,8 +187,8 @@ const description =
       color: var(--accent-color);
       background: var(--card-bg);
       padding: 0.25rem 0.75rem;
-      width: max-content;
-      text-align: left;
+      min-width: 12rem; /* Stable width for the transition text */
+      font-variant-numeric: tabular-nums;
       opacity: 1;
       transition: opacity 0.2s;
       border: 1px solid var(--border-color);
@@ -180,6 +198,9 @@ const description =
       margin-bottom: 0;
       position: relative;
       z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .timer-display.hidden {
@@ -238,8 +259,14 @@ const description =
         });
       });
 
-      if (optProgress) optProgress.style.width = '0%';
-      if (thrProgress) thrProgress.style.width = '0%';
+      if (optProgress) {
+        optProgress.style.transition = 'none';
+        optProgress.style.width = '0%';
+      }
+      if (thrProgress) {
+        thrProgress.style.transition = 'none';
+        thrProgress.style.width = '0%';
+      }
 
       // Hide timers instead of resetting text
       optTimer?.classList.add('hidden');
@@ -279,6 +306,14 @@ const description =
       optFinished = false;
       thrFinished = false;
 
+      // Force reflow to ensure 0% width is applied without transition
+      void optProgress?.offsetHeight;
+      void thrProgress?.offsetHeight;
+
+      // Re-enable transition
+      if (optProgress) optProgress.style.transition = '';
+      if (thrProgress) thrProgress.style.transition = '';
+
       // Reveal and initialize timers
       if (optTimer) {
         optTimer.textContent = '0ms';
@@ -291,13 +326,13 @@ const description =
 
       rafId = requestAnimationFrame(updateTimers);
 
-      // Start Optimized sequence
-      runSequence(optPage, optProgress, OPTIMIZED_BASE, () => {
+      // Start Optimized sequence (no event dispatch)
+      runSequence(optPage, optProgress, OPTIMIZED_BASE, false, () => {
         optFinished = true;
       });
 
-      // Start Throttled sequence
-      runSequence(thrPage, thrProgress, throttledDelay, () => {
+      // Start Throttled sequence (triggers REPLAY button visibility)
+      runSequence(thrPage, thrProgress, throttledDelay, true, () => {
         thrFinished = true;
       });
     }
@@ -306,6 +341,7 @@ const description =
       page: HTMLElement | null,
       progress: HTMLElement | null,
       startDelay: number,
+      dispatchEnd: boolean = false,
       onComplete?: () => void
     ) {
       if (!page) return;
@@ -342,8 +378,17 @@ const description =
           }
 
           // Trigger completion callback on last step
-          if (index === steps.length - 1 && onComplete) {
-            onComplete();
+          if (index === steps.length - 1) {
+            if (onComplete) onComplete();
+            
+            // Re-dispatch update-end ONLY if requested (for throttled side)
+            if (dispatchEnd) {
+              window.dispatchEvent(
+                new CustomEvent('performance-update-end', {
+                  detail: { value: throttledDelay },
+                })
+              );
+            }
           }
         }, accumulatedDelay);
 
@@ -357,13 +402,34 @@ const description =
       throttledDelay = e.detail.value;
       if (thrNote)
         thrNote.innerHTML = `Starts rendering at <span class="${getFCPClass(throttledDelay)}">${throttledDelay}ms</span>.`;
+
+      // Update scrubber display color manually
+      const scrubberValueEl = document.getElementById('performance-scrubber-value');
+      if (scrubberValueEl) {
+        scrubberValueEl.textContent = `${throttledDelay}ms`;
+        scrubberValueEl.className = `current-value ${getFCPClass(throttledDelay)}`;
+      }
     });
 
-    window.addEventListener('performance-update-end', () => {
+    window.addEventListener('performance-update-end', (e: any) => {
+      if (e.detail?.source === 'scrubber') {
+        startRendering();
+      }
+    });
+
+    window.addEventListener('performance-replay', () => {
+      resetViews();
+      // Small delay to allow reset classes to propagate if needed, or just call start
       startRendering();
     });
 
     // Initial run
+    const initialScrubberValue = document.getElementById('performance-scrubber-value');
+    if (initialScrubberValue) {
+      initialScrubberValue.textContent = `${throttledDelay}ms`;
+      initialScrubberValue.className = `current-value ${getFCPClass(throttledDelay)}`;
+    }
+
     startRendering();
   </script>
 </ExhibitLayout>

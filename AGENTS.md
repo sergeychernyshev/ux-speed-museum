@@ -19,9 +19,11 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
 - [x] Implement the `ExhibitDescription` component (Static text only).
 - [x] Implement the `PerformanceController` component for real-time manipulation.
+  - [x] **Integrated REPLAY Button:** Moved the REPLAY button into the `PerformanceController` header.
+    - [x] **Smart Visibility & Stability:** Button only appears after initial playback is complete and disables itself during playback. It uses `visibility: hidden` to avoid layout shifts in the header.
+    - [x] **Infinite Loop Prevention:** Events are now flagged with a `source` to distinguish between manual scrubber releases and automated simulation completions.
 
 ## Phase 2: Core Exhibits (MVP)
-
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
   - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
@@ -34,6 +36,9 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - **Visuals:** Rendering progress bars and dual-value millisecond timers. Timers are styled as bordered tabs sitting flush against the top of each experience frame (no gap) and are left-aligned.
     - **Timer Format:** Before rendering: `{current}ms`. After rendering starts: `{start} → {current}ms`. The arrow uses standard text color.
     - **FCP Colorization:** The `{start}` value is color-coded by FCP thresholds: **Green** (≤1800ms), **Orange** (≤3000ms), and **Red** (>3000ms).
+  - [x] **Completed Fixes:**
+    - [x] **Timer Color Sync:** Synced the color of "ms" and arrows with the numeric values.
+    - [x] **Realistic Progressive Image Loading:** Simulated top-down packet-based image loading with granular stutter.
 
 - [x] **Exhibit 2: The Input Abyss (Input Latency).**
   - [x] **Concept:** Visceral experience of delayed interactive feedback (Input Delay).
@@ -50,8 +55,38 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Interactivity:** Fully interactive elements on both sides to compare the "feel" of lag.
   - [x] **Thresholds:** Latency color-coded: **Green** (≤100ms), **Orange** (≤300ms), **Red** (>300ms) based on standard response time perceptions.
 
-- [ ] **Exhibit 3: Network Throttle.** A mock data-fetching interface simulating 2G, 3G, and "Slow 4G" speeds.
-- [ ] **Exhibit 4: Layout Shift.** A news-style layout demonstrating CLS via delayed asset loading.
+- [x] **Exhibit 3: The Layout Leap (Layout Shift).**
+  - [x] **Concept:** Experience the "jank" and frustration of Cumulative Layout Shift (CLS).
+  - [x] **Mechanics:** A news-article or blog layout where images, ads, or dynamic notices load with artificial delays, causing content to jump.
+  - [x] **The "Oops" Moment:** A button (e.g., "Cancel") that moves exactly when the user is about to click it, causing them to click something else (e.g., "Buy Now" or "Delete").
+  - [x] **Comparison:**
+    - [x] **Stable Side:** Pre-allocated aspect ratios (placeholders) ensure zero shift.
+    - [x] **Leaping Side:** Content jumps as assets arrive without reserved space.
+  - [x] **Visuals:** CLS score visualization and "jump" highlights.
+  - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
+  - [x] **Completed Fixes:**
+    - [x] **Fixed Height Placeholders:** Updated CSS `height` properties for banners (60px), hero (200px), and sidebar (125px) to ensure predictable space reservation and stability on the Stable side.
+    - [x] **Unify Container Sizing:** Ensured both sides use consistent `height` definitions.
+    - [x] **Account for Borders:** Aligned `box-sizing` and border styles to prevent 1px shifts.
+    - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
+    - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
+
+- [ ] **Exhibit 4: Network Throttle (LCP & Sequential Loading).**
+  - **Concept:** Experience the psychological difference between progressive loading on slow networks vs. high-bandwidth connections.
+  - **Fast Side:** Fixed "Fiber" speed (Instant/Near-instant).
+  - **Slow Side:** Controllable "Network Profile" (2G, 3G, Slow 4G) via scrubber or discrete selector.
+  - **Mechanics:**
+    - A social media feed or photo gallery layout.
+    - Resources (images, text, profile avatars) load sequentially based on simulated bandwidth and latency.
+    - **The "Waterfall" Effect:** Visualize the queue of resources loading one by one.
+  - **Content:** 
+    - 5-6 social media posts with different asset sizes.
+    - Images should use simulated progressive loading.
+  - **Visuals:**
+    - LCP timer and highlight on the largest image.
+    - Per-resource progress bars showing "Downloading..."
+    - RTT (Round Trip Time) indicator and current download speed (e.g., "50 kbps").
+  - **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
 
 ## Phase 3: Advanced Simulations
 
@@ -67,6 +102,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 ## Implementation Guidelines
 
 - **Zero-Layout-Shift:** Initial HTML pre-rendered to prevent layout shifts.
+- [x] **Realistic Progressive Image Loading:** Instead of images appearing instantly, simulate a top-to-down "wipe" or scan-line loading effect across all exhibits to mimic low-bandwidth image decoding.
 - **No Spinners:** Never use spinners. Use progress bars or text-based indicators. 🚫🌀
 - **Loading Progress:** Animate loading bars according to actual asset download progress.
 - **Preparation Shield Optimization:** Skip shield if all resources are already loaded/cached.

@@ -5,24 +5,50 @@ interface Props {
   step: number;
   defaultValue: number;
   label: string;
-  unit: string;
+  unit?: string;
+  id?: string;
+  list?: string;
+  showReplay?: boolean;
 }
 
-const { min, max, step, defaultValue, label, unit } = Astro.props;
+const {
+  min,
+  max,
+  step,
+  defaultValue,
+  label,
+  unit = '',
+  id = 'performance-scrubber',
+  list,
+  showReplay = false,
+} = Astro.props;
 ---
 
 <div class="performance-controller">
   <div class="controller-header">
-    <label for="performance-scrubber">{label}</label>
-    <span class="value-display" id="value-display">{defaultValue}{unit}</span>
+    <div class="label-group">
+      <label for={id}>{label}</label>
+      {
+        showReplay && (
+          <button class="replay-btn" id={`${id}-replay`}>
+            <span class="play-icon">▶</span> REPLAY
+          </button>
+        )
+      }
+    </div>
+    <span class="value-display" id={`${id}-display`}>
+      <span class="current-value" id={`${id}-value`}>{defaultValue}{unit}</span>
+    </span>
   </div>
   <input
     type="range"
-    id="performance-scrubber"
+    id={id}
     min={min}
     max={max}
     step={step}
     value={defaultValue}
+    data-unit={unit}
+    list={list}
   />
 </div>
 
@@ -32,21 +58,76 @@ const { min, max, step, defaultValue, label, unit } = Astro.props;
     border: 1px solid var(--border-color);
     padding: 1rem;
     border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
+    width: max-content;
+    min-width: 300px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .controller-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.5rem;
     gap: 1rem;
+  }
+
+  .label-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--muted-text);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .replay-btn {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0.1rem 0.3rem;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    visibility: hidden; /* Hidden but occupies space */
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.6rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition:
+      transform 0.1s,
+      opacity 0.2s;
+  }
+
+  .replay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .replay-btn:not(:disabled):hover {
+    opacity: 0.9;
+  }
+
+  .replay-btn:not(:disabled):active {
+    transform: scale(0.95);
+  }
+
+  .play-icon {
+    font-size: 0.5rem;
   }
 
   .value-display {
     font-weight: bold;
     color: var(--accent-color);
+    font-variant-numeric: tabular-nums;
+    min-width: 4rem;
+    text-align: right;
   }
 
   input[type='range'] {
@@ -56,48 +137,82 @@ const { min, max, step, defaultValue, label, unit } = Astro.props;
 </style>
 
 <script>
-  const scrubber = document.getElementById(
-    'performance-scrubber'
-  ) as HTMLInputElement;
-  const display = document.getElementById('value-display');
-  const unit = scrubber?.getAttribute('data-unit') || 'ms';
+  // Handle multiple controllers if necessary
+  document.querySelectorAll('.performance-controller').forEach((container) => {
+    const scrubber = container.querySelector(
+      'input[type="range"]'
+    ) as HTMLInputElement;
+    const valueDisplay = container.querySelector('.current-value');
+    const replayBtn = container.querySelector('.replay-btn');
+    const unit = scrubber?.getAttribute('data-unit') || '';
 
-  function updateColor(value: number) {
-    if (!display) return;
-    display.classList.remove('fcp-good', 'fcp-needs-improvement', 'fcp-poor');
-    if (value <= 1800) {
-      display.classList.add('fcp-good');
-    } else if (value <= 3000) {
-      display.classList.add('fcp-needs-improvement');
-    } else {
-      display.classList.add('fcp-poor');
-    }
-  }
+    let isInteracting = false;
 
-  // Initial color
-  if (scrubber) updateColor(parseInt(scrubber.value));
+    scrubber?.addEventListener('pointerdown', () => {
+      isInteracting = true;
+    });
 
-  scrubber?.addEventListener('input', (e) => {
-    const value = (e.target as HTMLInputElement).value;
-    if (display) display.textContent = `${value}${unit}`;
-    updateColor(parseInt(value));
+    scrubber?.addEventListener('input', (e) => {
+      const value = (e.target as HTMLInputElement).value;
+      if (valueDisplay) valueDisplay.textContent = `${value}${unit}`;
 
-    // Dispatch custom event for exhibit to listen to (scrubbing)
-    window.dispatchEvent(
-      new CustomEvent('performance-update', {
-        detail: { value: parseInt(value) },
-      })
-    );
-  });
+      // Disable and hide replay while scrubbing/playing
+      if (replayBtn) {
+        (replayBtn as HTMLButtonElement).disabled = true;
+        (replayBtn as HTMLElement).style.visibility = 'hidden';
+      }
 
-  scrubber?.addEventListener('change', (e) => {
-    const value = (e.target as HTMLInputElement).value;
+      // Dispatch custom event for exhibit to listen to (scrubbing)
+      window.dispatchEvent(
+        new CustomEvent('performance-update', {
+          detail: { value: parseInt(value), id: scrubber.id },
+        })
+      );
+    });
 
-    // Dispatch completion event (released)
-    window.dispatchEvent(
-      new CustomEvent('performance-update-end', {
-        detail: { value: parseInt(value) },
-      })
-    );
+    // Use pointerup as the single source of truth for "release"
+    scrubber?.addEventListener('pointerup', (e) => {
+      if (isInteracting) {
+        window.dispatchEvent(
+          new CustomEvent('performance-update-end', {
+            detail: { 
+              value: parseInt((e.target as HTMLInputElement).value), 
+              id: scrubber.id, 
+              source: 'scrubber' 
+            },
+          })
+        );
+        isInteracting = false;
+      }
+    });
+
+    // Backup for cases where pointerup might be missed (e.g. mouse leaves window)
+    window.addEventListener('pointerup', () => {
+      isInteracting = false;
+    });
+
+    replayBtn?.addEventListener('click', () => {
+      // Disable self on click
+      (replayBtn as HTMLButtonElement).disabled = true;
+
+      window.dispatchEvent(
+        new CustomEvent('performance-replay', {
+          detail: { id: scrubber?.id },
+        })
+      );
+    });
+
+    // Listen for completion to show/enable button
+    window.addEventListener('performance-update-end', (e: any) => {
+      // Only show button if the event comes from a simulation completion, not scrubber release
+      if (replayBtn && e.detail?.source !== 'scrubber') {
+        (replayBtn as HTMLElement).style.visibility = 'visible';
+        (replayBtn as HTMLButtonElement).disabled = false;
+      }
+    });
+
+    // Re-enable on replay finish (if exhibits don't trigger update-end)
+    // Most exhibits call startSequence/startSimulation which finishes with an event
+    // or we can just enable it after a delay if needed, but exhibits should trigger update-end.
   });
 </script>
