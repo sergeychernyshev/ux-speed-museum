@@ -2,6 +2,7 @@
 import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
 import ExhibitDescription from '../../components/ExhibitDescription.astro';
 import PerformanceController from '../../components/PerformanceController.astro';
+import inputAbyssImg from '../../assets/input-abyss.webp';
 
 const title = 'The Input Abyss';
 const description = `
@@ -27,7 +28,7 @@ function getINPStatus(ms: number) {
 }
 ---
 
-<ExhibitLayout title={title} image="/input-abyss.webp">
+<ExhibitLayout title={title} image={inputAbyssImg.src}>
   <ExhibitDescription
     slot="description"
     title={title}

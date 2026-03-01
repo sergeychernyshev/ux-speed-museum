@@ -2,13 +2,14 @@
 import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
 import ExhibitDescription from '../../components/ExhibitDescription.astro';
 import PerformanceController from '../../components/PerformanceController.astro';
+import layoutLeapImg from '../../assets/layout-leap.webp';
 
 const title = 'The Layout Leap';
 const description =
   'Have you ever read an article on a news page on a news site, and—*oops*—the content shifted and you lost where you were reading? That is <a href="https://web.dev/articles/cls" target="_blank" rel="noopener">Cumulative Layout Shift (CLS)</a>. This exhibit demonstrates how different types of late-loading elements—banners, hero images, sidebar assets, and even font changes—contribute to page instability. Use the scrubber to increase the number of "leaping" elements and compare the stable experience on the right.';
 ---
 
-<ExhibitLayout title={title} image="/layout-leap.webp">
+<ExhibitLayout title={title} image={layoutLeapImg.src}>
   <ExhibitDescription
     slot="description"
     title={title}
