@@ -76,11 +76,12 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Comparison:**
     - [x] **Stable Side:** Reserved space for the dynamic element ensures buttons never move.
     - [x] **Unfortunate Side:** Zero-height placeholder causes a sudden jump upon loading.
-  - [x] **Visuals:** 
+  - [x] **Visuals:**
     - [x] Real-time "Accidental Click" detection.
     - [x] CLS score tracking.
     - [x] A "Replay" mechanism to try again.
   - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
+
 ## Phase 3: Advanced Simulations
 
 - [ ] **Exhibit 5: Main Thread Blocking.** Simulation of heavy JavaScript execution freezing the UI.

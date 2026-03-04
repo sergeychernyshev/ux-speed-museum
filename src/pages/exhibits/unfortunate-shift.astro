@@ -137,24 +137,18 @@ const scenarios = [
                           ]}
                         >
                           <div class="btn-spinner" />
-                          {
-                            scenario.switchEmoji && (
-                              <span class="btn-emoji">
-                                {scenario.switchEmoji}
-                              </span>
-                            )
-                          }
+                          {scenario.switchEmoji && (
+                            <span class="btn-emoji">
+                              {scenario.switchEmoji}
+                            </span>
+                          )}
                           <span class="btn-text">{scenario.switchLabel}</span>
                         </button>
                         <button class="btn btn-secondary btn-bait">
                           <div class="btn-spinner" />
-                          {
-                            scenario.baitEmoji && (
-                              <span class="btn-emoji">
-                                {scenario.baitEmoji}
-                              </span>
-                            )
-                          }
+                          {scenario.baitEmoji && (
+                            <span class="btn-emoji">{scenario.baitEmoji}</span>
+                          )}
                           <span class="btn-text">{scenario.baitLabel}</span>
                         </button>
                       </div>
@@ -313,10 +307,18 @@ const scenarios = [
     }
 
     /* Directions - pronounced offsets */
-    :global(.late-element.from-top) { transform: translateY(-30px); }
-    :global(.late-element.from-bottom) { transform: translateY(30px); }
-    :global(.late-element.from-left) { transform: translateX(-120px); }
-    :global(.late-element.from-right) { transform: translateX(120px); }
+    :global(.late-element.from-top) {
+      transform: translateY(-30px);
+    }
+    :global(.late-element.from-bottom) {
+      transform: translateY(30px);
+    }
+    :global(.late-element.from-left) {
+      transform: translateX(-120px);
+    }
+    :global(.late-element.from-right) {
+      transform: translateX(120px);
+    }
 
     :global(.late-element.visible) {
       opacity: 1;
@@ -524,14 +526,22 @@ const scenarios = [
         const proTip = panel.querySelector('.late-element');
         const resultMsg = panel.querySelector('.result-message');
         const baitBtn = panel.querySelector('.btn-bait') as HTMLButtonElement;
-        const switchBtn = panel.querySelector('.btn-switch') as HTMLButtonElement;
+        const switchBtn = panel.querySelector(
+          '.btn-switch'
+        ) as HTMLButtonElement;
 
         if (lateContainer) {
           lateContainer.style.height = '0';
           lateContainer.classList.remove('visible');
         }
         if (proTip) {
-          proTip.classList.remove('visible', 'from-top', 'from-bottom', 'from-left', 'from-right');
+          proTip.classList.remove(
+            'visible',
+            'from-top',
+            'from-bottom',
+            'from-left',
+            'from-right'
+          );
         }
         if (resultMsg) {
           resultMsg.classList.remove('visible');
@@ -548,14 +558,17 @@ const scenarios = [
               if (btn.classList.contains('btn-bait')) {
                 textEl.textContent =
                   (panel as HTMLElement).dataset.baitLabel || '';
-                if (emojiEl) emojiEl.textContent = (panel as HTMLElement).dataset.baitEmoji || '';
+                if (emojiEl)
+                  emojiEl.textContent =
+                    (panel as HTMLElement).dataset.baitEmoji || '';
               } else {
                 textEl.textContent =
                   (panel as HTMLElement).dataset.switchLabel || '';
-                if (emojiEl) emojiEl.textContent = (panel as HTMLElement).dataset.switchEmoji || '';
+                if (emojiEl)
+                  emojiEl.textContent =
+                    (panel as HTMLElement).dataset.switchEmoji || '';
               }
             }
-
           }
         });
 
@@ -636,7 +649,7 @@ const scenarios = [
             btn.classList.add('processing');
             const textEl = btn.querySelector('.btn-text');
             const emojiEl = btn.querySelector('.btn-emoji');
-            
+
             if (textEl) textEl.textContent = processingLabel || 'Processing...';
             // Swap to processing emoji if provided
             if (emojiEl) {
@@ -673,11 +686,12 @@ const scenarios = [
 
         // 2. Immediately activate the WRONG action
         if (resultMsg) {
-          const interactionType = e.type.startsWith('touch') ? 'finger' : 'cursor';
+          const interactionType = e.type.startsWith('touch')
+            ? 'finger'
+            : 'cursor';
           const oopsTemplate = (panel as HTMLElement).dataset.oops || '';
           const oopsMessage = oopsTemplate.replace('{it}', interactionType);
-          resultMsg.innerHTML =
-            `<span class="result-fail">❌ OOPS!</span> ${oopsMessage} 😱😱😱`;
+          resultMsg.innerHTML = `<span class="result-fail">❌ OOPS!</span> ${oopsMessage} 😱😱😱`;
           resultMsg.classList.add('visible');
         }
 
@@ -719,8 +733,7 @@ const scenarios = [
 
         if (resultMsg && !resultMsg.classList.contains('visible')) {
           const ouchMessage = (panel as HTMLElement).dataset.ouch || '';
-          resultMsg.innerHTML =
-            `<span class="result-fail">💸 OUCH!</span> ${ouchMessage} 😱😱😱`;
+          resultMsg.innerHTML = `<span class="result-fail">💸 OUCH!</span> ${ouchMessage} 😱😱😱`;
           resultMsg.classList.add('visible');
         }
         startProcessing(panel, switchBtn);
