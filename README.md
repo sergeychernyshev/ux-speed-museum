@@ -12,7 +12,6 @@ To build empathy for users on slow devices or poor networks by making the "invis
 - **The Unfortunate Shift:** Feel the visceral frustration of an accidental click. Watch high-stakes dialog buttons shift away just as you're about to click them, causing you to trigger the wrong action.
 - **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts and frustration.
 - **The Slow Starter:** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
-- **The Jitter Junction:** Feel the frustration of inconsistent frame rates and scroll stutter.
 
 ## Simulation Engine
 
