@@ -8,10 +8,14 @@ To build empathy for users on slow devices or poor networks by making the "invis
 
 ## Exhibits
 
-- **The Slow Starter:** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
-- **The Jitter Junction:** Feel the frustration of inconsistent frame rates and scroll stutter.
-- **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts.
 - **The Input Abyss:** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
+- **The Unfortunate Shift:** Feel the visceral frustration of an accidental click. Watch high-stakes dialog buttons shift away just as you're about to click them, causing you to trigger the wrong action.
+- **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts and frustration.
+- **The Slow Starter:** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
+
+## Simulation Engine
+
+Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
 
 ## Architectural Approach
 
@@ -22,11 +26,10 @@ To build empathy for users on slow devices or poor networks by making the "invis
 
 ## Tech Stack
 
-- **Frontend:** Astro (TypeScript)
+- **Frontend:** [Astro](https://astro.build) (TypeScript)
 - **Styling:** Vanilla CSS with full support for `prefers-color-scheme` (Light/Dark modes).
 - **State Management:** Native Web APIs / Nanostores (for client-side reactivity)
-- **Simulation Engine:** Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
 
-## Getting Started
+## AI-Assisted
 
-(Detailed setup instructions will be added as implementation progresses.)
+This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.

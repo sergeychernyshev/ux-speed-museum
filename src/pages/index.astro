@@ -21,28 +21,6 @@ const title = 'Welcome to the Museum';
     <div class="cta-section">
       <h2>Gallery of Exhibits</h2>
       <div class="exhibit-grid">
-        <a href="/exhibits/slow-starter/" class="exhibit-card">
-          <div class="exhibit-card-header">
-            <h3>The Slow Starter</h3>
-          </div>
-          <div class="exhibit-card-image">
-            <Image
-              src={slowStarterImg}
-              alt="Slow Starter Exhibit"
-              width={600}
-              height={338}
-              loading="eager"
-              fetchpriority="high"
-            />
-          </div>
-          <div class="exhibit-card-content">
-            <p>
-              Experience the impact of slow start of page rendering on overall
-              experience and how delays in server response or render-blocking
-              resources increase user abondonment.
-            </p>
-          </div>
-        </a>
         <a href="/exhibits/input-abyss/" class="exhibit-card">
           <div class="exhibit-card-header">
             <h3>The Input Abyss</h3>
@@ -61,6 +39,27 @@ const title = 'Welcome to the Museum';
             <p>
               Feel the frustration of input latency. Compare instant feedback
               against delayed responses for buttons and text inputs.
+            </p>
+          </div>
+        </a>
+        <a href="/exhibits/unfortunate-shift/" class="exhibit-card">
+          <div class="exhibit-card-header">
+            <h3>The Unfortunate Shift</h3>
+          </div>
+          <div class="exhibit-card-image">
+            <Image
+              src={unfortunateShiftImg}
+              alt="The Unfortunate Shift Exhibit"
+              width={600}
+              height={338}
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+          <div class="exhibit-card-content">
+            <p>
+              Feel the visceral frustration of an accidental click. Watch a
+              dialog button shift away just as you're about to click it.
             </p>
           </div>
         </a>
@@ -86,22 +85,24 @@ const title = 'Welcome to the Museum';
             </p>
           </div>
         </a>
-        <a href="/exhibits/unfortunate-shift/" class="exhibit-card">
+        <a href="/exhibits/slow-starter/" class="exhibit-card">
           <div class="exhibit-card-header">
-            <h3>The Unfortunate Shift</h3>
+            <h3>The Slow Starter</h3>
           </div>
           <div class="exhibit-card-image">
             <Image
-              src={unfortunateShiftImg}
-              alt="The Unfortunate Shift Exhibit"
+              src={slowStarterImg}
+              alt="Slow Starter Exhibit"
               width={600}
               height={338}
+              loading="lazy"
             />
           </div>
           <div class="exhibit-card-content">
             <p>
-              Feel the visceral frustration of an accidental click. Watch a
-              dialog button shift away just as you're about to click it.
+              Experience the impact of slow start of page rendering on overall
+              experience and how delays in server response or render-blocking
+              resources increase user abondonment.
             </p>
           </div>
         </a>
