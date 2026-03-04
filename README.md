@@ -13,6 +13,10 @@ To build empathy for users on slow devices or poor networks by making the "invis
 - **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts.
 - **The Input Abyss:** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
 
+## Simulation Engine
+
+Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
+
 ## Architectural Approach
 
 - **Multi-Page Exhibits:** Each exhibit resides on its own statically generated page.
@@ -25,24 +29,7 @@ To build empathy for users on slow devices or poor networks by making the "invis
 - **Frontend:** Astro (TypeScript)
 - **Styling:** Vanilla CSS with full support for `prefers-color-scheme` (Light/Dark modes).
 - **State Management:** Native Web APIs / Nanostores (for client-side reactivity)
-- **AI-Assisted Development:** This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.
 
-## Simulation Engine
+## AI-Assisted
 
-Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
-
-## Getting Started
-
-All commands are run from the root of the project, from a terminal:
-
-| Command           | Action                                       |
-| :---------------- | :------------------------------------------- |
-| `npm install`     | Installs dependencies                        |
-| `npm run dev`     | Starts local dev server at `localhost:4321`  |
-| `npm run build`   | Build your production site to `./dist/`      |
-| `npm run preview` | Preview your build locally, before deploying |
-| `npm run format`  | Format the codebase using Prettier           |
-
-## License
-
-Apache License 2.0
+This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.
