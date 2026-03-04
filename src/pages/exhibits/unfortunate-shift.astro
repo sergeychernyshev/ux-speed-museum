@@ -1,0 +1,634 @@
+---
+import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
+import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import layoutLeapImg from '../../assets/layout-leap.webp';
+
+const title = 'The Unfortunate Shift';
+const description =
+  'Experience how layout shifts can weaponize your muscle memory. This exhibit features high-stakes scenarios where a "Bait" button (like Cancel or Save for Later) is suddenly replaced by a "Switch" button (like Delete or Place Order) the exact moment you try to interact. This does not usually happen because of malicious intent, but simply because some code finally finished loading. Try cancelling a high-stakes dialogs below.';
+
+const scenarios = [
+  {
+    id: 'danger',
+    title: 'Danger Zone',
+    icon: '⚠️',
+    body: 'Are you sure you want to delete your entire project history? This action is permanent.',
+    switchLabel: 'Delete Everything',
+    baitLabel: 'Cancel',
+    switchType: 'danger',
+    processingLabel: 'Deleting project...',
+  },
+  {
+    id: 'checkout',
+    title: 'Checkout Flow',
+    icon: '🛒',
+    body: 'Your cart is ready! 2 items are waiting for you.',
+    switchLabel: 'Place Order ($542.00)',
+    baitLabel: 'Save for Later',
+    switchType: 'primary',
+    processingLabel: 'Charging $542.00...',
+  },
+  {
+    id: 'danger-repeat',
+    title: 'System Update',
+    icon: '⚙️',
+    body: 'System update required. Would you like to wipe the cache now?',
+    switchLabel: 'Wipe All Data',
+    baitLabel: 'Maybe Later',
+    switchType: 'danger',
+    processingLabel: 'Wiping all data...',
+  },
+  {
+    id: 'checkout-repeat',
+    title: 'Paid Subscription',
+    icon: '💳',
+    body: 'Finalize your premium subscription to unlock all features.',
+    switchLabel: 'Start Paid Plan ($99/mo)',
+    baitLabel: 'Keep Free Tier',
+    switchType: 'primary',
+    processingLabel: 'Charging $99.00...',
+  },
+];
+---
+
+<ExhibitLayout title={title} image={layoutLeapImg.src}>
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
+
+  <div class="exhibit-stage">
+    <div class="exhibits-grid" id="comparison-stage">
+      {
+        scenarios.map((scenario) => (
+          <div
+            class="comparison-panel unfortunate-panel"
+            data-processing={scenario.processingLabel}
+            data-switch-label={scenario.switchLabel}
+            data-bait-label={scenario.baitLabel}
+          >
+            <div class="experience-block">
+              <div class="progress-container">
+                <div class="progress-bar" style="width: 80%;" />
+              </div>
+              <div class="viewport">
+                <div class="interaction-overlay">
+                  <div class="dialog-box">
+                    <div class="dialog-header">
+                      <h3>
+                        <span class="scenario-icon">{scenario.icon}</span>
+                        {scenario.title}
+                      </h3>
+                    </div>
+                    <div class="dialog-body">
+                      <p>{scenario.body}</p>
+
+                      <div class="late-element-container">
+                        <div class="late-element">
+                          <div class="pro-tip-content">
+                            <strong>💡 Pro Tip:</strong> Speeding up this
+                            process can save you time.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="dialog-actions">
+                        <button
+                          class:list={[
+                            'btn',
+                            'btn-switch',
+                            scenario.switchType === 'danger'
+                              ? 'btn-danger'
+                              : 'btn-primary',
+                          ]}
+                        >
+                          <div class="btn-spinner" />
+                          <span class="btn-text">{scenario.switchLabel}</span>
+                        </button>
+                        <button class="btn btn-secondary btn-bait">
+                          <div class="btn-spinner" />
+                          <span class="btn-text">{scenario.baitLabel}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="result-message" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <style>
+    .exhibit-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .exhibits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      width: 100%;
+      min-height: 500px;
+    }
+
+    @media (max-width: 768px) {
+      .exhibits-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comparison-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .experience-block {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 0;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 4px;
+      background: var(--border-color);
+      position: relative;
+      overflow: hidden;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent-color);
+      transition: width 0.3s ease-out;
+    }
+
+    .viewport {
+      width: 100%;
+      height: 18rem;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-top: none; /* Flow from progress bar */
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .interaction-overlay {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+      padding-top: 1rem;
+    }
+
+    .dialog-box {
+      width: 95%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    .dialog-header h3 {
+      margin: 0 0 0.75rem 0;
+      color: var(--accent-color);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scenario-icon {
+      font-size: 1.5rem;
+    }
+
+    .dialog-body p {
+      margin: 0 0 1rem 0;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--text-color);
+    }
+
+    .late-element-container {
+      height: 0;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .late-element-container.visible {
+      margin-bottom: 0; /* Tight alignment */
+    }
+
+    .late-element {
+      background: var(--sidebar-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition:
+        opacity 0.3s ease-out,
+        transform 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      height: 2.1rem; /* Match new smaller button height */
+      box-sizing: border-box;
+    }
+
+    .late-element.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pro-tip-content {
+      font-size: 0.8rem;
+      color: var(--text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .dialog-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem; /* Consistent gap */
+    }
+
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
+
+    .btn-secondary {
+      background: var(--border-color);
+      color: var(--text-color);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--muted-text);
+      color: white;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: #bb2d3b;
+    }
+
+    .btn-primary {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
+
+    .result-message {
+      position: absolute;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      width: max-content;
+      max-width: 90%;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 30;
+      pointer-events: none;
+      padding: 0.6rem 1.25rem;
+      opacity: 0;
+      transition:
+        opacity 0.3s,
+        transform 0.3s;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .result-message.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    :global(.result-fail) {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    :global(.result-info) {
+      color: var(--accent-color);
+    }
+
+    .btn-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    .btn.processing .btn-spinner {
+      display: block;
+    }
+
+    .btn-secondary.processing .btn-spinner {
+      border-top-color: var(--text-color);
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes shake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-5px);
+      }
+      75% {
+        transform: translateX(5px);
+      }
+    }
+  </style>
+
+  <script>
+    const shiftMagnitude = 42;
+
+    interface PanelState {
+      isShifted: boolean;
+      mouseDownOnBait: boolean;
+      isProcessing: boolean;
+    }
+
+    const panels = document.querySelectorAll('.unfortunate-panel');
+    const panelStates = new Map<Element, PanelState>();
+    const panelTimers = new Map<Element, number>();
+    const panelProgressTimers = new Map<Element, number[]>();
+
+    function resetPanel(panel: Element) {
+      if (panelTimers.has(panel)) {
+        clearTimeout(panelTimers.get(panel));
+        panelTimers.delete(panel);
+      }
+      if (panelProgressTimers.has(panel)) {
+        panelProgressTimers.get(panel)?.forEach(clearTimeout);
+        panelProgressTimers.delete(panel);
+      }
+
+      panelStates.set(panel, {
+        isShifted: false,
+        mouseDownOnBait: false,
+        isProcessing: false,
+      });
+
+      const progressBar = panel.querySelector('.progress-bar') as HTMLElement;
+      if (progressBar) {
+        progressBar.style.transition = 'none';
+        progressBar.style.width = '0%';
+        void progressBar.offsetWidth;
+        progressBar.style.transition = 'width 0.4s ease-out';
+        stutterProgress(panel, progressBar, 80);
+      }
+
+      const lateContainer = panel.querySelector(
+        '.late-element-container'
+      ) as HTMLElement;
+      const proTip = panel.querySelector('.late-element');
+      const resultMsg = panel.querySelector('.result-message');
+      const baitBtn = panel.querySelector('.btn-bait') as HTMLButtonElement;
+      const switchBtn = panel.querySelector('.btn-switch') as HTMLButtonElement;
+
+      if (lateContainer) {
+        lateContainer.style.height = '0';
+        lateContainer.classList.remove('visible');
+      }
+      proTip?.classList.remove('visible');
+      if (resultMsg) {
+        resultMsg.classList.remove('visible');
+        resultMsg.innerHTML = '';
+      }
+
+      [baitBtn, switchBtn].forEach((btn) => {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('processing');
+          const textEl = btn.querySelector('.btn-text');
+          if (textEl) {
+            if (btn.classList.contains('btn-bait')) {
+              textEl.textContent =
+                (panel as HTMLElement).dataset.baitLabel || '';
+            } else {
+              textEl.textContent =
+                (panel as HTMLElement).dataset.switchLabel || '';
+            }
+          }
+        }
+      });
+    }
+
+    function stutterProgress(panel: Element, bar: HTMLElement, target: number) {
+      const steps = [
+        { p: 10, d: 200 },
+        { p: 15, d: 800 },
+        { p: 35, d: 1200 },
+        { p: 40, d: 1800 },
+        { p: 65, d: 2400 },
+        { p: 72, d: 3200 },
+        { p: 80, d: 4000 },
+      ];
+
+      const timers: number[] = [];
+      steps.forEach((step) => {
+        const t = window.setTimeout(() => {
+          const state = panelStates.get(panel);
+          if (state && !state.isProcessing) {
+            bar.style.width = `${step.p}%`;
+          }
+        }, step.d);
+        timers.push(t);
+      });
+      panelProgressTimers.set(panel, timers);
+    }
+
+    function triggerShift(panel: Element) {
+      const state = panelStates.get(panel);
+      if (!state || state.isShifted) return;
+
+      state.isShifted = true;
+
+      const lateContainer = panel.querySelector(
+        '.late-element-container'
+      ) as HTMLElement;
+      const proTip = panel.querySelector('.late-element');
+
+      if (lateContainer) {
+        lateContainer.style.height = `${shiftMagnitude}px`;
+        lateContainer.classList.add('visible');
+      }
+      proTip?.classList.add('visible');
+    }
+
+    function startProcessing(panel: Element, targetBtn: HTMLButtonElement) {
+      const state = panelStates.get(panel);
+      if (!state || state.isProcessing) return;
+      state.isProcessing = true;
+
+      const progressBar = panel.querySelector('.progress-bar') as HTMLElement;
+      if (progressBar) progressBar.style.width = '100%';
+
+      const baitBtn = panel.querySelector('.btn-bait') as HTMLButtonElement;
+      const switchBtn = panel.querySelector('.btn-switch') as HTMLButtonElement;
+      const processingLabel = (panel as HTMLElement).dataset.processing;
+
+      [baitBtn, switchBtn].forEach((btn) => {
+        if (btn) {
+          btn.disabled = true;
+          if (btn === targetBtn) {
+            btn.classList.add('processing');
+            const textEl = btn.querySelector('.btn-text');
+            if (textEl) textEl.textContent = processingLabel || 'Processing...';
+          }
+        }
+      });
+
+      const resetTimer = window.setTimeout(() => {
+        resetPanel(panel);
+      }, 10000);
+      panelTimers.set(panel, resetTimer);
+    }
+
+    panels.forEach((panel) => {
+      resetPanel(panel);
+
+      const baitBtn = panel.querySelector('.btn-bait') as HTMLButtonElement;
+      const switchBtn = panel.querySelector('.btn-switch') as HTMLButtonElement;
+      const resultMsg = panel.querySelector('.result-message');
+
+      const handleBaitInteraction = (e: Event) => {
+        // Prevent accidental double triggers if both mousedown and touchstart fire
+        if (e.type === 'touchstart') e.preventDefault();
+
+        const state = panelStates.get(panel);
+        if (!state || state.isProcessing) return;
+        state.mouseDownOnBait = true;
+
+        // 1. Shift the layout
+        triggerShift(panel);
+
+        // 2. Immediately activate the WRONG action
+        if (resultMsg) {
+          const interactionType = e.type.startsWith('touch')
+            ? 'finger'
+            : 'cursor';
+          resultMsg.innerHTML = `<span class="result-fail">❌ OOPS!</span> The action button shifted under your ${interactionType}! 😱😱😱`;
+          resultMsg.classList.add('visible');
+        }
+        startProcessing(panel, switchBtn);
+      };
+
+      baitBtn?.addEventListener('mousedown', handleBaitInteraction);
+      baitBtn?.addEventListener('touchstart', handleBaitInteraction, {
+        passive: false,
+      });
+
+      const handleEndInteraction = () => {
+        const state = panelStates.get(panel);
+        if (state) state.mouseDownOnBait = false;
+      };
+
+      switchBtn?.addEventListener('mouseup', handleEndInteraction);
+      switchBtn?.addEventListener('touchend', handleEndInteraction);
+
+      baitBtn?.addEventListener('click', () => {
+        const state = panelStates.get(panel);
+        if (state && state.isProcessing) return;
+        startProcessing(panel, switchBtn);
+      });
+
+      switchBtn?.addEventListener('click', (e) => {
+        const state = panelStates.get(panel);
+        if (!state || state.isProcessing) return;
+
+        if (!state.isShifted) {
+          if (resultMsg) {
+            resultMsg.innerHTML =
+              '<span class="result-info">ℹ️ Try clicking the other button instead.</span>';
+            resultMsg.classList.add('visible');
+            setTimeout(() => resultMsg.classList.remove('visible'), 2000);
+          }
+          return;
+        }
+
+        if (resultMsg && !resultMsg.classList.contains('visible')) {
+          resultMsg.innerHTML =
+            '<span class="result-fail">💸 OUCH!</span> You accidentally triggered the wrong action! 😱😱😱';
+          resultMsg.classList.add('visible');
+        }
+        startProcessing(panel, switchBtn);
+      });
+    });
+
+    document.addEventListener('mouseup', () => {
+      panels.forEach((panel) => {
+        const state = panelStates.get(panel);
+        if (state) state.mouseDownOnBait = false;
+      });
+    });
+  </script>
+</ExhibitLayout>

@@ -18,12 +18,10 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - [x] Establish a "Vanilla CSS" design system with **Light and Dark mode** support.
 - [x] Create an `ExhibitLayout.astro` component with inline **Preparation Shield** logic.
 - [x] Implement the `ExhibitDescription` component (Static text only).
-- [x] Implement the `PerformanceController` component for real-time manipulation.
-      - [x] **Integrated REPLAY Button:** Moved the REPLAY button into the `PerformanceController` header.
-      - [x] **Pause/Resume Functionality:** Added a PAUSE/RESUME button to the controller, allowing users to freeze simulations mid-load to inspect the current state.
-      - [x] **Smart Visibility & Stability:** Buttons only appear when relevant and use `visibility: hidden` to avoid layout shifts.
-      - [x] **Infinite Loop Prevention:** Events are now flagged with a `source` to distinguish between manual scrubber releases and automated simulation completions.
+- [x] Implement the `PerformanceController` component for real-time manipulation. - [x] **Integrated REPLAY Button:** Moved the REPLAY button into the `PerformanceController` header. - [x] **Pause/Resume Functionality:** Added a PAUSE/RESUME button to the controller, allowing users to freeze simulations mid-load to inspect the current state. - [x] **Smart Visibility & Stability:** Buttons only appear when relevant and use `visibility: hidden` to avoid layout shifts. - [x] **Infinite Loop Prevention:** Events are now flagged with a `source` to distinguish between manual scrubber releases and automated simulation completions.
+
 ## Phase 2: Core Exhibits (MVP)
+
 - [x] **Exhibit 1: The Slow Starter.**
   - **Concept:** Progressive rendering of a realistic e-commerce product page.
   - **Fast Side:** Starts rendering at **500ms** (CrUX FCP P5 baseline). Note: only 5% of websites start rendering faster than this.
@@ -48,7 +46,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Buttons:** Visual "pressed" state and action completion (e.g., counter increment).
     - [x] **Text Fields:** Delayed character appearance while typing.
     - [x] **Checkboxes/Radios:** Delayed toggle state change.
-  - [x] **Visuals:** 
+  - [x] **Visuals:**
     - [x] Real-time interaction timers showing `{latency}ms`.
     - [x] Ghosting or "pending" states to indicate the input was received but not yet processed.
     - [x] Side-by-side comparison layout following Exhibit 1's pattern.
@@ -71,6 +69,18 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
     - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
 
+- [x] **Exhibit 4: The Unfortunate Shift (Accidental Interaction).**
+  - [x] **Concept:** A visceral demonstration of how layout shifts lead to unintended user actions.
+  - [x] **Mechanics:** A high-stakes confirmation dialog (e.g., "Delete Account" vs "Cancel").
+  - [x] **The Bait-and-Switch:** As the user moves their cursor to click "Cancel", a late-loading element (like a "Pro Tip" or "Notification") pushes the "Cancel" button down, placing the "Delete" button exactly where "Cancel" used to be.
+  - [x] **Comparison:**
+    - [x] **Stable Side:** Reserved space for the dynamic element ensures buttons never move.
+    - [x] **Unfortunate Side:** Zero-height placeholder causes a sudden jump upon loading.
+  - [x] **Visuals:** 
+    - [x] Real-time "Accidental Click" detection.
+    - [x] CLS score tracking.
+    - [x] A "Replay" mechanism to try again.
+  - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
 ## Phase 3: Advanced Simulations
 
 - [ ] **Exhibit 5: Main Thread Blocking.** Simulation of heavy JavaScript execution freezing the UI.

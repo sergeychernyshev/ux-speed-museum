@@ -41,7 +41,8 @@ const {
         {
           showPause && (
             <button class="pause-btn" id={`${id}-pause`}>
-              <span class="pause-icon">||</span> <span class="pause-text">PAUSE</span>
+              <span class="pause-icon">||</span>{' '}
+              <span class="pause-text">PAUSE</span>
             </button>
           )
         }
@@ -101,7 +102,8 @@ const {
     place-items: center;
   }
 
-  .replay-btn, .pause-btn {
+  .replay-btn,
+  .pause-btn {
     grid-area: 1 / 1;
     background: var(--text-color);
     color: var(--bg-color);
@@ -123,21 +125,25 @@ const {
       opacity 0.2s;
   }
 
-  .replay-btn:disabled, .pause-btn:disabled {
+  .replay-btn:disabled,
+  .pause-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
 
-  .replay-btn:not(:disabled):hover, .pause-btn:not(:disabled):hover {
+  .replay-btn:not(:disabled):hover,
+  .pause-btn:not(:disabled):hover {
     opacity: 0.9;
   }
 
-  .replay-btn:not(:disabled):active, .pause-btn:not(:disabled):active {
+  .replay-btn:not(:disabled):active,
+  .pause-btn:not(:disabled):active {
     transform: scale(0.95);
   }
 
-  .play-icon, .pause-icon {
+  .play-icon,
+  .pause-icon {
     font-size: 0.5rem;
   }
 
@@ -209,15 +215,15 @@ const {
       if (isInteracting) {
         window.dispatchEvent(
           new CustomEvent('performance-update-end', {
-            detail: { 
-              value: parseInt((e.target as HTMLInputElement).value), 
-              id: scrubber.id, 
-              source: 'scrubber' 
+            detail: {
+              value: parseInt((e.target as HTMLInputElement).value),
+              id: scrubber.id,
+              source: 'scrubber',
             },
           })
         );
         isInteracting = false;
-        
+
         // Show pause button when simulation starts
         if (pauseBtn) {
           (pauseBtn as HTMLElement).style.visibility = 'visible';
