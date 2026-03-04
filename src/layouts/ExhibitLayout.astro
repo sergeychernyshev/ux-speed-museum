@@ -316,6 +316,17 @@ const socialImageURL = image ? new URL(image, SITE_URL) : null;
                 The Layout Leap
               </a>
             </li>
+            <li>
+              <a
+                href="/exhibits/unfortunate-shift/"
+                class:list={{
+                  active: Astro.url.pathname === '/exhibits/unfortunate-shift/',
+                }}
+                data-astro-prefetch
+              >
+                The Unfortunate Shift
+              </a>
+            </li>
             <!-- Exhibit links will be added here -->
           </ul>
         </nav>

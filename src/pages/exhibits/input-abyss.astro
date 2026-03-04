@@ -451,10 +451,17 @@ function getINPStatus(ms: number) {
       updateHighlight();
 
       // Update scrubber display color
-      const scrubberValueEl = document.getElementById('performance-scrubber-value');
+      const scrubberValueEl = document.getElementById(
+        'performance-scrubber-value'
+      );
       if (scrubberValueEl) {
         const status = getINPStatus(currentLatency);
-        const className = status === 'good' ? 'fcp-good' : (status === 'warn' ? 'fcp-needs-improvement' : 'fcp-poor');
+        const className =
+          status === 'good'
+            ? 'fcp-good'
+            : status === 'warn'
+              ? 'fcp-needs-improvement'
+              : 'fcp-poor';
         scrubberValueEl.className = `current-value ${className}`;
       }
     });
@@ -462,14 +469,25 @@ function getINPStatus(ms: number) {
     window.addEventListener('performance-replay', () => {
       updateHighlight();
       // Re-enable immediately as it is an interaction exhibit
-      window.dispatchEvent(new CustomEvent('performance-update-end', { detail: { value: currentLatency } }));
+      window.dispatchEvent(
+        new CustomEvent('performance-update-end', {
+          detail: { value: currentLatency },
+        })
+      );
     });
 
     // Initial state
-    const initialScrubberValue = document.getElementById('performance-scrubber-value');
+    const initialScrubberValue = document.getElementById(
+      'performance-scrubber-value'
+    );
     if (initialScrubberValue) {
       const status = getINPStatus(currentLatency);
-      const className = status === 'good' ? 'fcp-good' : (status === 'warn' ? 'fcp-needs-improvement' : 'fcp-poor');
+      const className =
+        status === 'good'
+          ? 'fcp-good'
+          : status === 'warn'
+            ? 'fcp-needs-improvement'
+            : 'fcp-poor';
       initialScrubberValue.className = `current-value ${className}`;
     }
 
