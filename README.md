@@ -8,10 +8,11 @@ To build empathy for users on slow devices or poor networks by making the "invis
 
 ## Exhibits
 
-- **The Input Abyss:** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
-- **The Unfortunate Shift:** Feel the visceral frustration of an accidental click. Watch high-stakes dialog buttons shift away just as you're about to click them, causing you to trigger the wrong action.
-- **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts and frustration.
-- **The Slow Starter:** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
+- **[The Input Abyss](https://museum.uxspeed.dev/exhibits/input-abyss/):** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
+- **[The Unfortunate Shift](https://museum.uxspeed.dev/exhibits/unfortunate-shift/):** Feel the visceral frustration of an accidental click. Watch high-stakes dialog buttons shift away just as you're about to click them, causing you to trigger the wrong action.
+- **[The Layout Leap](https://museum.uxspeed.dev/exhibits/layout-leap/):** Observe how delayed asset loading causes disruptive layout shifts and frustration.
+- **[The Slow Starter](https://museum.uxspeed.dev/exhibits/slow-starter/):** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
+- **The Jitter Junction:** Feel the frustration of inconsistent frame rates and scroll stutter.
 
 ## Simulation Engine
 
@@ -33,3 +34,19 @@ Statically generated HTML with client-side scripts and Astro components for cont
 ## AI-Assisted
 
 This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.
+
+## Getting Started
+
+All commands are run from the root of the project, from a terminal:
+
+| Command           | Action                                       |
+| :---------------- | :------------------------------------------- |
+| `npm install`     | Installs dependencies                        |
+| `npm run dev`     | Starts local dev server at `localhost:4321`  |
+| `npm run build`   | Build your production site to `./dist/`      |
+| `npm run preview` | Preview your build locally, before deploying |
+| `npm run format`  | Format the codebase using Prettier           |
+
+## License
+
+Apache License 2.0
