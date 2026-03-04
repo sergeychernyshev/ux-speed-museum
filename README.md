@@ -29,4 +29,16 @@ To build empathy for users on slow devices or poor networks by making the "invis
 
 ## Getting Started
 
-(Detailed setup instructions will be added as implementation progresses.)
+All commands are run from the root of the project, from a terminal:
+
+| Command           | Action                                       |
+| :---------------- | :------------------------------------------- |
+| `npm install`     | Installs dependencies                        |
+| `npm run dev`     | Starts local dev server at `localhost:4321`  |
+| `npm run build`   | Build your production site to `./dist/`      |
+| `npm run preview` | Preview your build locally, before deploying |
+| `npm run format`  | Format the codebase using Prettier           |
+
+## License
+
+Apache License 2.0
