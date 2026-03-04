@@ -26,7 +26,7 @@ Statically generated HTML with client-side scripts and Astro components for cont
 
 ## Tech Stack
 
-- **Frontend:** Astro (TypeScript)
+- **Frontend:** [Astro](https://astro.build) (TypeScript)
 - **Styling:** Vanilla CSS with full support for `prefers-color-scheme` (Light/Dark modes).
 - **State Management:** Native Web APIs / Nanostores (for client-side reactivity)
 
