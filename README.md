@@ -8,10 +8,11 @@ To build empathy for users on slow devices or poor networks by making the "invis
 
 ## Exhibits
 
+- **The Input Abyss:** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
+- **The Unfortunate Shift:** Feel the visceral frustration of an accidental click. Watch high-stakes dialog buttons shift away just as you're about to click them, causing you to trigger the wrong action.
+- **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts and frustration.
 - **The Slow Starter:** Feel the agonizing wait of a slow-loading application with controllable initial hydration and rendering delays.
 - **The Jitter Junction:** Feel the frustration of inconsistent frame rates and scroll stutter.
-- **The Layout Leap:** Observe how delayed asset loading causes disruptive layout shifts.
-- **The Input Abyss:** Experience the "mud" of input latency across various interactive elements (buttons, text fields, checkboxes, radio buttons). Unlike other exhibits, this one shows a range of latencies on one screen, with the "active" input highlighted via a speed scrubber.
 
 ## Simulation Engine
 
