@@ -31,6 +31,10 @@ Statically generated HTML with client-side scripts and Astro components for cont
 - **Styling:** Vanilla CSS with full support for `prefers-color-scheme` (Light/Dark modes).
 - **State Management:** Native Web APIs / Nanostores (for client-side reactivity)
 
+## AI-Assisted
+
+This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.
+
 ## Getting Started
 
 All commands are run from the root of the project, from a terminal:
@@ -43,6 +47,6 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview` | Preview your build locally, before deploying |
 | `npm run format`  | Format the codebase using Prettier           |
 
-## AI-Assisted
+## License
 
-This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.
+BSD 3-Clause License
