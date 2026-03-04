@@ -112,14 +112,16 @@ const scenarios = [
               <div class="viewport">
                 <div class="interaction-overlay">
                   <div class="dialog-box">
-                    <div class="dialog-header">
+                    <div class="dialog-header loading-stage stage-1">
                       <h3>
                         <span class="scenario-icon">{scenario.icon}</span>
                         {scenario.title}
                       </h3>
                     </div>
                     <div class="dialog-body">
-                      <p>{scenario.body}</p>
+                      <div class="loading-stage stage-2">
+                        <p>{scenario.body}</p>
+                      </div>
 
                       <div class="late-element-container">
                         <div class="late-element">
@@ -129,7 +131,7 @@ const scenarios = [
                         </div>
                       </div>
 
-                      <div class="dialog-actions">
+                      <div class="dialog-actions loading-stage stage-3">
                         <button
                           class:list={[
                             'btn',
@@ -262,6 +264,14 @@ const scenarios = [
 
     .dialog-box.loading {
       opacity: 0;
+    }
+
+    .loading-stage {
+      opacity: 0;
+    }
+
+    .loading-stage.visible {
+      opacity: 1;
     }
 
     .dialog-header h3 {
@@ -552,6 +562,11 @@ const scenarios = [
           resultMsg.innerHTML = '';
         }
 
+        // Reset loading stages
+        panel.querySelectorAll('.loading-stage').forEach((el) => {
+          el.classList.remove('visible');
+        });
+
         [baitBtn, switchBtn].forEach((btn) => {
           if (btn) {
             btn.disabled = false;
@@ -582,12 +597,12 @@ const scenarios = [
 
     function stutterProgress(panel: Element, bar: HTMLElement, target: number) {
       const steps = [
-        { p: 10, d: 200 },
-        { p: 15, d: 800 },
-        { p: 35, d: 1200 },
-        { p: 40, d: 1800 },
+        { p: 10, d: 200, stage: 1 },
+        { p: 25, d: 600, stage: 2 },
+        { p: 40, d: 1000, stage: 3 },
+        { p: 55, d: 1800 },
         { p: 65, d: 2400 },
-        { p: 72, d: 3200 },
+        { p: 75, d: 3200 },
         { p: 80, d: 4000 },
       ];
 
@@ -597,6 +612,10 @@ const scenarios = [
           const state = panelStates.get(panel);
           if (state && !state.isProcessing) {
             bar.style.width = `${step.p}%`;
+            if (step.stage) {
+              const stageEl = panel.querySelector(`.stage-${step.stage}`);
+              if (stageEl) stageEl.classList.add('visible');
+            }
           }
         }, step.d);
         timers.push(t);
