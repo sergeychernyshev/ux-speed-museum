@@ -6,9 +6,8 @@ Thank you for your interest in contributing to the UX Speed Museum! This project
 
 We operate using a **Research -> Strategy -> Execution** lifecycle for every task.
 
-1.  **Research:** Map the codebase and validate assumptions.
-2.  **Strategy:** Formulate a grounded plan and share a concise summary.
-3.  **Execution:** Resolve sub-tasks through an iterative **Plan -> Act -> Validate** cycle.
+- **AI-Assisted Workflow:** This project leverages **Google Gemini** for strategic orchestration. All foundational mandates and implementation phases are documented in `AGENTS.md`.
+- **Roadmap Management:** Contributors should update `AGENTS.md` with new requirements and track progress using the provided checkboxes.
 
 ## Engineering Standards
 

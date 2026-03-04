@@ -25,7 +25,11 @@ To build empathy for users on slow devices or poor networks by making the "invis
 - **Frontend:** Astro (TypeScript)
 - **Styling:** Vanilla CSS with full support for `prefers-color-scheme` (Light/Dark modes).
 - **State Management:** Native Web APIs / Nanostores (for client-side reactivity)
-- **Simulation Engine:** Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
+- **AI-Assisted Development:** This project is primarily developed using **Google Gemini** in a collaborative "Human-in-the-Loop" workflow. All architectural decisions, project mandates, and implementation progress are maintained by the AI agent in `AGENTS.md`.
+
+## Simulation Engine
+
+Statically generated HTML with client-side scripts and Astro components for controlled performance degradation. Exhibits are presented in a **Side-by-Side Comparison** layout, where the "Optimized" and "Throttled" versions are visible simultaneously for immediate impact assessment.
 
 ## Getting Started
 
