@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import slowStarterImg from '../assets/slow-starter.webp';
 import inputAbyssImg from '../assets/input-abyss.webp';
 import layoutLeapImg from '../assets/layout-leap.webp';
+import unfortunateShiftImg from '../assets/unfortunate-shift.webp';
 
 const title = 'Welcome to the Museum';
 ---
@@ -82,12 +83,10 @@ const title = 'Welcome to the Museum';
         <a href="/exhibits/unfortunate-shift/" class="exhibit-card">
           <div class="exhibit-card-image">
             <Image
-              src={layoutLeapImg}
+              src={unfortunateShiftImg}
               alt="The Unfortunate Shift Exhibit"
               width={600}
               height={338}
-              loading="eager"
-              fetchpriority="high"
             />
           </div>
           <div class="exhibit-card-content">
