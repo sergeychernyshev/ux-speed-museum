@@ -17,6 +17,9 @@ const scenarios = [
     baitLabel: 'Cancel',
     switchType: 'danger',
     processingLabel: 'Deleting project...',
+    tipMessage: '⚠️ Notice: Backup your project first.',
+    oopsMessage: 'The delete button shifted under your {it}!',
+    ouchMessage: 'You just deleted your history! 😱',
   },
   {
     id: 'checkout',
@@ -27,6 +30,9 @@ const scenarios = [
     baitLabel: 'Save for Later',
     switchType: 'primary',
     processingLabel: 'Charging $542.00...',
+    tipMessage: '🚚 Shipping: Free delivery applied!',
+    oopsMessage: 'The order button shifted under your {it}!',
+    ouchMessage: 'Your credit card was just charged! 💸',
   },
   {
     id: 'danger-repeat',
@@ -37,6 +43,9 @@ const scenarios = [
     baitLabel: 'Maybe Later',
     switchType: 'danger',
     processingLabel: 'Wiping all data...',
+    tipMessage: '⏱️ Estimate: Update takes 2 minutes.',
+    oopsMessage: 'The wipe button shifted under your {it}!',
+    ouchMessage: 'All your system data is gone! 🧹',
   },
   {
     id: 'checkout-repeat',
@@ -47,6 +56,9 @@ const scenarios = [
     baitLabel: 'Keep Free Tier',
     switchType: 'primary',
     processingLabel: 'Charging $99.00...',
+    tipMessage: '🌟 Promo: Annual plan saves 20%.',
+    oopsMessage: 'The subscribe button shifted under your {it}!',
+    ouchMessage: 'You are now on a paid plan! 📈',
   },
 ];
 ---
@@ -67,6 +79,8 @@ const scenarios = [
             data-processing={scenario.processingLabel}
             data-switch-label={scenario.switchLabel}
             data-bait-label={scenario.baitLabel}
+            data-oops={scenario.oopsMessage}
+            data-ouch={scenario.ouchMessage}
           >
             <div class="experience-block">
               <div class="progress-container">
@@ -87,8 +101,7 @@ const scenarios = [
                       <div class="late-element-container">
                         <div class="late-element">
                           <div class="pro-tip-content">
-                            <strong>💡 Pro Tip:</strong> Speeding up this
-                            process can save you time.
+                            <strong>{scenario.tipMessage}</strong>
                           </div>
                         </div>
                       </div>
@@ -573,12 +586,14 @@ const scenarios = [
 
         // 2. Immediately activate the WRONG action
         if (resultMsg) {
-          const interactionType = e.type.startsWith('touch')
-            ? 'finger'
-            : 'cursor';
-          resultMsg.innerHTML = `<span class="result-fail">❌ OOPS!</span> The action button shifted under your ${interactionType}! 😱😱😱`;
+          const interactionType = e.type.startsWith('touch') ? 'finger' : 'cursor';
+          const oopsTemplate = (panel as HTMLElement).dataset.oops || '';
+          const oopsMessage = oopsTemplate.replace('{it}', interactionType);
+          resultMsg.innerHTML =
+            `<span class="result-fail">❌ OOPS!</span> ${oopsMessage} 😱😱😱`;
           resultMsg.classList.add('visible');
         }
+
         startProcessing(panel, switchBtn);
       };
 
@@ -616,8 +631,9 @@ const scenarios = [
         }
 
         if (resultMsg && !resultMsg.classList.contains('visible')) {
+          const ouchMessage = (panel as HTMLElement).dataset.ouch || '';
           resultMsg.innerHTML =
-            '<span class="result-fail">💸 OUCH!</span> You accidentally triggered the wrong action! 😱😱😱';
+            `<span class="result-fail">💸 OUCH!</span> ${ouchMessage} 😱😱😱`;
           resultMsg.classList.add('visible');
         }
         startProcessing(panel, switchBtn);
