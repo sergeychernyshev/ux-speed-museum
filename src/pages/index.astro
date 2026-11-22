@@ -2,6 +2,7 @@
 import ExhibitLayout from '../layouts/ExhibitLayout.astro';
 import { Image } from 'astro:assets';
 import slowStarterImg from '../assets/slow-starter.webp';
+import buriedLeadImg from '../assets/buried-lead.webp';
 import inputAbyssImg from '../assets/input-abyss.webp';
 import layoutLeapImg from '../assets/layout-leap.webp';
 import unfortunateShiftImg from '../assets/unfortunate-shift.webp';
@@ -104,6 +105,27 @@ const title = 'Welcome to the Museum';
               Experience the impact of slow start of page rendering on overall
               experience and how delays in server response or render-blocking
               resources increase user abondonment.
+            </p>
+          </div>
+        </a>
+        <a href="/exhibits/buried-lead/" class="exhibit-card">
+          <div class="exhibit-card-header">
+            <h3>The Buried Lead</h3>
+          </div>
+          <div class="exhibit-card-image">
+            <Image
+              src={buriedLeadImg}
+              alt="The Buried Lead Exhibit"
+              width={600}
+              height={338}
+              loading="lazy"
+            />
+          </div>
+          <div class="exhibit-card-content">
+            <p>
+              See how a slow Largest Contentful Paint (LCP) leaves the biggest
+              part of the page empty while everything around the main content
+              has already loaded.
             </p>
           </div>
         </a>
