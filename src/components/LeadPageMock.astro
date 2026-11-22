@@ -306,6 +306,11 @@ const { id, variant = 'product' } = Astro.props;
     width: 100%;
   }
 
+  /* Full screen: never crop the campaign text out of the banner */
+  :global(.exhibit-stage.fullscreen) .carousel-frame {
+    max-height: none;
+  }
+
   .carousel-arrow {
     position: absolute;
     top: 50%;

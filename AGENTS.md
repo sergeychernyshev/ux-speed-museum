@@ -117,6 +117,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Comparison Toggle:** In full screen only, a "COMPARISON: ON/OFF" button hides the good side so only the slow / broken experience remains at full width. Leaving full screen always restores the comparison.
   - [x] **Convention:** The good side of an exhibit is marked with `data-experience="good"`. Exhibits without a good side (The Input Abyss, The Unfortunate Shift) get full screen without the comparison toggle.
   - [x] **Stability:** The comparison button reserves its space (`visibility: hidden`) outside full screen.
+  - [x] **The Buried Lead:** Works in full screen with the comparison toggle for all three variants; the "Main content" picker stays available at the top of the stage. The carousel banner is shown uncropped in full screen.
 - [ ] Final visual polish and responsive testing.
 
 ## Implementation Guidelines
