@@ -76,7 +76,7 @@ const variants = [
           <div class="metric-header">
             <div class="panel-info">
               <span class="panel-label">Lead First</span>
-              <p class="panel-note">
+              <p class="panel-note" id="prioritized-note">
                 Main content is prioritized and shows up at <span
                   class="fcp-good">1000ms</span
                 >.
@@ -328,7 +328,7 @@ const variants = [
   <script>
     // Both sides start rendering at the same time; only the lead differs
     const FCP = 500;
-    const PRIORITIZED_LCP = 1000;
+    const PRIORITIZED_IMAGE_LCP = 1000;
     const PAINT_STEP = 80; // Delay between paint steps of the page chrome
     const MAX_WIPE = 1200; // Longest time an image takes to wipe in
 
@@ -345,9 +345,16 @@ const variants = [
 
     const stage = document.getElementById('comparison-stage');
     const buriedNote = document.getElementById('buried-note');
+    const prioritizedNote = document.getElementById('prioritized-note');
     const scrubberValueEl = document.getElementById(
       'performance-scrubber-value'
     );
+
+    // A prioritized image still has to download, but a prioritized headline
+    // needs nothing extra (its font is ready), so it shows on first paint.
+    function prioritizedLcp() {
+      return activeVariant === 'headline' ? FCP : PRIORITIZED_IMAGE_LCP;
+    }
 
     interface Side {
       pages: HTMLElement | null;
@@ -369,7 +376,7 @@ const variants = [
         pages: document.getElementById('prioritized-pages'),
         timer: document.getElementById('prioritized-timer'),
         progress: document.getElementById('prioritized-progress'),
-        lcp: () => PRIORITIZED_LCP,
+        lcp: prioritizedLcp,
         timerShowsLcp: false,
       },
     ];
@@ -472,7 +479,7 @@ const variants = [
       lastTimestamp = timestamp;
       render();
 
-      if (elapsed >= Math.max(buriedLcp, PRIORITIZED_LCP)) {
+      if (elapsed >= Math.max(buriedLcp, prioritizedLcp())) {
         running = false;
         window.dispatchEvent(
           new CustomEvent('performance-update-end', {
@@ -533,6 +540,10 @@ const variants = [
       if (buriedNote) {
         buriedNote.innerHTML = `Main content shows up at <span class="${lcpClass}">${buriedLcp}ms</span>.`;
       }
+      if (prioritizedNote) {
+        const lcp = prioritizedLcp();
+        prioritizedNote.innerHTML = `Main content is prioritized and shows up at <span class="${getLCPClass(lcp)}">${lcp}ms</span>.`;
+      }
       if (scrubberValueEl) {
         scrubberValueEl.textContent = `${buriedLcp}ms`;
         scrubberValueEl.className = `current-value ${lcpClass}`;
@@ -567,6 +578,7 @@ const variants = [
       document.querySelectorAll<HTMLElement>('.lead-mock').forEach((mock) => {
         mock.hidden = mock.dataset.variant !== variant;
       });
+      updateLabels();
     }
 
     document

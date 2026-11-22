@@ -89,7 +89,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - [x] **Exhibit 5: The Buried Lead (Largest Contentful Paint) (#19).**
   - [x] **Concept:** A slow LCP element defeats the purpose of making it the main content and giving it the most space on the page. Similar to The Slow Starter, but everything except the lead renders on time.
   - [x] **Both Sides:** Start rendering at **500ms**; page chrome (navigation, text, buttons) paints in quick steps right after.
-  - [x] **Lead First Side (right):** Fixed LCP of **1000ms**.
+  - [x] **Lead First Side (right):** Fixed LCP of **1000ms** for the image variants. In the headline variant the headline shows immediately, with the first paint (**500ms**).
   - [x] **Buried Lead Side (left):** Controllable "**Time to main content (LCP)**" (1000-8000ms, default 3500ms) via scrubber.
   - [x] **Variants:** A "Main content" picker switches between three pre-rendered mock pages (`LeadPageMock`):
     - [x] **Product image:** large product photo on a product page.
