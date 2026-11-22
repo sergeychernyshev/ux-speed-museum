@@ -12,9 +12,11 @@ const { title, description } = Astro.props;
     <h2>{title}</h2>
   </div>
 
-  <div class="description-content">
-    <p set:html={description} />
-  </div>
+  {
+    /* Descriptions may contain their own paragraphs, so they must not be
+       wrapped in a <p>: the browser would leave an empty one behind. */
+  }
+  <div class="description-content" set:html={description} />
 </section>
 
 <style>

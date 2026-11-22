@@ -124,6 +124,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - **Responsive Design:** Fully responsive supporting mobile and desktop. 📱💻
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered.
 - **Exhibit Thumbnails:** Gallery card / social images are captures of the exhibit in **dark theme**.
+- **Exhibit Descriptions:** Keep them short (two brief paragraphs at most). `ExhibitDescription` renders the HTML directly into its content block, so descriptions may contain their own `<p>` elements without leaving empty paragraphs behind.
 - **No Tailwind:** Use Vanilla CSS for precise control.
 - **Code Styling:** Prettier is used for consistent formatting.
 

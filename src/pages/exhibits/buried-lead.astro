@@ -7,11 +7,9 @@ import buriedLeadImg from '../../assets/buried-lead.webp';
 
 const title = 'The Buried Lead';
 const description = `
-  <p>Every page has a lead: the product photo, the campaign banner, the headline. It is the reason the visitor came, and designers give it the most space on the screen. <a href="https://web.dev/articles/lcp" target="_blank" rel="noopener">Largest Contentful Paint (LCP)</a> measures when that main content finally shows up.</p>
+  <p>Every page has a lead: the product photo, the headline, the campaign banner. It is what the visitor came for, and it gets the most space on the screen. <a href="https://web.dev/articles/lcp" target="_blank" rel="noopener">Largest Contentful Paint (LCP)</a> measures when it finally shows up.</p>
 
-  <p>Both pages below start rendering at the same moment (500ms). On the left, navigation, prices and buttons appear on time, but the lead itself is buried behind everything else in the loading queue, leaving the biggest area of the page empty. LCP is considered <span class="fcp-good">"good"</span> up to 2500ms, <span class="fcp-needs-improvement">"needs improvement"</span> up to 4000ms and <span class="fcp-poor">"poor"</span> beyond that.</p>
-
-  <p>Switch between three kinds of main content: a product image, a headline that stays invisible until its web font loads, and the first slide of a marketing carousel.</p>
+  <p>Both pages below start rendering at 500ms, but on the left the lead is buried at the back of the loading queue, leaving the biggest part of the page empty. LCP is <span class="fcp-good">"good"</span> up to 2500ms, <span class="fcp-needs-improvement">"needs improvement"</span> up to 4000ms and <span class="fcp-poor">"poor"</span> beyond that.</p>
 `;
 
 const variants = [
