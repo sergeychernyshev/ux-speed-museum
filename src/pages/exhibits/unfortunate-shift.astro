@@ -1,6 +1,7 @@
 ---
 import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
 import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import FullscreenControls from '../../components/FullscreenControls.astro';
 import layoutLeapImg from '../../assets/unfortunate-shift.webp';
 
 const title = 'The Unfortunate Shift';
@@ -167,6 +168,10 @@ const scenarios = [
         ))
       }
     </div>
+
+    <div class="controls-overlay">
+      <FullscreenControls />
+    </div>
   </div>
 
   <style>
@@ -189,6 +194,17 @@ const scenarios = [
       .exhibits-grid {
         grid-template-columns: 1fr;
       }
+    }
+
+    .controls-overlay {
+      position: sticky;
+      bottom: 2rem;
+      z-index: 100;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .comparison-panel {

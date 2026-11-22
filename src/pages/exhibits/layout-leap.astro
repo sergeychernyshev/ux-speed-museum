@@ -98,7 +98,7 @@ const description =
       </div>
 
       <!-- Stable Side (Right) -->
-      <div class="comparison-panel">
+      <div class="comparison-panel" data-experience="good">
         <div class="experience-block">
           <div class="metric-header">
             <div class="panel-info">
@@ -597,6 +597,12 @@ const description =
 
     .mock-article.title-shift h1 {
       font-size: 1.6rem;
+    }
+
+    /* Full screen: keep the article at a readable, uncropped width */
+    :global(.exhibit-stage.fullscreen) .mock-article {
+      max-width: 45rem;
+      margin-inline: auto;
     }
 
     /* Controls */
