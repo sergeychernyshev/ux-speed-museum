@@ -93,7 +93,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Buried Lead Side (left):** Controllable "**Time to main content (LCP)**" (1000-8000ms, default 3500ms) via scrubber.
   - [x] **Variants:** A "Main content" picker switches between three pre-rendered mock pages (`LeadPageMock`), in this order:
     - [x] **Product image:** large product photo on a product page.
-    - [x] **Headline font:** a text heading that stays invisible until its web font "loads", then appears all at once.
+    - [x] **Headline font:** a text heading that stays invisible until its web font "loads", then appears all at once. The article is a realistic news story where the headline is clearly the most important line (a fictional team winning a championship); no real teams or people.
     - [x] **Marketing carousel:** first slide only, not interactive; arrows and dots render on time over an empty frame.
   - [x] **No Layout Shift:** The lead always has its space reserved; it stays empty until the content arrives.
   - [x] **Image Loading:** Top-down packet-based wipe that completes exactly at the LCP time. The download itself always takes the same **400ms** on both sides and at every setting; a buried lead only starts downloading later.
