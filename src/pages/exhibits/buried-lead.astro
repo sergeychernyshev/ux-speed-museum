@@ -11,13 +11,13 @@ const description = `
 
   <p>Both pages below start rendering at the same moment (500ms). On the left, navigation, prices and buttons appear on time, but the lead itself is buried behind everything else in the loading queue, leaving the biggest area of the page empty. LCP is considered <span class="fcp-good">"good"</span> up to 2500ms, <span class="fcp-needs-improvement">"needs improvement"</span> up to 4000ms and <span class="fcp-poor">"poor"</span> beyond that.</p>
 
-  <p>Switch between three kinds of main content: a product image, the first slide of a marketing carousel, and a headline that stays invisible until its web font loads.</p>
+  <p>Switch between three kinds of main content: a product image, a headline that stays invisible until its web font loads, and the first slide of a marketing carousel.</p>
 `;
 
 const variants = [
   { id: 'product', label: 'Product image' },
-  { id: 'carousel', label: 'Marketing carousel' },
   { id: 'headline', label: 'Headline font' },
+  { id: 'carousel', label: 'Marketing carousel' },
 ];
 ---
 

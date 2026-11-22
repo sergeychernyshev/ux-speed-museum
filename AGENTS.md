@@ -91,10 +91,10 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Both Sides:** Start rendering at **500ms**; page chrome (navigation, text, buttons) paints in quick steps right after.
   - [x] **Lead First Side (right):** Fixed LCP of **1000ms** for the image variants. In the headline variant the headline shows immediately, with the first paint (**500ms**).
   - [x] **Buried Lead Side (left):** Controllable "**Time to main content (LCP)**" (1000-8000ms, default 3500ms) via scrubber.
-  - [x] **Variants:** A "Main content" picker switches between three pre-rendered mock pages (`LeadPageMock`):
+  - [x] **Variants:** A "Main content" picker switches between three pre-rendered mock pages (`LeadPageMock`), in this order:
     - [x] **Product image:** large product photo on a product page.
-    - [x] **Marketing carousel:** first slide only, not interactive; arrows and dots render on time over an empty frame.
     - [x] **Headline font:** a text heading that stays invisible until its web font "loads", then appears all at once.
+    - [x] **Marketing carousel:** first slide only, not interactive; arrows and dots render on time over an empty frame.
   - [x] **No Layout Shift:** The lead always has its space reserved; it stays empty until the content arrives.
   - [x] **Image Loading:** Top-down packet-based wipe that completes exactly at the LCP time. The download itself always takes the same **400ms** on both sides and at every setting; a buried lead only starts downloading later.
   - [x] **Visuals:** Timer tabs show `{current}ms` until the lead is rendered, then freeze at `LCP: {lcp}ms`. Progress bars reflect chrome and lead rendering.
