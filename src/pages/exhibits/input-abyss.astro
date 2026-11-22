@@ -68,6 +68,13 @@ function getINPStatus(ms: number) {
                   data-latency={latency}
                   placeholder="Type..."
                 />
+                <div class="matrix-input-echo" aria-hidden="true">
+                  <span class="echo-placeholder">Type...</span>
+                  <span class="echo-before" />
+                  <span class="echo-selection" />
+                  <span class="echo-caret" />
+                  <span class="echo-after" />
+                </div>
               </div>
             </div>
           ))
@@ -220,6 +227,7 @@ function getINPStatus(ms: number) {
 
     .matrix-input-wrapper {
       width: 100%;
+      position: relative;
     }
 
     .matrix-test-input {
@@ -229,13 +237,90 @@ function getINPStatus(ms: number) {
       border-radius: 4px;
       background: var(--card-bg);
       color: var(--text-color);
+      font-family: inherit;
       font-size: 0.8rem;
+      line-height: normal;
       text-align: center;
     }
 
     .matrix-test-input:focus {
       outline: none;
       border-color: var(--accent-color);
+    }
+
+    /*
+     * Delayed inputs keep the real (instant) value in the native field but
+     * render it transparently. The echo layer on top paints a delayed copy,
+     * so no keystroke is ever lost - it just shows up late.
+     */
+    .matrix-test-input.delayed {
+      color: transparent;
+      caret-color: transparent;
+    }
+
+    .matrix-test-input.delayed::placeholder {
+      color: transparent;
+    }
+
+    .matrix-test-input.delayed::selection {
+      color: transparent;
+      background: transparent;
+    }
+
+    .matrix-input-echo {
+      display: none;
+      position: absolute;
+      inset: 0;
+      padding: 0.5rem;
+      border: 1px solid transparent;
+      color: var(--text-color);
+      font-family: inherit;
+      font-size: 0.8rem;
+      line-height: normal;
+      text-align: center;
+      white-space: pre;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .matrix-test-input.delayed + .matrix-input-echo {
+      display: block;
+    }
+
+    .echo-placeholder {
+      display: none;
+      position: absolute;
+      inset: 0;
+      padding: 0.5rem;
+      color: var(--muted-text);
+    }
+
+    .matrix-input-echo.empty .echo-placeholder {
+      display: block;
+    }
+
+    .echo-selection {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .echo-caret {
+      display: none;
+      width: 0;
+      height: 1.1em;
+      vertical-align: text-bottom;
+      box-shadow: 1px 0 0 var(--text-color);
+    }
+
+    .matrix-input-echo.caret .echo-caret {
+      display: inline-block;
+      animation: echo-caret-blink 1s steps(1) infinite;
+    }
+
+    @keyframes echo-caret-blink {
+      50% {
+        opacity: 0;
+      }
     }
 
     .matrix-checkbox-wrapper {
@@ -377,7 +462,6 @@ function getINPStatus(ms: number) {
 
     matrixInputs.forEach((input) => {
       const latency = parseInt(input.getAttribute('data-latency') || '0');
-      let displayValue = '';
 
       const syncState = () => {
         currentLatency = latency;
@@ -391,24 +475,91 @@ function getINPStatus(ms: number) {
         updateHighlight();
       };
 
-      input.addEventListener('focus', syncState);
+      const echo = input.parentElement?.querySelector(
+        '.matrix-input-echo'
+      ) as HTMLElement | null;
 
-      input.addEventListener('input', (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        const actualValue = target.value;
+      // The 0ms field stays fully native: nothing to delay.
+      if (latency === 0 || !echo) {
+        input.addEventListener('focus', syncState);
+        input.addEventListener('input', syncState);
+        return;
+      }
 
-        // Immediately revert to the last confirmed "display" value
-        // to hide the character that the browser just inserted.
-        target.value = displayValue;
+      const before = echo.querySelector('.echo-before') as HTMLElement;
+      const selection = echo.querySelector('.echo-selection') as HTMLElement;
+      const caret = echo.querySelector('.echo-caret') as HTMLElement;
+      const after = echo.querySelector('.echo-after') as HTMLElement;
+      const edgeGap = 8;
 
-        // Sync scrubber and highlight
+      // Drop markup whitespace between the spans: the echo is "white-space:
+      // pre", so it would otherwise be painted as part of the text.
+      Array.from(echo.childNodes).forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) node.remove();
+      });
+
+      type Snapshot = {
+        value: string;
+        start: number;
+        end: number;
+        focused: boolean;
+      };
+
+      // The native input always holds the true value (so no keystroke, paste
+      // or deletion is ever lost). We only delay what the user gets to see.
+      const takeSnapshot = (): Snapshot => ({
+        value: input.value,
+        start: input.selectionStart ?? input.value.length,
+        end: input.selectionEnd ?? input.value.length,
+        focused: document.activeElement === input,
+      });
+
+      const render = (s: Snapshot) => {
+        before.textContent = s.value.slice(0, s.start);
+        selection.textContent = s.value.slice(s.start, s.end);
+        after.textContent = s.value.slice(s.end);
+        echo.classList.toggle('empty', s.value === '');
+        echo.classList.toggle('caret', s.focused && s.start === s.end);
+
+        // Keep the (delayed) caret in view when the text overflows
+        const x = after.offsetLeft;
+        if (x > echo.scrollLeft + echo.clientWidth - edgeGap) {
+          echo.scrollLeft = x - echo.clientWidth + edgeGap;
+        } else if (x < echo.scrollLeft + edgeGap) {
+          echo.scrollLeft = Math.max(0, x - edgeGap);
+        }
+      };
+
+      let lastScheduled = takeSnapshot();
+      render(lastScheduled);
+      input.classList.add('delayed');
+
+      const schedule = () => {
+        const s = takeSnapshot();
+        if (
+          s.value === lastScheduled.value &&
+          s.start === lastScheduled.start &&
+          s.end === lastScheduled.end &&
+          s.focused === lastScheduled.focused
+        ) {
+          return;
+        }
+        lastScheduled = s;
+        // Equal delays fire in order, so snapshots are painted in sequence
+        setTimeout(() => render(s), latency);
+      };
+
+      input.addEventListener('focus', () => {
         syncState();
-
-        // Delay the update of the visible value
-        setTimeout(() => {
-          displayValue = actualValue;
-          target.value = displayValue;
-        }, latency);
+        schedule();
+      });
+      input.addEventListener('blur', schedule);
+      input.addEventListener('input', () => {
+        syncState();
+        schedule();
+      });
+      document.addEventListener('selectionchange', () => {
+        if (document.activeElement === input) schedule();
       });
     });
 

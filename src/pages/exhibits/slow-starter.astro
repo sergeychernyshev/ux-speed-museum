@@ -166,6 +166,12 @@ const description =
       overflow: hidden;
     }
 
+    /* Fast side has its timer tab on the right, so mirror the corners */
+    .comparison-panel:last-child .viewport {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 0;
+    }
+
     .render-progress-container {
       position: absolute;
       top: 0;
