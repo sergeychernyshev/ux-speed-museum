@@ -100,7 +100,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Visuals:** Timer tabs show `{current}ms` until the lead is rendered, then freeze at `LCP: {lcp}ms`. Progress bars reflect chrome and lead rendering.
   - [x] **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
   - [x] **Controls:** Replay and Pause/Resume; switching variants or releasing the scrubber restarts the sequence.
-  - [x] **Local Assets:** `public/chronos-campaign.avif` (campaign banner composed from the product photo) and `src/assets/buried-lead.webp` (gallery card, a capture of the exhibit) are placeholders that can be replaced with final artwork.
+  - [x] **Local Assets:** `public/chronos-campaign.avif` (campaign banner composed from the product photo) and `src/assets/buried-lead.webp` (gallery card, a dark-theme capture of the exhibit) are placeholders that can be replaced with final artwork.
 
 ## Phase 3: Advanced Simulations
 
@@ -123,6 +123,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - **Side-by-Side Layout:** Always place the slower or throttled experience on the left to prioritize user attention on the performance bottleneck.
 - **Responsive Design:** Fully responsive supporting mobile and desktop. 📱💻
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered.
+- **Exhibit Thumbnails:** Gallery card / social images are captures of the exhibit in **dark theme**.
 - **No Tailwind:** Use Vanilla CSS for precise control.
 - **Code Styling:** Prettier is used for consistent formatting.
 
