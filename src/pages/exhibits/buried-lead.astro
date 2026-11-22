@@ -1,0 +1,620 @@
+---
+import ExhibitLayout from '../../layouts/ExhibitLayout.astro';
+import ExhibitDescription from '../../components/ExhibitDescription.astro';
+import PerformanceController from '../../components/PerformanceController.astro';
+import LeadPageMock from '../../components/LeadPageMock.astro';
+import buriedLeadImg from '../../assets/buried-lead.webp';
+
+const title = 'The Buried Lead';
+const description = `
+  <p>Every page has a lead: the product photo, the headline, the campaign banner. It is what the visitor came for, and it gets the most space on the screen. <a href="https://web.dev/articles/lcp" target="_blank" rel="noopener">Largest Contentful Paint (LCP)</a> measures when it finally shows up.</p>
+
+  <p>Both pages below start rendering at 500ms, but on the left the lead is buried at the back of the loading queue, leaving the biggest part of the page empty. LCP is <span class="fcp-good">"good"</span> up to 2500ms, <span class="fcp-needs-improvement">"needs improvement"</span> up to 4000ms and <span class="fcp-poor">"poor"</span> beyond that.</p>
+`;
+
+const variants = [
+  { id: 'product', label: 'Product image' },
+  { id: 'headline', label: 'Headline font' },
+  { id: 'carousel', label: 'Marketing carousel' },
+];
+---
+
+<ExhibitLayout title={title} image={buriedLeadImg.src}>
+  <ExhibitDescription
+    slot="description"
+    title={title}
+    description={description}
+  />
+
+  <div class="exhibit-stage">
+    <fieldset class="variant-picker" id="variant-picker">
+      <legend>Main content</legend>
+      <div class="variant-options">
+        {
+          variants.map((variant, index) => (
+            <label class="variant-option">
+              <input
+                type="radio"
+                name="lead-variant"
+                value={variant.id}
+                checked={index === 0}
+              />
+              <span>{variant.label}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <div class="comparison-container" id="comparison-stage">
+      <div class="comparison-panel">
+        <div class="experience-block">
+          <div class="metric-header">
+            <div class="timer-display" id="buried-timer">0ms</div>
+            <div class="panel-info">
+              <span class="panel-label">Buried Lead</span>
+              <p class="panel-note" id="buried-note">
+                Main content shows up at <span class="fcp-needs-improvement"
+                  >3500ms</span
+                >.
+              </p>
+            </div>
+          </div>
+          <div class="viewport" id="buried-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="buried-progress"></div>
+            </div>
+            <LeadPageMock id="buried-pages" />
+          </div>
+        </div>
+      </div>
+
+      <div class="comparison-panel" data-experience="good">
+        <div class="experience-block">
+          <div class="metric-header">
+            <div class="panel-info">
+              <span class="panel-label">Lead First</span>
+              <p class="panel-note" id="prioritized-note">
+                Main content is prioritized and shows up at <span
+                  class="fcp-good">1000ms</span
+                >.
+              </p>
+            </div>
+            <div class="timer-display" id="prioritized-timer">0ms</div>
+          </div>
+          <div class="viewport" id="prioritized-viewport">
+            <div class="render-progress-container">
+              <div class="render-progress-bar" id="prioritized-progress"></div>
+            </div>
+            <LeadPageMock id="prioritized-pages" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-overlay">
+      <PerformanceController
+        min={1000}
+        max={8000}
+        step={100}
+        defaultValue={3500}
+        label="Time to main content (LCP)"
+        unit="ms"
+        showReplay={true}
+      />
+    </div>
+  </div>
+
+  <style>
+    .exhibit-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    /* Variant picker */
+    .variant-picker {
+      border: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem 1rem;
+      max-width: 100%;
+    }
+
+    .variant-picker legend {
+      float: left; /* Lay the legend out inline with the options */
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--muted-text);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .variant-options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.25rem;
+      gap: 0.25rem;
+    }
+
+    .variant-option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .variant-option input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .variant-option span {
+      display: block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted-text);
+    }
+
+    .variant-option input:checked + span {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .variant-option input:focus-visible + span {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
+    }
+
+    /* Comparison */
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      width: 100%;
+      min-height: 600px;
+    }
+
+    .comparison-panel:first-child {
+      order: -1;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comparison-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .panel-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0 0.5rem 0.5rem;
+      align-items: center;
+      text-align: center;
+    }
+
+    .panel-label {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      color: var(--muted-text);
+    }
+
+    .panel-note {
+      font-size: 0.7rem;
+      color: var(--muted-text);
+      font-style: italic;
+      min-height: 1rem; /* Reserve space */
+      line-height: 1.3;
+    }
+
+    .experience-block {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .viewport {
+      width: 100%;
+      background: var(--sidebar-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      border-top-left-radius: 0; /* Flush with timer tab */
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      padding: 1.25rem 1rem 1rem;
+      position: relative;
+      min-height: 500px;
+      overflow: hidden;
+    }
+
+    /* Good side has its timer tab on the right, so mirror the corners */
+    .comparison-panel:last-child .viewport {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 0;
+    }
+
+    .render-progress-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--border-color);
+      z-index: 10;
+    }
+
+    .render-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-color);
+      transition: width 0.2s ease-out;
+    }
+
+    .timer-display {
+      font-family: monospace;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      background: var(--card-bg);
+      padding: 0.25rem 0.75rem;
+      min-width: 9.5rem; /* Stable width for "LCP: 8000ms" */
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity 0.2s;
+      border: 1px solid var(--border-color);
+      border-bottom: none;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-display.hidden {
+      opacity: 0;
+    }
+
+    .controls-overlay {
+      position: sticky;
+      bottom: 2rem;
+      z-index: 100;
+      max-width: 100%;
+    }
+
+    /* Keep the controller within narrow screens */
+    .controls-overlay :global(.performance-controller) {
+      min-width: 0;
+      max-width: 100%;
+    }
+  </style>
+
+  <script>
+    // Both sides start rendering at the same time; only the lead differs
+    const FCP = 500;
+    const PRIORITIZED_IMAGE_LCP = 1000;
+    const PAINT_STEP = 80; // Delay between paint steps of the page chrome
+    // Images download at the same speed on both sides and at every setting.
+    // A buried lead is not slower to download - it just starts later.
+    const IMAGE_DOWNLOAD = 400;
+
+    let buriedLcp = 3500;
+    let activeVariant = 'product';
+
+    // The simulation is a pure function of elapsed time, which makes
+    // pausing, resuming and replaying trivial.
+    let elapsed = 0;
+    let lastTimestamp = 0;
+    let running = false;
+    let paused = false;
+    let rafId = 0;
+
+    const stage = document.getElementById('comparison-stage');
+    const buriedNote = document.getElementById('buried-note');
+    const prioritizedNote = document.getElementById('prioritized-note');
+    const scrubberValueEl = document.getElementById(
+      'performance-scrubber-value'
+    );
+
+    // A prioritized image still has to download, but a prioritized headline
+    // needs nothing extra (its font is ready), so it shows on first paint.
+    function prioritizedLcp() {
+      return activeVariant === 'headline' ? FCP : PRIORITIZED_IMAGE_LCP;
+    }
+
+    interface Side {
+      pages: HTMLElement | null;
+      timer: HTMLElement | null;
+      progress: HTMLElement | null;
+      lcp: () => number;
+      timerShowsLcp: boolean;
+    }
+
+    const sides: Side[] = [
+      {
+        pages: document.getElementById('buried-pages'),
+        timer: document.getElementById('buried-timer'),
+        progress: document.getElementById('buried-progress'),
+        lcp: () => buriedLcp,
+        timerShowsLcp: false,
+      },
+      {
+        pages: document.getElementById('prioritized-pages'),
+        timer: document.getElementById('prioritized-timer'),
+        progress: document.getElementById('prioritized-progress'),
+        lcp: prioritizedLcp,
+        timerShowsLcp: false,
+      },
+    ];
+
+    function getLCPClass(time: number) {
+      if (time <= 2500) return 'fcp-good';
+      if (time <= 4000) return 'fcp-needs-improvement';
+      return 'fcp-poor';
+    }
+
+    // Top-down, packet-by-packet image loading: [progress, % still hidden]
+    const wipeSteps = [
+      [0, 100],
+      [0.08, 96],
+      [0.18, 88],
+      [0.3, 74],
+      [0.4, 70],
+      [0.52, 46],
+      [0.64, 40],
+      [0.78, 18],
+      [0.9, 8],
+      [1, 0],
+    ];
+
+    function hiddenPercent(progress: number) {
+      if (progress < 0) return 100;
+      let hidden = 100;
+      for (const [at, value] of wipeSteps) {
+        if (progress >= at) hidden = value;
+      }
+      return hidden;
+    }
+
+    function render() {
+      sides.forEach((side) => {
+        const mock = side.pages?.querySelector<HTMLElement>(
+          `.lead-mock[data-variant="${activeVariant}"]`
+        );
+        if (!mock) return;
+
+        const lcp = side.lcp();
+        mock.classList.toggle('visible', elapsed >= FCP);
+
+        // Page chrome paints in quick steps right after first paint
+        const chrome = mock.querySelectorAll<HTMLElement>('[data-paint]');
+        let lastStep = 0;
+        let paintedCount = 0;
+        chrome.forEach((el) => {
+          const step = parseInt(el.dataset.paint || '0');
+          lastStep = Math.max(lastStep, step);
+          const painted = elapsed >= FCP + step * PAINT_STEP;
+          el.classList.toggle('painted', painted);
+          if (painted) paintedCount++;
+        });
+
+        // The lead is fully rendered exactly at LCP
+        const lead = mock.querySelector<HTMLElement>('.lead');
+        let leadProgress = 0;
+        if (lead?.dataset.lead === 'image') {
+          const wipeDuration = IMAGE_DOWNLOAD;
+          const hidden = hiddenPercent(
+            (elapsed - (lcp - wipeDuration)) / wipeDuration
+          );
+          lead.style.clipPath = `inset(0 0 ${hidden}% 0)`;
+          leadProgress = 1 - hidden / 100;
+        } else if (lead) {
+          // Text appears all at once when its font arrives
+          lead.classList.toggle('painted', elapsed >= lcp);
+          leadProgress = elapsed >= lcp ? 1 : 0;
+        }
+
+        if (side.progress) {
+          const chromeProgress = chrome.length
+            ? paintedCount / chrome.length
+            : 1;
+          side.progress.style.width = `${chromeProgress * 50 + leadProgress * 50}%`;
+        }
+
+        if (side.timer) {
+          if (elapsed >= lcp) {
+            if (!side.timerShowsLcp) {
+              side.timer.innerHTML = `LCP:&nbsp;<span class="${getLCPClass(lcp)}">${lcp}ms</span>`;
+              side.timerShowsLcp = true;
+            }
+          } else {
+            side.timer.textContent = `${Math.max(0, Math.floor(elapsed))}ms`;
+            side.timerShowsLcp = false;
+          }
+        }
+      });
+    }
+
+    function frame(timestamp: number) {
+      if (!running || paused) return;
+
+      if (lastTimestamp) {
+        // Clamp so a backgrounded tab does not skip the experience
+        elapsed += Math.min(timestamp - lastTimestamp, 100);
+      }
+      lastTimestamp = timestamp;
+      render();
+
+      if (elapsed >= Math.max(buriedLcp, prioritizedLcp())) {
+        running = false;
+        window.dispatchEvent(
+          new CustomEvent('performance-update-end', {
+            detail: { value: buriedLcp },
+          })
+        );
+        return;
+      }
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function resetViews() {
+      cancelAnimationFrame(rafId);
+      running = false;
+      paused = false;
+      elapsed = 0;
+      lastTimestamp = 0;
+      stage?.classList.add('scrubbing');
+
+      sides.forEach((side) => {
+        side.timer?.classList.add('hidden');
+        if (side.progress) {
+          side.progress.style.transition = 'none';
+          side.progress.style.width = '0%';
+        }
+      });
+      render();
+    }
+
+    function startRendering() {
+      resetViews();
+      stage?.classList.remove('scrubbing');
+
+      sides.forEach((side) => {
+        // Force reflow so the progress bar restarts without animating back
+        void side.progress?.offsetHeight;
+        if (side.progress) side.progress.style.transition = '';
+        side.timer?.classList.remove('hidden');
+      });
+
+      running = true;
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function togglePause(isPaused: boolean) {
+      if (paused === isPaused || !running) return;
+      paused = isPaused;
+      if (paused) {
+        cancelAnimationFrame(rafId);
+      } else {
+        lastTimestamp = 0;
+        rafId = requestAnimationFrame(frame);
+      }
+    }
+
+    function updateLabels() {
+      const lcpClass = getLCPClass(buriedLcp);
+      if (buriedNote) {
+        buriedNote.innerHTML = `Main content shows up at <span class="${lcpClass}">${buriedLcp}ms</span>.`;
+      }
+      if (prioritizedNote) {
+        const lcp = prioritizedLcp();
+        prioritizedNote.innerHTML = `Main content is prioritized and shows up at <span class="${getLCPClass(lcp)}">${lcp}ms</span>.`;
+      }
+      if (scrubberValueEl) {
+        scrubberValueEl.textContent = `${buriedLcp}ms`;
+        scrubberValueEl.className = `current-value ${lcpClass}`;
+      }
+    }
+
+    // A run started from the variant picker (rather than the controller)
+    // should leave the controller in the same state as a replay would.
+    function showPauseInsteadOfReplay() {
+      const replayBtn = document.getElementById(
+        'performance-scrubber-replay'
+      ) as HTMLButtonElement | null;
+      const pauseBtn = document.getElementById(
+        'performance-scrubber-pause'
+      ) as HTMLButtonElement | null;
+      if (replayBtn) {
+        replayBtn.disabled = true;
+        replayBtn.style.visibility = 'hidden';
+      }
+      if (pauseBtn) {
+        pauseBtn.disabled = false;
+        pauseBtn.style.visibility = 'visible';
+        const text = pauseBtn.querySelector('.pause-text');
+        const icon = pauseBtn.querySelector('.pause-icon');
+        if (text) text.textContent = 'PAUSE';
+        if (icon) icon.textContent = '||';
+      }
+    }
+
+    function setVariant(variant: string) {
+      activeVariant = variant;
+      document.querySelectorAll<HTMLElement>('.lead-mock').forEach((mock) => {
+        mock.hidden = mock.dataset.variant !== variant;
+      });
+      updateLabels();
+    }
+
+    document
+      .querySelectorAll<HTMLInputElement>('input[name="lead-variant"]')
+      .forEach((input) => {
+        input.addEventListener('change', () => {
+          if (!input.checked) return;
+          setVariant(input.value);
+          startRendering();
+          showPauseInsteadOfReplay();
+        });
+        // Browsers may restore the previous choice on reload
+        if (input.checked) setVariant(input.value);
+      });
+
+    window.addEventListener('performance-update', (e: any) => {
+      resetViews();
+      buriedLcp = e.detail.value;
+      updateLabels();
+    });
+
+    window.addEventListener('performance-update-end', (e: any) => {
+      if (e.detail?.source === 'scrubber') {
+        startRendering();
+      }
+    });
+
+    window.addEventListener('performance-replay', () => {
+      startRendering();
+    });
+
+    window.addEventListener('performance-toggle-pause', (e: any) => {
+      togglePause(e.detail.isPaused);
+    });
+
+    updateLabels();
+    startRendering();
+  </script>
+</ExhibitLayout>

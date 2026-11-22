@@ -86,10 +86,26 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] A "Replay" mechanism to try again.
   - [x] **Thresholds:** CLS color-coded: **Green** (≤0.1), **Orange** (≤0.25), **Red** (>0.25).
 
+- [x] **Exhibit 5: The Buried Lead (Largest Contentful Paint) (#19).**
+  - [x] **Concept:** A slow LCP element defeats the purpose of making it the main content and giving it the most space on the page. Similar to The Slow Starter, but everything except the lead renders on time.
+  - [x] **Both Sides:** Start rendering at **500ms**; page chrome (navigation, text, buttons) paints in quick steps right after.
+  - [x] **Lead First Side (right):** Fixed LCP of **1000ms** for the image variants. In the headline variant the headline shows immediately, with the first paint (**500ms**).
+  - [x] **Buried Lead Side (left):** Controllable "**Time to main content (LCP)**" (1000-8000ms, default 3500ms) via scrubber.
+  - [x] **Variants:** A "Main content" picker switches between three pre-rendered mock pages (`LeadPageMock`), in this order:
+    - [x] **Product image:** large product photo on a product page.
+    - [x] **Headline font:** a text heading that stays invisible until its web font "loads", then appears all at once. The article is a realistic news story where the headline is clearly the most important line (a fictional team winning a championship); no real teams or people.
+    - [x] **Marketing carousel:** first slide only, not interactive; arrows and dots render on time over an empty frame.
+  - [x] **No Layout Shift:** The lead always has its space reserved; it stays empty until the content arrives.
+  - [x] **Image Loading:** Top-down packet-based wipe that completes exactly at the LCP time. The download itself always takes the same **400ms** on both sides and at every setting; a buried lead only starts downloading later.
+  - [x] **Visuals:** Timer tabs show `{current}ms` until the lead is rendered, then freeze at `LCP: {lcp}ms`. Progress bars reflect chrome and lead rendering.
+  - [x] **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
+  - [x] **Controls:** Replay and Pause/Resume; switching variants or releasing the scrubber restarts the sequence.
+  - [x] **Local Assets:** `public/chronos-campaign.avif` (campaign banner composed from the product photo) and `src/assets/buried-lead.webp` (gallery card, a dark-theme capture of the exhibit) are placeholders that can be replaced with final artwork.
+
 ## Phase 3: Advanced Simulations
 
-- [ ] **Exhibit 5: Main Thread Blocking.** Simulation of heavy JavaScript execution freezing the UI.
-- [ ] **Exhibit 6: Rendering Jitter.** Artificially dropping frames during animations or scrolling.
+- [ ] **Exhibit 6: Main Thread Blocking.** Simulation of heavy JavaScript execution freezing the UI.
+- [ ] **Exhibit 7: Rendering Jitter.** Artificially dropping frames during animations or scrolling.
 
 ## Phase 4: Polish & Education
 
@@ -107,6 +123,8 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - **Side-by-Side Layout:** Always place the slower or throttled experience on the left to prioritize user attention on the performance bottleneck.
 - **Responsive Design:** Fully responsive supporting mobile and desktop. 📱💻
 - **Static First:** All HTML for every exhibit state must be statically generated/pre-rendered.
+- **Exhibit Thumbnails:** Gallery card / social images are captures of the exhibit in **dark theme**.
+- **Exhibit Descriptions:** Keep them short (two brief paragraphs at most). `ExhibitDescription` renders the HTML directly into its content block, so descriptions may contain their own `<p>` elements without leaving empty paragraphs behind.
 - **No Tailwind:** Use Vanilla CSS for precise control.
 - **Code Styling:** Prettier is used for consistent formatting.
 
