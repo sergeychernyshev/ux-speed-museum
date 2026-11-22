@@ -37,6 +37,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
   - [x] **Completed Fixes:**
     - [x] **Timer Color Sync:** Synced the color of "ms" and arrows with the numeric values.
     - [x] **Realistic Progressive Image Loading:** Simulated top-down packet-based image loading with granular stutter.
+    - [x] **Fast Side Corners (#18):** The Fast (right) viewport has its timer tab on the right, so its top-right corner is square (flush with the tab) and its top-left corner is rounded - mirroring the Slow side.
 
 - [x] **Exhibit 2: The Input Abyss (Input Latency).**
   - [x] **Concept:** Visceral experience of delayed interactive feedback (Input Delay).
@@ -52,6 +53,8 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] Side-by-side comparison layout following Exhibit 1's pattern.
   - [x] **Interactivity:** Fully interactive elements on both sides to compare the "feel" of lag.
   - [x] **Thresholds:** Latency color-coded: **Green** (≤100ms), **Orange** (≤300ms), **Red** (>300ms) based on standard response time perceptions.
+  - [x] **Completed Fixes:**
+    - [x] **No Lost Text (#20):** Typed copy must be preserved exactly; latency only delays when it appears. The native input always holds the true value (rendered transparently) while an echo layer paints a delayed copy of value, caret and selection.
 
 - [x] **Exhibit 3: The Layout Leap (Layout Shift).**
   - [x] **Concept:** Experience the "jank" and frustration of Cumulative Layout Shift (CLS).
@@ -68,6 +71,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Account for Borders:** Aligned `box-sizing` and border styles to prevent 1px shifts.
     - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
     - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
+    - [x] **Suggest Multiple Replays (#21):** Shifts are hard to catch in one go, so the description recommends replaying and a hint appears under the controller after each run ("watched N of 3") until the sequence has been watched 3 times at the current setting. The hint reserves its space (`visibility: hidden`) to avoid layout shift.
 
 - [x] **Exhibit 4: The Unfortunate Shift (Accidental Interaction).**
   - [x] **Concept:** A visceral demonstration of how layout shifts lead to unintended user actions.
