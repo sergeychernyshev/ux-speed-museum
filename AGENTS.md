@@ -96,7 +96,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Marketing carousel:** first slide only, not interactive; arrows and dots render on time over an empty frame.
     - [x] **Headline font:** a text heading that stays invisible until its web font "loads", then appears all at once.
   - [x] **No Layout Shift:** The lead always has its space reserved; it stays empty until the content arrives.
-  - [x] **Image Loading:** Top-down packet-based wipe that completes exactly at the LCP time.
+  - [x] **Image Loading:** Top-down packet-based wipe that completes exactly at the LCP time. The download itself always takes the same **400ms** on both sides and at every setting; a buried lead only starts downloading later.
   - [x] **Visuals:** Timer tabs show `{current}ms` until the lead is rendered, then freeze at `LCP: {lcp}ms`. Progress bars reflect chrome and lead rendering.
   - [x] **Thresholds:** LCP color-coded: **Green** (≤2500ms), **Orange** (≤4000ms), **Red** (>4000ms).
   - [x] **Controls:** Replay and Pause/Resume; switching variants or releasing the scrubber restarts the sequence.

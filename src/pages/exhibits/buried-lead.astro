@@ -330,7 +330,9 @@ const variants = [
     const FCP = 500;
     const PRIORITIZED_IMAGE_LCP = 1000;
     const PAINT_STEP = 80; // Delay between paint steps of the page chrome
-    const MAX_WIPE = 1200; // Longest time an image takes to wipe in
+    // Images download at the same speed on both sides and at every setting.
+    // A buried lead is not slower to download - it just starts later.
+    const IMAGE_DOWNLOAD = 400;
 
     let buriedLcp = 3500;
     let activeVariant = 'product';
@@ -436,7 +438,7 @@ const variants = [
         const lead = mock.querySelector<HTMLElement>('.lead');
         let leadProgress = 0;
         if (lead?.dataset.lead === 'image') {
-          const wipeDuration = Math.min(MAX_WIPE, (lcp - FCP) * 0.6);
+          const wipeDuration = IMAGE_DOWNLOAD;
           const hidden = hiddenPercent(
             (elapsed - (lcp - wipeDuration)) / wipeDuration
           );
