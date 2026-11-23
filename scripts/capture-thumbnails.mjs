@@ -60,12 +60,38 @@ const shots = {
     target: '#comparison-stage',
     prepare: (page) => replayAndPauseAt(page, 1700),
   },
-  // Finished run: the left article has been pushed around, the right has not
+  // Stable side finished, leaping side still waiting for its late elements.
+  // Both sides load on the same clock, so this moment never happens on its
+  // own: the run is paused before any image arrives (the leaping side is
+  // exactly as the visitor sees it then) and only the stable side is
+  // completed by hand.
   'layout-leap': {
     path: '/exhibits/layout-leap/',
     target: '#comparison-stage',
-    prepare: (page) =>
-      page.waitForSelector('.replay-btn:not([disabled])', { timeout: 15000 }),
+    prepare: async (page) => {
+      await page.waitForSelector('.replay-btn:not([disabled])', {
+        timeout: 15000,
+      });
+      // Drag the scrubber to its maximum so every late element leaps
+      const box = await page.locator('#cls-scrubber').boundingBox();
+      await page.mouse.click(box.x + box.width - 2, box.y + box.height / 2);
+      await wait(page, 2000); // Fonts have swapped, images not started yet
+      await page.click('.pause-btn');
+      await page.evaluate(() => {
+        document
+          .querySelectorAll(
+            '#stable-banner, #stable-hero-wrapper, #stable-hero, #stable-side-wrapper, #stable-side'
+          )
+          .forEach((el) => el.classList.add('visible'));
+        document.querySelectorAll('#stable-article img').forEach((img) => {
+          img.style.animation = 'none';
+          img.style.clipPath = 'none';
+        });
+        const bar = document.getElementById('stable-progress');
+        if (bar) bar.style.width = '100%';
+      });
+      await wait(page, 600);
+    },
   },
   // The matrix of buttons and text fields with the default latency selected
   'input-abyss': {
