@@ -1,0 +1,244 @@
+---
+/**
+ * Full-screen controls for an exhibit.
+ *
+ * Place anywhere inside an `.exhibit-stage`. The stage itself becomes the
+ * full-screen surface. If the stage contains a panel marked with
+ * `data-experience="good"`, a second button lets the visitor hide it to
+ * experience only the slow / broken version.
+ */
+---
+
+<div class="fullscreen-controls">
+  <button type="button" class="fs-btn fs-compare-btn" aria-pressed="true">
+    COMPARISON: <span class="fs-compare-state">ON</span>
+  </button>
+  <button type="button" class="fs-btn fs-toggle-btn" aria-pressed="false">
+    <svg
+      class="fs-icon fs-icon-enter"
+      viewBox="0 0 16 16"
+      width="10"
+      height="10"
+      aria-hidden="true"
+    >
+      <path
+        d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"></path>
+    </svg>
+    <svg
+      class="fs-icon fs-icon-exit"
+      viewBox="0 0 16 16"
+      width="10"
+      height="10"
+      aria-hidden="true"
+    >
+      <path
+        d="M6 1v5H1M15 6h-5V1M10 15v-5h5M1 10h5v5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"></path>
+    </svg>
+    <span class="fs-toggle-text">FULL SCREEN</span>
+  </button>
+</div>
+
+<style is:global>
+  /* Controls never get wider than the stage (narrow screens) */
+  .exhibit-stage .controls-overlay {
+    max-width: 100%;
+  }
+
+  /* --- Buttons --- */
+  .fullscreen-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fs-btn {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.6rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition:
+      transform 0.1s,
+      opacity 0.2s;
+  }
+
+  .fs-btn:hover {
+    opacity: 0.9;
+  }
+
+  .fs-btn:active {
+    transform: scale(0.95);
+  }
+
+  .fs-icon-exit,
+  .exhibit-stage.fullscreen .fs-icon-enter {
+    display: none;
+  }
+
+  .exhibit-stage.fullscreen .fs-icon-exit {
+    display: block;
+  }
+
+  /*
+   * The comparison toggle only makes sense in full screen. It keeps its
+   * space when unavailable so the controls never shift, and is removed
+   * entirely for exhibits that have no "good" side to hide.
+   */
+  .fs-compare-btn {
+    visibility: hidden;
+  }
+
+  .fs-compare-btn.unavailable {
+    display: none;
+  }
+
+  .exhibit-stage.fullscreen .fs-compare-btn {
+    visibility: visible;
+  }
+
+  .fs-compare-btn[aria-pressed='false'] {
+    background: var(--card-bg);
+    color: var(--text-color);
+    box-shadow: inset 0 0 0 1px var(--text-color);
+  }
+
+  .fs-compare-state {
+    display: inline-block;
+    min-width: 1.6em; /* "ON" and "OFF" take the same space */
+    text-align: left;
+  }
+
+  /* --- Full-screen stage --- */
+  html.exhibit-fullscreen {
+    overflow: hidden;
+  }
+
+  .exhibit-stage.fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background: var(--bg-color);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Let the experiences use all the space the screen offers */
+  .exhibit-stage.fullscreen .comparison-container {
+    flex: 1 0 auto;
+  }
+
+  .exhibit-stage.fullscreen .comparison-panel,
+  .exhibit-stage.fullscreen .experience-block,
+  .exhibit-stage.fullscreen .comparison-panel .viewport {
+    flex: 1 0 auto;
+  }
+
+  .exhibit-stage.fullscreen .controls-overlay {
+    bottom: 1rem;
+  }
+
+  /* --- Comparison off: only the slow / broken experience remains --- */
+  .exhibit-stage.fullscreen.solo [data-experience='good'] {
+    display: none;
+  }
+
+  .exhibit-stage.fullscreen.solo .comparison-container {
+    grid-template-columns: 1fr;
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('.fullscreen-controls')
+    .forEach((controls) => {
+      const stage = controls.closest<HTMLElement>('.exhibit-stage');
+      const toggleBtn = controls.querySelector<HTMLElement>('.fs-toggle-btn');
+      const toggleText = controls.querySelector('.fs-toggle-text');
+      const compareBtn = controls.querySelector<HTMLElement>('.fs-compare-btn');
+      const compareState = controls.querySelector('.fs-compare-state');
+      if (!stage || !toggleBtn || !compareBtn) return;
+
+      if (!stage.querySelector('[data-experience="good"]')) {
+        compareBtn.classList.add('unavailable');
+      }
+
+      const isFullscreen = () => stage.classList.contains('fullscreen');
+
+      function setComparison(on: boolean) {
+        stage!.classList.toggle('solo', !on);
+        compareBtn!.setAttribute('aria-pressed', String(on));
+        if (compareState) compareState.textContent = on ? 'ON' : 'OFF';
+      }
+
+      function applyState(on: boolean) {
+        stage!.classList.toggle('fullscreen', on);
+        document.documentElement.classList.toggle('exhibit-fullscreen', on);
+        toggleBtn!.setAttribute('aria-pressed', String(on));
+        if (toggleText) {
+          toggleText.textContent = on ? 'EXIT FULL SCREEN' : 'FULL SCREEN';
+        }
+        // Outside of full screen every exhibit is always a comparison
+        if (!on) setComparison(true);
+        window.dispatchEvent(
+          new CustomEvent('exhibit-fullscreen-change', {
+            detail: { fullscreen: on },
+          })
+        );
+      }
+
+      function enter() {
+        applyState(true);
+        // Native full screen where available (not on iPhone, for example).
+        // The styled stage already covers the window, so failure is fine.
+        stage!.requestFullscreen?.().catch(() => {});
+      }
+
+      function exit() {
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+        applyState(false);
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        if (isFullscreen()) exit();
+        else enter();
+      });
+
+      compareBtn.addEventListener('click', () => {
+        setComparison(stage.classList.contains('solo'));
+      });
+
+      // Browser-driven exit (Esc key, system gesture)
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && isFullscreen()) applyState(false);
+      });
+
+      // Esc for browsers without native full screen
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isFullscreen()) exit();
+      });
+    });
+</script>
