@@ -209,8 +209,8 @@ const scenarios = [
     }
 
     /*
-     * A single example in full screen: the box keeps its usual size and sits
-     * in the middle of the screen.
+     * A single example in full screen: the box fills the screen and the
+     * interface sits in the middle of it.
      */
     .unfortunate-panel:global(.fullscreen) {
       position: fixed;
@@ -221,13 +221,27 @@ const scenarios = [
       padding: 1rem;
       background: var(--bg-color);
       overflow: auto;
-      justify-content: safe center;
-      align-items: center;
     }
 
     .unfortunate-panel:global(.fullscreen) .experience-block {
-      max-width: 36rem;
-      flex: 0 0 auto;
+      flex: 1 0 auto;
+    }
+
+    .unfortunate-panel:global(.fullscreen) .viewport {
+      flex: 1 0 auto;
+      height: auto;
+      min-height: 16rem;
+      align-items: center;
+    }
+
+    /*
+     * The interface keeps its usual 16rem area, centered as a whole. The
+     * dialog stays anchored to the top of that area, so the late element
+     * still pushes the buttons down by exactly one button.
+     */
+    .unfortunate-panel:global(.fullscreen) .interaction-overlay {
+      height: 16rem;
+      flex: none;
     }
 
     .comparison-panel {
