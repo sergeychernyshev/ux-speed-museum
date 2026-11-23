@@ -616,6 +616,15 @@ const description =
       gap: 0.5rem;
     }
 
+    /*
+     * The CLS snap points sit very close together at the low end, so this
+     * exhibit lets the controller use the full stage width for a longer
+     * scrubber.
+     */
+    .controls-overlay :global(.performance-controller) {
+      width: 100%;
+    }
+
     /* Space is always reserved, so showing the hint never shifts layout */
     .replay-hint {
       order: -1; /* Sits above the docked controller */

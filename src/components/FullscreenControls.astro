@@ -51,6 +51,30 @@
     max-width: 100%;
   }
 
+  /*
+   * The controls stay attached to the bottom edge of the screen all the way
+   * down the page: nothing may follow them (no page padding), and on pages
+   * shorter than the screen they are pushed down to the edge.
+   */
+  .layout main:has(.controls-overlay) {
+    flex: 1 0 auto;
+    padding-bottom: 0;
+  }
+
+  .layout .exhibit-content.ready:has(.controls-overlay) {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .exhibit-content > .exhibit-stage {
+    flex: 1 0 auto;
+  }
+
+  .exhibit-stage .controls-overlay {
+    margin-top: auto;
+  }
+
   /* In full screen the controls stay at the bottom even on short pages */
   .exhibit-stage.fullscreen .controls-overlay {
     margin-top: auto;
