@@ -13,10 +13,13 @@ const description = `
 `;
 
 const variants = [
-  { id: 'product', label: 'Product image' },
-  { id: 'headline', label: 'Headline font' },
   { id: 'carousel', label: 'Marketing carousel' },
-];
+  { id: 'headline', label: 'Headline font' },
+  { id: 'product', label: 'Product image' },
+] as const;
+
+// The first variant in the list is the one shown on load
+const defaultVariant = variants[0].id;
 ---
 
 <ExhibitLayout title={title} image={buriedLeadImg.src}>
@@ -64,7 +67,7 @@ const variants = [
             <div class="render-progress-container">
               <div class="render-progress-bar" id="buried-progress"></div>
             </div>
-            <LeadPageMock id="buried-pages" />
+            <LeadPageMock id="buried-pages" variant={defaultVariant} />
           </div>
         </div>
       </div>
@@ -86,7 +89,7 @@ const variants = [
             <div class="render-progress-container">
               <div class="render-progress-bar" id="prioritized-progress"></div>
             </div>
-            <LeadPageMock id="prioritized-pages" />
+            <LeadPageMock id="prioritized-pages" variant={defaultVariant} />
           </div>
         </div>
       </div>
@@ -333,7 +336,7 @@ const variants = [
     const IMAGE_DOWNLOAD = 400;
 
     let buriedLcp = 3500;
-    let activeVariant = 'product';
+    let activeVariant = 'carousel'; // Replaced by the checked option on load
 
     // The simulation is a pure function of elapsed time, which makes
     // pausing, resuming and replaying trivial.
