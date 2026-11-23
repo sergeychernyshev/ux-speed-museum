@@ -3,7 +3,9 @@
  * Full-screen controls for an exhibit.
  *
  * Place anywhere inside an `.exhibit-stage`. The stage itself becomes the
- * full-screen surface. If the stage contains a panel marked with
+ * full-screen surface, unless a closer ancestor is marked with
+ * `data-fullscreen-surface` (used to put a single example full screen).
+ * If the surface contains a panel marked with
  * `data-experience="good"`, a second button lets the visitor hide it to
  * experience only the slow / broken version.
  */
@@ -147,11 +149,11 @@
   }
 
   .fs-icon-exit,
-  .exhibit-stage.fullscreen .fs-icon-enter {
+  .fullscreen-controls.active .fs-icon-enter {
     display: none;
   }
 
-  .exhibit-stage.fullscreen .fs-icon-exit {
+  .fullscreen-controls.active .fs-icon-exit {
     display: block;
   }
 
@@ -227,7 +229,10 @@
   document
     .querySelectorAll<HTMLElement>('.fullscreen-controls')
     .forEach((controls) => {
-      const stage = controls.closest<HTMLElement>('.exhibit-stage');
+      // The surface that goes full screen: a marked ancestor, else the stage
+      const stage =
+        controls.closest<HTMLElement>('[data-fullscreen-surface]') ??
+        controls.closest<HTMLElement>('.exhibit-stage');
       const toggleBtn = controls.querySelector<HTMLElement>('.fs-toggle-btn');
       const toggleText = controls.querySelector('.fs-toggle-text');
       const compareBtn = controls.querySelector<HTMLElement>('.fs-compare-btn');
@@ -248,6 +253,7 @@
 
       function applyState(on: boolean) {
         stage!.classList.toggle('fullscreen', on);
+        controls.classList.toggle('active', on);
         document.documentElement.classList.toggle('exhibit-fullscreen', on);
         toggleBtn!.setAttribute('aria-pressed', String(on));
         if (toggleText) {
