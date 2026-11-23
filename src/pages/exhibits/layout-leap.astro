@@ -608,7 +608,7 @@ const description =
     /* Controls */
     .controls-overlay {
       position: sticky;
-      bottom: 2rem;
+      bottom: 0; /* Docked to the bottom edge of the screen */
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -618,6 +618,7 @@ const description =
 
     /* Space is always reserved, so showing the hint never shifts layout */
     .replay-hint {
+      order: -1; /* Sits above the docked controller */
       visibility: hidden;
       opacity: 0;
       max-width: 100%;

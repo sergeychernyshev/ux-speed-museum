@@ -198,13 +198,15 @@ const scenarios = [
 
     .controls-overlay {
       position: sticky;
-      bottom: 2rem;
+      bottom: 0; /* Docked to the bottom edge of the screen */
       z-index: 100;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-bottom: none;
+      border-radius: 12px 12px 0 0;
+      padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+      width: max-content !important;
     }
 
     .comparison-panel {

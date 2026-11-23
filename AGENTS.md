@@ -133,6 +133,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - **Exhibit Thumbnails:** Gallery card / social images are captures of the exhibit in **dark theme**.
 - **Exhibit Descriptions:** Keep them short (two brief paragraphs at most). `ExhibitDescription` renders the HTML directly into its content block, so descriptions may contain their own `<p>` elements without leaving empty paragraphs behind.
 - **Inclusive Mock Content:** Mock pages must not use gendered categories (e.g. Men / Women). The Chronos store navigation is Collections / Sport / Classic.
+- **Docked Controls:** The controls overlay is docked flush to the bottom edge of the screen (`position: sticky; bottom: 0`), never floating above it. The `PerformanceController` is a compact bar: a single row on wide screens (label and replay, scrubber, value, full-screen buttons) and two rows on narrow ones, so it covers as little of the exhibit as possible.
 - **No Tailwind:** Use Vanilla CSS for precise control.
 - **Code Styling:** Prettier is used for consistent formatting.
 

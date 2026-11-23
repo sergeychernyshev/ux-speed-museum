@@ -47,7 +47,41 @@
 <style is:global>
   /* Controls never get wider than the stage (narrow screens) */
   .exhibit-stage .controls-overlay {
+    width: 100%;
     max-width: 100%;
+  }
+
+  /* In full screen the controls stay at the bottom even on short pages */
+  .exhibit-stage.fullscreen .controls-overlay {
+    margin-top: auto;
+  }
+
+  /*
+   * Narrow screens: the hidden comparison button gives its space back and
+   * the full-screen button shrinks to its icon (the label stays available
+   * to assistive technology).
+   */
+  @media (max-width: 768px) {
+    .exhibit-stage:not(.fullscreen) .fs-compare-btn {
+      display: none;
+    }
+
+    .fs-toggle-btn {
+      padding: 0.35rem;
+    }
+
+    .fs-toggle-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .fullscreen-controls {
+      flex-wrap: nowrap;
+    }
   }
 
   /* --- Buttons --- */
@@ -137,7 +171,7 @@
     z-index: 1000;
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    padding: 1rem 1rem 0; /* Controls dock flush to the bottom edge */
     background: var(--bg-color);
     overflow-x: hidden;
     overflow-y: auto;
@@ -153,10 +187,6 @@
   .exhibit-stage.fullscreen .experience-block,
   .exhibit-stage.fullscreen .comparison-panel .viewport {
     flex: 1 0 auto;
-  }
-
-  .exhibit-stage.fullscreen .controls-overlay {
-    bottom: 1rem;
   }
 
   /* --- Comparison off: only the slow / broken experience remains --- */
