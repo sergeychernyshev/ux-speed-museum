@@ -208,7 +208,10 @@ const scenarios = [
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    /* A single example in full screen */
+    /*
+     * A single example in full screen: the box keeps its usual size and sits
+     * in the middle of the screen.
+     */
     .unfortunate-panel:global(.fullscreen) {
       position: fixed;
       inset: 0;
@@ -218,16 +221,13 @@ const scenarios = [
       padding: 1rem;
       background: var(--bg-color);
       overflow: auto;
+      justify-content: safe center;
+      align-items: center;
     }
 
     .unfortunate-panel:global(.fullscreen) .experience-block {
-      flex: 1 0 auto;
-    }
-
-    .unfortunate-panel:global(.fullscreen) .viewport {
-      flex: 1 0 auto;
-      height: auto;
-      min-height: 16rem;
+      max-width: 36rem;
+      flex: 0 0 auto;
     }
 
     .comparison-panel {
