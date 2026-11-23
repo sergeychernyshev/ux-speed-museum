@@ -71,7 +71,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Account for Borders:** Aligned `box-sizing` and border styles to prevent 1px shifts.
     - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
     - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
-    - [x] **Suggest Multiple Replays (#21):** Shifts are hard to catch in one go, so the description recommends replaying and a hint appears under the controller after each run ("watched N of 3") until the sequence has been watched 3 times at the current setting. The hint reserves its space (`visibility: hidden`) to avoid layout shift.
+    - [x] **Suggest Multiple Replays (#21, #26):** Shifts are hard to catch in one go, so the description recommends replaying and a hint appears after each run until the sequence has been watched 3 times at the current setting. The hint sits above the docked controller (nothing is reserved below it), shows no view counter, and reserves its space (`visibility: hidden`) to avoid layout shift.
 
 - [x] **Exhibit 4: The Unfortunate Shift (Accidental Interaction).**
   - [x] **Concept:** A visceral demonstration of how layout shifts lead to unintended user actions.
