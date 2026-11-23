@@ -3,7 +3,9 @@
  * Full-screen controls for an exhibit.
  *
  * Place anywhere inside an `.exhibit-stage`. The stage itself becomes the
- * full-screen surface. If the stage contains a panel marked with
+ * full-screen surface, unless a closer ancestor is marked with
+ * `data-fullscreen-surface` (used to put a single example full screen).
+ * If the surface contains a panel marked with
  * `data-experience="good"`, a second button lets the visitor hide it to
  * experience only the slow / broken version.
  */
@@ -47,7 +49,65 @@
 <style is:global>
   /* Controls never get wider than the stage (narrow screens) */
   .exhibit-stage .controls-overlay {
+    width: 100%;
     max-width: 100%;
+  }
+
+  /*
+   * The controls stay attached to the bottom edge of the screen all the way
+   * down the page: nothing may follow them (no page padding), and on pages
+   * shorter than the screen they are pushed down to the edge.
+   */
+  .layout main:has(.controls-overlay) {
+    flex: 1 0 auto;
+    padding-bottom: 0;
+  }
+
+  .layout .exhibit-content.ready:has(.controls-overlay) {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .exhibit-content > .exhibit-stage {
+    flex: 1 0 auto;
+  }
+
+  .exhibit-stage .controls-overlay {
+    margin-top: auto;
+  }
+
+  /* In full screen the controls stay at the bottom even on short pages */
+  .exhibit-stage.fullscreen .controls-overlay {
+    margin-top: auto;
+  }
+
+  /*
+   * Narrow screens: the hidden comparison button gives its space back and
+   * the full-screen button shrinks to its icon (the label stays available
+   * to assistive technology).
+   */
+  @media (max-width: 768px) {
+    .exhibit-stage:not(.fullscreen) .fs-compare-btn {
+      display: none;
+    }
+
+    .fs-toggle-btn {
+      padding: 0.35rem;
+    }
+
+    .fs-toggle-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .fullscreen-controls {
+      flex-wrap: nowrap;
+    }
   }
 
   /* --- Buttons --- */
@@ -89,11 +149,11 @@
   }
 
   .fs-icon-exit,
-  .exhibit-stage.fullscreen .fs-icon-enter {
+  .fullscreen-controls.active .fs-icon-enter {
     display: none;
   }
 
-  .exhibit-stage.fullscreen .fs-icon-exit {
+  .fullscreen-controls.active .fs-icon-exit {
     display: block;
   }
 
@@ -137,7 +197,7 @@
     z-index: 1000;
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    padding: 1rem 1rem 0; /* Controls dock flush to the bottom edge */
     background: var(--bg-color);
     overflow-x: hidden;
     overflow-y: auto;
@@ -155,10 +215,6 @@
     flex: 1 0 auto;
   }
 
-  .exhibit-stage.fullscreen .controls-overlay {
-    bottom: 1rem;
-  }
-
   /* --- Comparison off: only the slow / broken experience remains --- */
   .exhibit-stage.fullscreen.solo [data-experience='good'] {
     display: none;
@@ -173,7 +229,10 @@
   document
     .querySelectorAll<HTMLElement>('.fullscreen-controls')
     .forEach((controls) => {
-      const stage = controls.closest<HTMLElement>('.exhibit-stage');
+      // The surface that goes full screen: a marked ancestor, else the stage
+      const stage =
+        controls.closest<HTMLElement>('[data-fullscreen-surface]') ??
+        controls.closest<HTMLElement>('.exhibit-stage');
       const toggleBtn = controls.querySelector<HTMLElement>('.fs-toggle-btn');
       const toggleText = controls.querySelector('.fs-toggle-text');
       const compareBtn = controls.querySelector<HTMLElement>('.fs-compare-btn');
@@ -194,6 +253,7 @@
 
       function applyState(on: boolean) {
         stage!.classList.toggle('fullscreen', on);
+        controls.classList.toggle('active', on);
         document.documentElement.classList.toggle('exhibit-fullscreen', on);
         toggleBtn!.setAttribute('aria-pressed', String(on));
         if (toggleText) {

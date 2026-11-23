@@ -96,6 +96,7 @@ const scenarios = [
         scenarios.map((scenario) => (
           <div
             class="comparison-panel unfortunate-panel"
+            data-fullscreen-surface
             data-processing={scenario.processingLabel}
             data-switch-label={scenario.switchLabel}
             data-bait-label={scenario.baitLabel}
@@ -163,14 +164,13 @@ const scenarios = [
                   <div class="result-message" />
                 </div>
               </div>
+              <div class="panel-footer">
+                <FullscreenControls />
+              </div>
             </div>
           </div>
         ))
       }
-    </div>
-
-    <div class="controls-overlay">
-      <FullscreenControls />
     </div>
   </div>
 
@@ -196,15 +196,52 @@ const scenarios = [
       }
     }
 
-    .controls-overlay {
-      position: sticky;
-      bottom: 2rem;
-      z-index: 100;
+    /* Each example has its own full-screen button in the footer of its box */
+    .panel-footer {
+      width: 100%;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-top: none;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      padding: 0.4rem 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /*
+     * A single example in full screen: the box fills the screen and the
+     * interface sits in the middle of it.
+     */
+    .unfortunate-panel:global(.fullscreen) {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      width: 100%;
+      height: 100%;
+      padding: 1rem;
+      background: var(--bg-color);
+      overflow: auto;
+    }
+
+    .unfortunate-panel:global(.fullscreen) .experience-block {
+      flex: 1 0 auto;
+    }
+
+    .unfortunate-panel:global(.fullscreen) .viewport {
+      flex: 1 0 auto;
+      height: auto;
+      min-height: 16rem;
+      align-items: center;
+    }
+
+    /*
+     * The interface keeps its usual 16rem area, centered as a whole. The
+     * dialog stays anchored to the top of that area, so the late element
+     * still pushes the buttons down by exactly one button.
+     */
+    .unfortunate-panel:global(.fullscreen) .interaction-overlay {
+      height: 16rem;
+      flex: none;
     }
 
     .comparison-panel {
@@ -244,12 +281,9 @@ const scenarios = [
       background: var(--bg-color);
       border: 1px solid var(--border-color);
       border-top: none; /* Flow from progress bar */
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
-      padding: 0;
+      padding: 0; /* The footer below closes the box */
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       display: flex;
       align-items: flex-start;
       justify-content: center;

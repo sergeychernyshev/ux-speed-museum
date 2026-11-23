@@ -71,7 +71,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
     - [x] **Account for Borders:** Aligned `box-sizing` and border styles to prevent 1px shifts.
     - [x] **Fix Hero Image Cropping:** Transitioned hero image to its reserved `200px` height.
     - [x] **Verify Visual Fill:** Confirmed `object-fit: cover` usage for complete container fill.
-    - [x] **Suggest Multiple Replays (#21):** Shifts are hard to catch in one go, so the description recommends replaying and a hint appears under the controller after each run ("watched N of 3") until the sequence has been watched 3 times at the current setting. The hint reserves its space (`visibility: hidden`) to avoid layout shift.
+    - [x] **Suggest Multiple Replays (#21, #26):** Shifts are hard to catch in one go, so the description recommends replaying and a hint appears after each run until the sequence has been watched 3 times at the current setting. The hint sits above the docked controller (nothing is reserved below it), shows no view counter, and reserves its space (`visibility: hidden`) to avoid layout shift.
 
 - [x] **Exhibit 4: The Unfortunate Shift (Accidental Interaction).**
   - [x] **Concept:** A visceral demonstration of how layout shifts lead to unintended user actions.
@@ -112,7 +112,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - [ ] Add "Deep Dive" sidebars for each exhibit explaining the underlying Web Vital.
 - [ ] Implement a **Side-by-Side Comparison** layout for every exhibit.
 - [x] **Full-Screen Mode (#22):** Every exhibit can be switched to full screen for more immersive replays.
-  - [x] **Shared Component:** `FullscreenControls` renders the buttons and owns all logic. It is built into `PerformanceController`; exhibits without a controller (The Unfortunate Shift) place it directly inside their `.exhibit-stage`.
+  - [x] **Shared Component:** `FullscreenControls` renders the buttons and owns all logic. It is built into `PerformanceController`; The Unfortunate Shift has no controller and no overlay: each of its four examples has its own full-screen button in a footer strip at the bottom of its box and goes full screen on its own (the example is marked `data-fullscreen-surface`); in full screen the box (progress bar, viewport, footer) fills the screen and the dialog interface sits in the middle of it, still anchored to the top of its usual 16rem area so the shift distance is unchanged.
   - [x] **Surface:** The `.exhibit-stage` becomes the full-screen surface, with the controller staying pinned at the bottom. The native Fullscreen API is used where available, with a fixed-position fallback (e.g. iPhone). Esc or the same button exits.
   - [x] **Comparison Toggle:** In full screen only, a "COMPARISON: ON/OFF" button hides the good side so only the slow / broken experience remains at full width. Leaving full screen always restores the comparison.
   - [x] **Convention:** The good side of an exhibit is marked with `data-experience="good"`. Exhibits without a good side (The Input Abyss, The Unfortunate Shift) get full screen without the comparison toggle.
@@ -133,6 +133,7 @@ The application is built as a multi-page site using Astro in **Static Site Gener
 - **Exhibit Thumbnails:** Gallery card / social images are captures of the exhibit in **dark theme**.
 - **Exhibit Descriptions:** Keep them short (two brief paragraphs at most). `ExhibitDescription` renders the HTML directly into its content block, so descriptions may contain their own `<p>` elements without leaving empty paragraphs behind.
 - **Inclusive Mock Content:** Mock pages must not use gendered categories (e.g. Men / Women). The Chronos store navigation is Collections / Sport / Classic.
+- **Docked Controls:** The controls overlay is docked flush to the bottom edge of the screen (`position: sticky; bottom: 0`), never floating above it. It stays attached all the way to the end of the page (no padding below it) and on pages shorter than the screen. The `PerformanceController` is a compact bar: a single row on wide screens (label and replay, scrubber, value, full-screen buttons) and two rows on narrow ones, so it covers as little of the exhibit as possible. The Layout Leap controller spans the full stage width, because its CLS snap points sit close together and need a longer scrubber.
 - **No Tailwind:** Use Vanilla CSS for precise control.
 - **Code Styling:** Prettier is used for consistent formatting.
 

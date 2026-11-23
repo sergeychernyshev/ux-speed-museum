@@ -194,7 +194,6 @@ const description =
       <p class="replay-hint" id="replay-hint" role="status">
         Hard to catch in one go? <strong>Replay</strong> a few times and watch a different
         spot each time.
-        <span class="replay-count" id="replay-count"></span>
       </p>
     </div>
   </div>
@@ -608,7 +607,7 @@ const description =
     /* Controls */
     .controls-overlay {
       position: sticky;
-      bottom: 2rem;
+      bottom: 0; /* Docked to the bottom edge of the screen */
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -616,8 +615,18 @@ const description =
       gap: 0.5rem;
     }
 
+    /*
+     * The CLS snap points sit very close together at the low end, so this
+     * exhibit lets the controller use the full stage width for a longer
+     * scrubber.
+     */
+    .controls-overlay :global(.performance-controller) {
+      width: 100%;
+    }
+
     /* Space is always reserved, so showing the hint never shifts layout */
     .replay-hint {
+      order: -1; /* Sits above the docked controller */
       visibility: hidden;
       opacity: 0;
       max-width: 100%;
@@ -639,11 +648,6 @@ const description =
 
     .replay-hint strong {
       color: var(--text-color);
-    }
-
-    .replay-count {
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
     }
   </style>
 
@@ -697,7 +701,6 @@ const description =
     const suggestedViews = 3;
     let viewCount = 0;
     const replayHint = document.getElementById('replay-hint');
-    const replayCount = document.getElementById('replay-count');
 
     function hideReplayHint() {
       replayHint?.classList.remove('visible');
@@ -706,9 +709,6 @@ const description =
     function showReplayHint() {
       viewCount++;
       if (viewCount >= suggestedViews) return;
-      if (replayCount) {
-        replayCount.textContent = `(watched ${viewCount} of ${suggestedViews})`;
-      }
       replayHint?.classList.add('visible');
     }
 
